@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 13** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 0** | **Total: 13** | ░░░░░░░░░░ 0%
+⚪ **Open: 12** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 1** | **Total: 13** | █░░░░░░░░░ 8%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -30,7 +30,6 @@ _No paused tasks._
 
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
-| [TASK-001](open/task-001-delete-sync-layer.md) | Delete awesome-task-system/ and scripts/sync_task_system.py | Small | Junior | ⚪ open |
 | [TASK-002](open/task-002-python-skeleton.md) | Author Python project skeleton (pyproject, requirements-dev, CI, conftest, gitignore) | Small | Junior | ⚪ open |
 | [TASK-003](open/task-003-replace-pre-commit.md) | Replace scripts/pre-commit with the CircuitSmith version | Small | Junior | ⚪ open |
 | [TASK-004](open/task-004-upgrade-commit-skill.md) | Upgrade /commit skill and commit-pathspec.sh to the CircuitSmith versions | Small | Junior | ⚪ open |
@@ -48,4 +47,5 @@ _No paused tasks._
 
 | ID | Title | Effort |
 |----|-------|--------|
+| [TASK-001](closed/task-001-delete-sync-layer.md) | Delete awesome-task-system/ and scripts/sync_task_system.py | Small |
 <!-- END GENERATED -->

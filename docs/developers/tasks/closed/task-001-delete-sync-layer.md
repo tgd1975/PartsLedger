@@ -1,9 +1,11 @@
 ---
 id: TASK-001
 title: Delete awesome-task-system/ and scripts/sync_task_system.py
-status: open
+status: closed
+closed: 2026-05-12
 opened: 2026-05-12
 effort: Small
+effort_actual: XS (<30m)
 complexity: Junior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -29,11 +31,11 @@ here (the full pre-commit replacement happens in TASK-003 anyway).
 
 ## Acceptance Criteria
 
-- [ ] `awesome-task-system/` directory is gone.
-- [ ] `scripts/sync_task_system.py` is gone.
-- [ ] `python scripts/housekeep.py --apply` still runs clean (no
+- [x] `awesome-task-system/` directory is gone.
+- [x] `scripts/sync_task_system.py` is gone.
+- [x] `python scripts/housekeep.py --apply` still runs clean (no
       references to the deleted paths from any live script).
-- [ ] A test commit using the existing `/commit` skill succeeds (the
+- [x] A test commit using the existing `/commit` skill succeeds (the
       pre-commit hook does not error on the missing sync script).
 
 ## Test Plan
