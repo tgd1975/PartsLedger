@@ -1,0 +1,36 @@
+# direnv config for PartsLedger — per-developer paths and credentials.
+#
+# Setup:
+#   1. Install direnv: `sudo apt install direnv` (Ubuntu) or `brew install direnv` (macOS).
+#   2. Hook your shell — see https://direnv.net/docs/hook.html. For bash:
+#        eval "$(direnv hook bash)"   # add to ~/.bashrc
+#   3. Copy this file: `cp .envrc.example .envrc`
+#   4. Fill in the values below for your hardware.
+#   5. `direnv allow` from the repo root — direnv will then load these
+#      whenever your shell is inside the repo.
+#
+# All variables are namespaced PL_* so they don't collide.
+
+# Anthropic API key — for Claude Opus 4.7 Vision fallback identification.
+export ANTHROPIC_API_KEY=""
+
+# Nexar / Octopart GraphQL credentials — for metadata enrichment (datasheets,
+# manufacturer, pinout, prices). Get yours at https://nexar.com/.
+export PL_NEXAR_CLIENT_ID=""
+export PL_NEXAR_CLIENT_SECRET=""
+
+# USB camera index passed to `cv2.VideoCapture(...)`. On Linux,
+# `v4l2-ctl --list-devices` shows which /dev/videoN corresponds to which
+# camera; OpenCV indexes them as integers. Usually 0 for the first webcam.
+export PL_CAMERA_INDEX="0"
+
+# Path to the inventory directory (the maker's parts bin). Defaults to
+# `./inventory/` inside the repo, but you can point at any directory tree.
+export PL_INVENTORY_PATH="${PWD}/inventory"
+
+# Override the default Python interpreter (e.g. point at a project venv).
+export PL_PYTHON="${PL_PYTHON:-python3}"
+
+# Bypass reason for the /commit pre-commit hook. Leave empty under normal use;
+# set only for interactive rebase / recovery. Logged to .git/pl-commit-bypass.log.
+# export PL_COMMIT_BYPASS=""
