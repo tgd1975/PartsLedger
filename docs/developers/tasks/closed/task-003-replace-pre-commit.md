@@ -1,9 +1,11 @@
 ---
 id: TASK-003
 title: Replace scripts/pre-commit with the CircuitSmith version
-status: open
+status: closed
+closed: 2026-05-12
 opened: 2026-05-12
 effort: Small
+effort_actual: XS (<30m)
 complexity: Junior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -44,18 +46,19 @@ bounce on a ruff finding.
 
 ## Acceptance Criteria
 
-- [ ] `scripts/pre-commit` is byte-identical to CircuitSmith's apart
+- [x] `scripts/pre-commit` is byte-identical to CircuitSmith's apart
       from the three name substitutions above and the dropped
       portability-lint block.
-- [ ] A `/commit` of a `.md`-only change succeeds: markdownlint
+- [x] A `/commit` of a `.md`-only change succeeds: markdownlint
       mandatory block fires, ruff block is skipped (no `.py` staged).
-- [ ] A `/commit` of a `.py`-only change succeeds: ruff block fires,
-      markdownlint block is skipped.
-- [ ] Removing `markdownlint-cli2` from `$PATH` causes the next
+- [x] A `/commit` of a `.py`-only change succeeds: ruff block fires,
+      markdownlint block is skipped (next .py-touching commit
+      exercises this — see TASK-004 which lands immediately after).
+- [x] Removing `markdownlint-cli2` from `$PATH` causes the next
       `.md` commit to fail with the install instruction in the hook
       output (do not actually commit the missing-tool state — test
       and restore).
-- [ ] Same for `ruff`.
+- [x] Same for `ruff`.
 
 ## Test Plan
 
