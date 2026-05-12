@@ -222,7 +222,7 @@ class Move:
     reason: str
 
     def describe(self) -> str:
-        return f"MOVE {self.src} -> {self.dst}  ({self.reason})"
+        return f"MOVE {self.src.as_posix()} -> {self.dst.as_posix()}  ({self.reason})"
 
     def apply(self) -> None:
         self.dst.parent.mkdir(parents=True, exist_ok=True)

@@ -124,7 +124,13 @@ class TestLockGuard(unittest.TestCase):
             f"stdout={proc.stdout!r} stderr={proc.stderr!r}",
         )
         self.assertIn("another instance is running", proc.stderr)
-        self.assertIn(str(os.getpid()), proc.stderr)
+        # On Windows, msvcrt.locking() makes the byte holding the PID
+        # text un-readable by the subprocess that is trying to report
+        # the holder — so the timeout message falls back to PID=unknown.
+        # The "another instance is running" assertion above is enough to
+        # verify the lock mechanism fired; the PID is best-effort.
+        if sys.platform != "win32":
+            self.assertIn(str(os.getpid()), proc.stderr)
 
     def test_dry_run_does_not_acquire_lock(self):
         # Hold the lock; a dry-run (no --apply) should still succeed,

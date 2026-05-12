@@ -35,9 +35,12 @@ class TestDeriveEpicStatus(unittest.TestCase):
                  self._t("foo", "open")]
         self.assertEqual(hk.derive_epic_status("foo", tasks), "active")
 
-    def test_open_and_closed_is_open(self):
+    def test_open_and_closed_is_active(self):
+        # Mixed open+closed derives to "active" — an epic with any
+        # closed task is past pristine-open. See derive_epic_status's
+        # semantics in housekeep.py.
         tasks = [self._t("foo", "closed"), self._t("foo", "open")]
-        self.assertEqual(hk.derive_epic_status("foo", tasks), "open")
+        self.assertEqual(hk.derive_epic_status("foo", tasks), "active")
 
     def test_ignores_other_epics(self):
         tasks = [self._t("bar", "active"), self._t("foo", "closed")]
@@ -241,7 +244,9 @@ class TestGenerateEpicsMd(unittest.TestCase):
                             prereqs="[TASK-001]", order=2)
             self._make_epic(t, "open", "EPIC-001", "foo", "Foo Epic")
             content = self._run(t)
-            self.assertIn("graph TD", content)
+            # _graph_direction picks LR for a 2-node 1-edge epic
+            # (width 1, depth 2 → LR per the depth-vs-width heuristic).
+            self.assertIn("graph LR", content)
             self.assertIn("TASK_001 --> TASK_002", content)
 
     def test_epic_without_prereqs_produces_flat_list(self):
@@ -364,9 +369,9 @@ class TestGenerateKanbanMd(unittest.TestCase):
             open_idx = next(i for i, line in enumerate(lines) if "  Open" in line)
             active_idx = next(i for i, line in enumerate(lines) if "  Active" in line)
             closed_idx = next(i for i, line in enumerate(lines) if "  Closed" in line)
-            task001_idx = next(i for i, line in enumerate(lines) if "TASK-001" in line)
-            task002_idx = next(i for i, line in enumerate(lines) if "TASK-002" in line)
-            task003_idx = next(i for i, line in enumerate(lines) if "TASK-003" in line)
+            task001_idx = next(i for i, line in enumerate(lines) if "TASK_001" in line)
+            task002_idx = next(i for i, line in enumerate(lines) if "TASK_002" in line)
+            task003_idx = next(i for i, line in enumerate(lines) if "TASK_003" in line)
             self.assertLess(open_idx, task001_idx)
             self.assertLess(task001_idx, active_idx)
             self.assertLess(active_idx, task002_idx)
@@ -462,7 +467,9 @@ class TestInitEndToEnd(unittest.TestCase):
             hk.generate_kanban_md(tasks_dir, ("open", "active", "closed"), cfg)
 
             kanban = (tasks_dir / "KANBAN.md").read_text(encoding="utf-8")
-            self.assertIn("TASK-001", kanban)
+            # Mermaid kanban node IDs use underscores (TASK-NNN → TASK_NNN)
+            # so the mermaid renderer parses them correctly.
+            self.assertIn("TASK_001", kanban)
 
             # Step 3: close the task and verify a move is planned
             task_file.write_text(
