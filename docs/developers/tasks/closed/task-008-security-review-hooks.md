@@ -1,9 +1,11 @@
 ---
 id: TASK-008
 title: Port security-review hooks (pre-merge-commit, post-merge, pre-rebase)
-status: open
+status: closed
+closed: 2026-05-13
 opened: 2026-05-12
 effort: Medium
+effort_actual: Small (<2h)
 complexity: Junior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -45,24 +47,23 @@ artefacts plus three follow-on edits:
 
 ## Acceptance Criteria
 
-- [ ] `scripts/security_review_changes.py` exists and runs (`python
+- [x] `scripts/security_review_changes.py` exists and runs (`python
       scripts/security_review_changes.py HEAD HEAD` exits 0 with a
       "no changes" finding).
-- [ ] The three git-hooks files exist under `scripts/git-hooks/` and
+- [x] The three git-hooks files exist under `scripts/git-hooks/` and
       are executable.
-- [ ] `bash scripts/install_git_hooks.sh` succeeds; `.git/hooks/`
+- [x] `bash scripts/install_git_hooks.sh` succeeds; `.git/hooks/`
       now contains pre-commit, pre-merge-commit, post-merge, and
       pre-rebase entries pointing at this repo's scripts.
-- [ ] An intentional bad-pull simulation (a branch with a new
+- [x] An intentional bad-pull simulation (a branch with a new
       `Bash(curl:*)` allow entry merged into a test branch)
       triggers a HIGH finding from `pre-merge-commit` and blocks
       the merge.
-- [ ] `PL_SKIP_SECURITY_REVIEW=1 git pull` bypasses the hook and
+- [x] `PL_SKIP_SECURITY_REVIEW=1 git pull` bypasses the hook and
       logs the bypass.
-- [ ] `docs/developers/SECURITY_REVIEW.md` exists, links into
-      `AUTONOMY.md § No-published-effect` (the link target lands in
-      TASK-012 — link can be left dangling until then or pre-
-      populated).
+- [x] `docs/developers/SECURITY_REVIEW.md` exists, links into
+      `AUTONOMY.md § No-published-effect` (forward-link will resolve
+      when TASK-012 lands AUTONOMY.md).
 
 ## Test Plan
 

@@ -4,6 +4,7 @@
       "Bash(python scripts/housekeep.py:*)",
       "Bash(python scripts/release_burnup.py:*)",
       "Bash(python scripts/release_snapshot.py:*)",
+      "Bash(python scripts/security_review_changes.py:*)",
       "Bash(python scripts/task_system_config.py:*)",
       "Bash(python scripts/update_idea_overview.py:*)",
       "Bash(python scripts/update_task_overview.py:*)",

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# pre-merge-commit: review incoming changes before the merge commit is finalized.
+# Fires for non-fast-forward `git pull` / `git merge`. Blocks on HIGH/CRITICAL.
+# To abort the in-flight merge after a block: `git merge --abort`.
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# HEAD is the local pre-merge tip; MERGE_HEAD is what's about to be merged in.
+if ! git rev-parse --verify -q MERGE_HEAD >/dev/null; then
+    exit 0
+fi
+
+exec python3 "$REPO_ROOT/scripts/security_review_changes.py" \
+    HEAD MERGE_HEAD --label "pre-merge-commit"

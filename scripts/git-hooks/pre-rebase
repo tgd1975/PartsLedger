@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# pre-rebase: review the upstream commits about to be replayed onto local.
+# Fires for `git pull --rebase`. Blocks on HIGH/CRITICAL.
+# Args: $1 = upstream, $2 = branch (optional, defaults to current).
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+UPSTREAM="${1:-}"
+if [ -z "$UPSTREAM" ]; then
+    exit 0
+fi
+
+# We're about to incorporate commits in UPSTREAM that are not in HEAD.
+# Diff old=HEAD (current local tip) vs new=UPSTREAM.
+exec python3 "$REPO_ROOT/scripts/security_review_changes.py" \
+    HEAD "$UPSTREAM" --label "pre-rebase ($UPSTREAM)"
