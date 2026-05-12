@@ -1,0 +1,10 @@
+# Dev-environment install for PartsLedger.
+#
+# Run from the repo root: `pip install -r requirements-dev.txt`
+# (the `-e .` below is interpreted relative to the current working
+# directory, not relative to this file).
+#
+# Installs the project in editable mode with the [dev] extra. Runtime
+# and dev deps are declared in pyproject.toml — this file is a
+# one-liner so contributors don't have to remember the extras syntax.
+-e .[dev]

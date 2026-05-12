@@ -361,12 +361,12 @@ class TestGenerateKanbanMd(unittest.TestCase):
             self._make_task(t, "closed", "003", "closed")
             content = self._run(t)
             lines = content.splitlines()
-            open_idx = next(i for i, l in enumerate(lines) if "  Open" in l)
-            active_idx = next(i for i, l in enumerate(lines) if "  Active" in l)
-            closed_idx = next(i for i, l in enumerate(lines) if "  Closed" in l)
-            task001_idx = next(i for i, l in enumerate(lines) if "TASK-001" in l)
-            task002_idx = next(i for i, l in enumerate(lines) if "TASK-002" in l)
-            task003_idx = next(i for i, l in enumerate(lines) if "TASK-003" in l)
+            open_idx = next(i for i, line in enumerate(lines) if "  Open" in line)
+            active_idx = next(i for i, line in enumerate(lines) if "  Active" in line)
+            closed_idx = next(i for i, line in enumerate(lines) if "  Closed" in line)
+            task001_idx = next(i for i, line in enumerate(lines) if "TASK-001" in line)
+            task002_idx = next(i for i, line in enumerate(lines) if "TASK-002" in line)
+            task003_idx = next(i for i, line in enumerate(lines) if "TASK-003" in line)
             self.assertLess(open_idx, task001_idx)
             self.assertLess(task001_idx, active_idx)
             self.assertLess(active_idx, task002_idx)
@@ -476,7 +476,8 @@ class TestInitEndToEnd(unittest.TestCase):
                              tasks_dir / "closed" / "task-001-hello.md")
 
     def test_version_flag(self):
-        import subprocess, sys
+        import subprocess
+        import sys
         result = subprocess.run(
             [sys.executable, str(pathlib.Path(hk.__file__)), "--version"],
             capture_output=True, text=True,
@@ -855,7 +856,8 @@ class TestSyncTaskSystem(unittest.TestCase):
             self.skipTest("sync_task_system.py not present in this checkout")
 
     def test_check_returns_zero_when_in_sync(self):
-        import subprocess, sys
+        import subprocess
+        import sys
         result = subprocess.run(
             [sys.executable, str(self.sync), "--check"],
             capture_output=True, text=True, cwd=self.repo_root,

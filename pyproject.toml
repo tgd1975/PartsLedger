@@ -1,0 +1,85 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "partsledger"
+version = "0.1.0.dev0"
+description = "LLM-native inventory for an electronics parts bin — USB camera capture, DINOv2 embeddings, Claude Vision identification, Markdown-as-database."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [
+    { name = "tgd1975" },
+]
+keywords = [
+    "inventory",
+    "electronics",
+    "parts-bin",
+    "dinov2",
+    "claude-vision",
+    "nexar",
+    "octopart",
+    "markdown",
+    "claude-code-skill",
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: System :: Hardware",
+]
+
+dependencies = [
+    "torch>=2.0",
+    "transformers>=4.40",
+    "Pillow>=10.0",
+    "opencv-python>=4.8",
+    "sqlite-vec>=0.1",
+    "requests>=2.31",
+    "anthropic>=0.40",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.7",
+]
+
+[project.urls]
+Homepage = "https://github.com/tgd1975/PartsLedger"
+Issues = "https://github.com/tgd1975/PartsLedger/issues"
+Changelog = "https://github.com/tgd1975/PartsLedger/blob/main/CHANGELOG.md"
+
+# No importable Python package yet — the product code lands as the
+# inventory-add / inventory-page skills under .claude/skills/ and as
+# scripts/ utilities. Tell setuptools to install metadata only so
+# `pip install -e .` and `uv pip install -e .[dev]` both succeed
+# without auto-discovery guessing wrong.
+[tool.setuptools]
+py-modules = []
+
+[tool.pytest.ini_options]
+# Two test roots: product-code tests at `tests/` (created when the
+# pipeline modules start landing) and task-system / script tooling
+# tests at `scripts/tests/`. See docs/developers/TESTING.md for the
+# layer convention.
+testpaths = ["tests", "scripts/tests"]
+python_files = "test_*.py"
+addopts = "-ra"
+strict_markers = true
+
+[tool.ruff.lint]
+# Deliberately minimal initial ruleset: pyflakes (F) and the essential
+# pycodestyle subset (E4 imports / E7 statements / E9 runtime errors).
+# Opt into more (I imports-sort, UP pyupgrade, B bugbear, C90 complexity,
+# …) deliberately as the codebase grows — not all at once.
+select = ["E4", "E7", "E9", "F"]

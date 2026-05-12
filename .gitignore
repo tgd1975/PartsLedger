@@ -34,6 +34,9 @@ Thumbs.db
 .claude/settings.local.json
 .claude/*.lock
 
+# Security-review hook output (regenerable; never commit the report)
+.claude/security-review-latest.md
+
 # direnv local env (per-developer paths, API keys, camera index — see .envrc.example)
 .envrc
 

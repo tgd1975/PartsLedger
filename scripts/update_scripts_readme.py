@@ -9,7 +9,6 @@ with up-to-date information about all available scripts.
 Usage: python3 scripts/update_scripts_readme.py
 """
 
-import os
 import re
 import subprocess
 from pathlib import Path

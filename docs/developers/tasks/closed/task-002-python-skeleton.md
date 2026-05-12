@@ -1,9 +1,11 @@
 ---
 id: TASK-002
 title: Author Python project skeleton (pyproject, requirements-dev, CI, conftest, gitignore)
-status: open
+status: closed
+closed: 2026-05-12
 opened: 2026-05-12
 effort: Small
+effort_actual: Small (<2h)
 complexity: Junior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -58,16 +60,16 @@ this task's commit message.
 
 ## Acceptance Criteria
 
-- [ ] `pyproject.toml` exists; `pip install -e .` and `uv pip install
+- [x] `pyproject.toml` exists; `pip install -e .` and `uv pip install
       -e .[dev]` both succeed in a fresh venv (the latter is the
       canonical install).
-- [ ] `requirements-dev.txt` is the verbatim CircuitSmith one-liner.
-- [ ] `tests/conftest.py` exists and is empty.
-- [ ] `.github/workflows/ci.yml` exists and uses `astral-sh/setup-uv`
+- [x] `requirements-dev.txt` is the verbatim CircuitSmith one-liner.
+- [x] `tests/conftest.py` exists and is empty.
+- [x] `.github/workflows/ci.yml` exists and uses `astral-sh/setup-uv`
       (not `pip install`).
-- [ ] `.gitignore` carries the additions listed above.
-- [ ] `ruff check scripts/` exits 0 on the post-cleanup tree.
-- [ ] `pytest` from the repo root collects without errors (zero tests
+- [x] `.gitignore` carries the additions listed above.
+- [x] `ruff check scripts/` exits 0 on the post-cleanup tree.
+- [x] `pytest` from the repo root collects without errors (zero tests
       is acceptable; a collection error is not).
 
 ## Test Plan

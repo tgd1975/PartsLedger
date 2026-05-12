@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          # Lower bound of pyproject.toml `requires-python = ">=3.11"`.
+          # Test only against this version for now; matrix-expand once a
+          # newer-Python-only feature lands.
+          python-version: '3.11'
+
+      - uses: astral-sh/setup-uv@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Python dev dependencies
+        run: uv pip install --system -r requirements-dev.txt
+
+      - name: Install markdownlint-cli2
+        run: npm install -g markdownlint-cli2
+
+      - name: Markdown lint
+        # Mirror of scripts/pre-commit. Keep the glob and ignore-arg
+        # in sync with that file's `markdownlint-cli2 …` invocation.
+        shell: bash
+        run: markdownlint-cli2 "**/*.md" "#node_modules" "#.claude/security-review-latest.md"
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Pytest
+        run: pytest

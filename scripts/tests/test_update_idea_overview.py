@@ -1,7 +1,6 @@
 """Unit tests for update_idea_overview.py — no filesystem side effects on repo."""
 
 import io
-import os
 import pathlib
 import sys
 import tempfile
