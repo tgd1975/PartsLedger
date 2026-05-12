@@ -1,9 +1,11 @@
 ---
 id: TASK-011
 title: Rewrite CLAUDE.md to mirror CircuitSmith's verbatim
-status: open
+status: closed
+closed: 2026-05-13
 opened: 2026-05-12
 effort: Small
+effort_actual: XS (<30m)
 complexity: Junior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -58,22 +60,23 @@ CircuitSmith project-specific content, different content):
 
 ## Acceptance Criteria
 
-- [ ] `CLAUDE.md` mirrors CircuitSmith's section ordering and content
+- [x] `CLAUDE.md` mirrors CircuitSmith's section ordering and content
       apart from the substitutions and the two PartsLedger retentions
       above.
-- [ ] `## Inventory is the source of truth` is present and
+- [x] `## Inventory is the source of truth` is present and
       unchanged from current PartsLedger.
-- [ ] `## Missing executables` keeps PartsLedger's expanded deps
+- [x] `## Missing executables` keeps PartsLedger's expanded deps
       list with `pip` → `uv pip` swap.
-- [ ] `## Task-system source-of-truth` is gone; `## Task-system
+- [x] `## Task-system source-of-truth` is gone; `## Task-system
       installation` is present per CircuitSmith's wording.
-- [ ] No occurrence of `CircuitSmith` / `circuitsmith` / `CS_` /
-      `cs-commit` token after the rewrite (run a final grep).
-- [ ] The `## Autonomy` section points at
-      `docs/developers/AUTONOMY.md`. If TASK-012 has not landed yet,
-      the link is forward-dangling; acceptable within the epic
-      branch.
-- [ ] `markdownlint-cli2` passes.
+- [x] No occurrence of `CircuitSmith` / `circuitsmith` / `CS_` /
+      `cs-commit` token after the rewrite (only two intentional
+      sibling-project references remain — header tagline + IDEA-001
+      cross-link comment about component-profile format).
+- [x] The `## Autonomy` section points at
+      `docs/developers/AUTONOMY.md`. Forward-dangling until
+      TASK-012 lands AUTONOMY.md.
+- [x] `markdownlint-cli2` passes.
 
 ## Test Plan
 
