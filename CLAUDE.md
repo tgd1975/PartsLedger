@@ -5,7 +5,7 @@
 PartsLedger is an LLM-native inventory for an electronics parts bin: USB camera
 captures a part, the pipeline (DINOv2 embeddings → Claude Opus 4.7 Vision →
 Nexar/Octopart) identifies it, and the result lands in
-`inventory/parts/<part>.md`. See [`concept.md`](concept.md) for the full design.
+`inventory/parts/<part>.md`. See [`IDEA-001`](docs/developers/ideas/open/idea-001-partsledger-concept.md) for the full design.
 
 ## OS context
 
@@ -36,7 +36,7 @@ else is regenerable:
 
 Never write to the SQLite DB without a corresponding `.md` update.
 Never edit `.md` files without keeping them schema-compatible with the
-CircuitSmith component-profile format (see [`concept.md`](concept.md#example-partsic-lm358nmd)).
+CircuitSmith component-profile format (see [`IDEA-001`](docs/developers/ideas/open/idea-001-partsledger-concept.md#example-an-lm358n-entry)).
 
 ## Human interaction — batch questions, don't loop
 

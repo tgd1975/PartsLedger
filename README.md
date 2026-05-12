@@ -8,7 +8,7 @@ An **LLM-native inventory for your parts bin**. Point a USB camera at a componen
 
 🚧 **Concept stage** — the repo currently contains only the concept docs. Code to follow.
 
-The full architecture and rationale live in **[concept.md](concept.md)**.
+The full architecture and rationale live in **[IDEA-001](docs/developers/ideas/open/idea-001-partsledger-concept.md)**.
 
 ## Who is it for?
 
@@ -50,7 +50,7 @@ USB camera ──► DINOv2 embedding ──► Search vector DB
                                                    → cache embedding
 ```
 
-Active learning without upfront training: the first photo of a new type runs the full pipeline; from the second photo onwards, the local embedding lookup suffices. Details, example frontmatter, component table, and boundaries are in **[concept.md](concept.md)**.
+Active learning without upfront training: the first photo of a new type runs the full pipeline; from the second photo onwards, the local embedding lookup suffices. Details, example frontmatter, component table, and boundaries are in **[IDEA-001](docs/developers/ideas/open/idea-001-partsledger-concept.md)**.
 
 ## Target Audience & Scope
 
@@ -74,7 +74,7 @@ Active learning without upfront training: the first photo of a new type runs the
 
 ## Roadmap
 
-- [x] Concept & schema sketch ([concept.md](concept.md))
+- [x] Concept & schema sketch ([IDEA-001](docs/developers/ideas/open/idea-001-partsledger-concept.md))
 - [ ] Markdown schema as a formal spec (frontmatter, CircuitSmith-compatible)
 - [ ] Python skeleton: USB camera + DINOv2 + sqlite-vec
 - [ ] Claude Vision integration for unknown parts

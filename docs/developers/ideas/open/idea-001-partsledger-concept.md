@@ -1,4 +1,9 @@
-# PartsLedger — Concept
+---
+id: IDEA-001
+title: PartsLedger concept
+description: PartsLedger's seed document — goal, scope, file format, skill+camera entry paths, CircuitSmith bridge.
+category: foundation
+---
 
 > *"PartsLedger keeps the record. CircuitSmith reads it before forging."*
 
@@ -218,13 +223,13 @@ If/when the maker runs `/inventory-page LM358N`, a `parts/lm358n.md` is
 generated and the Part cell becomes `[LM358N](parts/lm358n.md)`. The page is
 prose — ELI5, At-a-glance specs, ASCII pinout, sample inverting-amplifier
 circuit, "Watch out for" gotchas, and a "Pairs naturally with" pointer to the
-[ICL7660S](inventory/parts/7660s.md) for ±V rails on a single supply.
+[ICL7660S](../../../../inventory/parts/7660s.md) for ±V rails on a single supply.
 
-A real example to look at: [inventory/parts/7660s.md](inventory/parts/7660s.md).
+A real example to look at: [inventory/parts/7660s.md](../../../../inventory/parts/7660s.md).
 
 ## Integration with CircuitSmith
 
-PartsLedger is the inventory layer; [CircuitSmith](../CircuitSmith/) (=
+PartsLedger is the inventory layer; [CircuitSmith](../../../../../CircuitSmith/) (=
 IDEA-027) is the schematic layer. Honest framing:
 
 - The reference pages are **prose**, not structured component profiles —
