@@ -4,203 +4,322 @@
 
 ## Goal
 
-A maker (through-hole, modules, dev-boards, larger ICs) wants to digitise their parts bin. Hold a component under the USB camera → automatic identification → entry in a Markdown-based inventory with datasheet, description, and storage location. With every use, the system becomes faster and more accurate, with no explicit training.
+A maker (through-hole, modules, dev-boards, larger ICs) wants to digitise their
+parts bin. Two entry paths feed the same Markdown-based inventory:
+
+- **Skill path (today):** the maker tells an LLM *"I have N of part X"*; the
+  LLM identifies it, finds the datasheet, and writes the entry.
+- **Camera path (planned):** the maker holds a component under the USB
+  camera; a vision pipeline identifies it and writes the same entry.
+
+With every use, the inventory becomes richer and the system becomes faster —
+no explicit training, no separate database.
 
 ## Target Audience & Scope
 
-- **Makers / hobbyists**: through-hole components, modules (Blue Pill, ESP32, WeMos D1 Mini, DRV8825, HC-SR04, MAX7219 …), dev-boards, larger ICs in DIP/TO-220/SOIC.
-- **Deliberate non-goals**: SMD micro-parts (SOD-323 diodes with 2-3-character marking codes), industrial AOI applications, multi-user web frontend with audit trail.
+- **Makers / hobbyists**: through-hole components, modules (Blue Pill, ESP32,
+  WeMos D1 Mini, DRV8825, HC-SR04, MAX7219 …), dev-boards, larger ICs in
+  DIP / TO-220 / SOIC.
+- **Deliberate non-goals**: SMD micro-parts (SOD-323 diodes with 2-3-character
+  marking codes), industrial AOI applications, multi-user web frontend with
+  audit trail.
 
 ## Core Idea: LLM-Native Markdown Inventory
 
-The inventory is **not** kept in a SQL database, but as a directory of Markdown files with YAML frontmatter. Rationale:
+The inventory is **not** kept in a SQL database, but in Markdown files. Two
+files do all the work:
 
-- LLMs (especially Claude) can read the entire inventory directly — `cat inventory/parts/*.md` is the only "query layer" you need. No API wrapper, no ORM.
-- Git becomes the history — every stock movement is a commit; `git log inventory/parts/resistor-10k.md` shows the full history of a part.
-- Schema-compatible with [CircuitSmith / IDEA-027](https://github.com/tgd1975/AwesomeStudioPedal/blob/main/docs/developers/ideas/open/idea-027-circuit-skill.md): inventory fields (`quantity`, `locations`) as a superset over the component-profile fields (`vcc_min`, `pins`, …).
-- Tool diversity: Obsidian, VS Code, grep, the GitHub web UI all work without adaptation.
+- `inventory/INVENTORY.md` — a single flat index. Sectioned tables (MCUs, ICs,
+  Sensors, Modules, Transistors, Bulk/kits) with columns
+  `Part | Qty | Description | Datasheet | Octopart | Notes`. **The source of
+  truth for "what do I have and how many".**
+- `inventory/parts/<id>.md` — optional, hobbyist-friendly **reference pages**
+  for parts that earn one: ELI5, pinout, sample circuit, gotchas. Prose, no
+  frontmatter. The Part cell in `INVENTORY.md` links to the page once it
+  exists, so the index doubles as a navigable book.
 
-## Hardware
+Why this shape:
 
-- USB webcam (2K is enough), good desk lamp or ring light.
-- Any Linux/Win/Mac machine with Python.
-- **No** macro lens, **no** USB microscope required (scope: maker components, no SMD marking codes).
+- LLMs (especially Claude) can read the whole inventory directly — `cat
+  inventory/INVENTORY.md inventory/parts/*.md` is the only "query layer" you
+  need.
+- Git is the history — every stock movement is a commit; `git log
+  inventory/INVENTORY.md` shows who arrived and who left.
+- Tool diversity: Obsidian, VS Code, grep, GitHub web UI all work unmodified.
 
-## Architecture (Hybrid Pipeline)
+## Two Entry Paths, One Target
 
-```
-[USB camera capture via OpenCV]
-        │
-        ▼
-[Compute DINOv2 embedding] ──► [Search local vector DB (sqlite-vec)]
-        │                              │
-        │                       ┌──────┴──────┐
-        │                       ▼             ▼
-        │             Small distance:   Large distance:
-        │             instant match     "unknown"
-        │             (no API call)           │
-        │                       │             ▼
-        │                       │     ┌───────────────────────────┐
-        │                       │     │ Identification pipeline:  │
-        │                       │     │  • Claude Opus 4.7 Vision │
-        │                       │     │    (reads markings,       │
-        │                       │     │     identifies modules)   │
-        │                       │     │  • Optional: resistor     │
-        │                       │     │    colour-band reader     │
-        │                       │     │  • Octopart/Nexar API     │
-        │                       │     │    for metadata           │
-        │                       │     └─────────────┬─────────────┘
-        │                       │                   │
-        │                       ▼                   ▼
-        │              [Maker confirms via TUI/Web UI]
-        │                                  │
-        ▼                                  ▼
-[Embedding + label stored in vector DB — system "learns"]
-                                  │
-                                  ▼
-              [Write/update inventory/parts/*.md]
-```
+Both paths converge on the same files. The skill path is what works today;
+the camera path is the planned second entry point.
 
-### Roles of the Components
+```mermaid
+flowchart LR
+    subgraph SkillPath["Skill path (today)"]
+        S1["/inventory-add &lt;part&gt; &lt;qty&gt;"]
+        S2["LLM identifies + hedges"]
+        S3["WebSearch datasheet"]
+        S1 --> S2 --> S3
+    end
 
-- **Vision Language Model (VLM)** = star of the pipeline. Reads markings (`10kΩ`, `L7805CV`, `LM358N`), identifies modules (`Blue Pill with STM32F103`, `DRV8825 driver`). Hit rate on maker-grade parts is estimated at 80-90 % with decent lighting. The VLM is pluggable; two first-class backends are planned:
-  - **Claude Opus 4.7 Vision** (Anthropic API) — hosted, top-tier accuracy on dense / hand-written / damaged markings.
-  - **Mistral Pixtral** (Pixtral Large via Mistral API, or open-weight **Pixtral 12B** self-hosted via `vllm` / `transformers`) — same multimodal role; the open-weight variant lets the entire pipeline run offline once the embedding DB has warmed up.
-- **DINOv2 embeddings** = local cache. Distinguish package types and module shapes (TO-92 vs. TO-220 vs. electrolytic cap vs. film cap). Second photo of an already-seen part type → instant match, no API call.
-- **Octopart / Nexar GraphQL API** = metadata enrichment (datasheet, manufacturer, pinout, prices).
-- **Resistor colour-band reader** = optional small OpenCV module.
-- **Markdown writer** = orchestrates writing/updating `inventory/parts/*.md`.
+    subgraph CameraPath["Camera path (planned)"]
+        C1["USB camera capture"]
+        C2["DINOv2 embedding<br/>+ sqlite-vec cache"]
+        C3["VLM<br/>(Claude / Pixtral)"]
+        C4["Nexar / Octopart"]
+        C1 --> C2 --> C3 --> C4
+    end
 
-## Active Learning Without Upfront Training
+    T1["inventory/INVENTORY.md<br/>(table row, Qty bumped)"]
+    T2["inventory/parts/&lt;id&gt;.md<br/>(reference page, optional)"]
 
-Instead of training a classifier on fixed classes, DINOv2 is used purely as a feature extractor:
-
-1. First photo of a new part type → compute embedding → search vector DB → nothing similar → full pipeline (Claude + Octopart) takes over.
-2. Maker confirms the identification.
-3. Embedding is stored with the label in the vector DB.
-4. Second photo of the same part type → embedding similar → instant match, no API call.
-
-After 3-5 scans per part type, local recognition becomes faster and cheaper than the Claude pipeline. There is **no** explicit training session.
-
-### Confidence-Based Behaviour
-
-- **Small distance** → confident match, no follow-up.
-- **Medium distance** → top-3 candidates for confirmation.
-- **Large distance** → unknown, full pipeline runs.
-
-## Directory Layout
-
-```
-inventory/                       ← The maker's view (their own bin)
-├── README.md                    ← auto-generated index + statistics
-├── parts/
-│   ├── ic-lm358n.md             ← one file per part type
-│   ├── module-blue-pill.md
-│   ├── led-5mm-red.md
-│   ├── resistor-10k.md
-│   └── …
-├── images/
-│   └── ic-lm358n-001.jpg
-└── .embeddings/
-    └── vectors.sqlite           ← DINOv2 cache (regenerable)
+    S3 --> T1
+    C4 --> T1
+    T1 -.->|"/inventory-page"| T2
 ```
 
-Truth lives in the `.md` files. `.embeddings/vectors.sqlite` is only a cache and can be rebuilt at any time from the images + MDs.
+The key invariant: **whichever path writes, the file format is identical.**
+The skill path is hand-driven and verbose; the camera path is glance-driven
+and bulk-friendly. They produce the same rows and the same pages.
 
-## Example: parts/ic-lm358n.md
+## The Skill Path (today)
 
-```markdown
----
-id: lm358n
-category: ic
-sub_category: opamp
-type: lm358n              # matches CircuitSmith component-type
-package: DIP-8
-manufacturer: Texas Instruments
-mpn: LM358N
-# Inventory (maker-specific)
-quantity: 3
-locations:
-  - box: 7
-    slot: A2
-date_added: 2026-05-12
-# Electrical properties (compatible with CircuitSmith profile format)
-vcc_min: 3.0
-vcc_max: 32.0
-pins:
-  1: { name: "1OUT", side: "right" }
-  2: { name: "1IN-", side: "left" }
-  # …
-metadata:
-  keywords: [opamp, dual, low-power, amplifier]
-  datasheet: https://www.ti.com/lit/ds/symlink/lm358.pdf
-  octopart_url: https://octopart.com/lm358n-...
-  photo: ../images/ic-lm358n-001.jpg
----
+Two skills do all the work, both LLM-orchestrated, neither needing any
+hardware beyond a keyboard.
 
-# LM358N — Dual Operational Amplifier
+### `/inventory-add <part-id> <qty>` (also batched: `…, <part-id> <qty>`)
 
-3 in stock in box 7, slot A2.
-
-## Known uses
-- Pre-amp project (2025-03)
-- Active filter experiment (2026-01)
-
-## Notes
-One of the three has pin 8 slightly bent — use it last.
+```mermaid
+flowchart TD
+    A["User: /inventory-add TL082CF 3"] --> B["LLM identifies part<br/>from training knowledge"]
+    B --> C{"Confident?"}
+    C -- ambiguous / exotic / unknown --> D["Ask user to confirm<br/>(hedged language)"]
+    C -- yes --> E["WebSearch:<br/>'&lt;part&gt; datasheet'"]
+    D --> E
+    E --> F{"Manufacturer<br/>datasheet found?"}
+    F -- yes --> G["Build Octopart search URL"]
+    F -- no --> H["Fall back to generic<br/>family datasheet (e.g. TI)"]
+    H --> G
+    G --> I["Locate section<br/>(MCU / IC / Sensor / Module)"]
+    I --> J{"Row exists?"}
+    J -- yes --> K["Bump Qty in place"]
+    J -- no --> L["Insert alphabetically,<br/>repad table (MD060)"]
+    K --> M["Report"]
+    L --> M
 ```
 
-## Integration with CircuitSmith
+Specials:
 
-PartsLedger is the inventory layer; CircuitSmith (= IDEA-027) is the schematic layer. The bridge:
+- **Bulk / kits** (generic classes like "1N4148 diodes" or "carbon-film
+  resistor set") skip the row workflow and go to the **Bulk / kits** section
+  as a bullet entry — we don't catalogue individual values.
+- **Hedge language is mandatory.** *"Likely the X from Y"*, never *"is X"*.
+  The user is ground truth; the LLM is a guess until they confirm.
+- **Package assumption**: the maker's drawer is through-hole. Function
+  descriptions never claim a SOIC variant even when the marking suggests
+  it — the physical part on the bench is the ground truth.
 
-- CircuitSmith gains a `--prefer-inventory` mode: during component selection, it first checks what is actually in stock before drawing from the full library.
-- The existing `components/*.py` profiles in CircuitSmith become fallback templates — if the inventory contains an MD file with `type: lm358n`, CircuitSmith uses it; otherwise it falls back to the hardcoded profile.
-- BOM generation gets three columns: "needed", "already in stock", "still to order".
-- Adapter effort: a ~50-line patch in the CircuitSmith loader that reads `inventory/parts/*.md` and registers them as additional profiles in the `components/` lookup path.
+### `/inventory-page <part-id>`
 
-## Data Flows
+Generates a one-page reference for a part that's already in `INVENTORY.md`,
+then links the Part cell to it. The page is prose for a hobbyist, not a
+machine schema:
 
-- **Always local**: DINOv2 inference, sqlite-vec, OpenCV capture, colour-band reader, Markdown writer.
-- **VLM call** (only for unknown parts): either Claude API / Mistral API (cloud), **or** self-hosted Pixtral 12B (no network).
-- **Metadata enrichment**: Nexar/Octopart API (cloud, optional — can be deferred or skipped; the maker can also fill datasheet links manually later).
-- **No server required**: everything is file-based. If you want a web interface on top, run InvenTree/Part-DB alongside.
+| Section | Purpose |
+|---|---|
+| Title + one-paragraph overview | What it is, what it's for, package |
+| Datasheet + Octopart links | Reused from `INVENTORY.md`, not invented |
+| ELI5 | One concrete metaphor (bucket brigade, one-note keyboard, …) |
+| At a glance | Headline specs, hedged with `~`, `up to`, `typically` |
+| Pinout (DIP-N, top view) | ASCII chip + table — walls must align |
+| Sample circuit | Connection list, not ASCII schematic art |
+| Variations *(optional)* | Other canonical modes (sine vs triangle, FSK, …) |
+| Watch out for | Easy-to-miss constraints, silent-failure modes |
+| Pairs naturally with | Real cross-references into the rest of the inventory |
+
+**Family pages**: when two inventory rows are revisions or marking variants
+of the same chip (`PIC16F628` ↔ `PIC16F628A`, `NE555N` ↔ `NE555P` ↔
+`LM555CM`), they share one page. The page title carries both
+(`# PIC16F628 / PIC16F628A — …`), a `## Differences` section explains what
+changed, and the non-canonical rows in `INVENTORY.md` carry a *"Shares page
+with …"* note.
+
+## The Camera Path (planned)
+
+The original ambition — and the reason for the 2K USB webcam on the desk.
+Currently **not implemented**; documented here so it's clear how it slots in
+without changing the file format.
+
+```mermaid
+flowchart TD
+    CAP["USB camera capture<br/>(OpenCV cv2.VideoCapture)"] --> EMB["DINOv2 embedding"]
+    EMB --> VDB[("sqlite-vec<br/>local vector cache")]
+    EMB --> Q{"Distance to<br/>nearest neighbour"}
+    Q -- small --> M1["Instant match<br/>(no API call)"]
+    Q -- medium --> M2["Top-3 candidates<br/>→ user picks"]
+    Q -- large --> M3["Unknown — run<br/>full identification"]
+    M3 --> VLM["VLM:<br/>Claude Opus Vision<br/>or Pixtral (local)"]
+    VLM --> NX["Nexar / Octopart<br/>metadata enrichment"]
+    M1 --> CONF["User confirms via TUI"]
+    M2 --> CONF
+    NX --> CONF
+    CONF --> LEARN["Store embedding + label<br/>in vector DB"]
+    LEARN --> WRITE["Call into the same writer<br/>as /inventory-add"]
+```
+
+Roles:
+
+- **VLM** is the star — reads markings (`10kΩ`, `L7805CV`, `LM358N`),
+  identifies modules (Blue Pill, DRV8825). Pluggable: Claude Opus Vision
+  (hosted) or Pixtral 12B (Apache-licensed, runs locally on a single
+  consumer GPU).
+- **DINOv2 embeddings** are *not* a classifier — they're a similarity cache.
+  After 3-5 scans per part type, local recognition becomes faster and cheaper
+  than the VLM pipeline. No explicit training session.
+- **Nexar / Octopart** for metadata enrichment. Optional — the maker can also
+  fill datasheets manually later.
+- **The writer is shared with the skill path.** The camera path doesn't get
+  its own file format; it builds the same row and (optionally) calls the same
+  page generator.
 
 ### Fully Offline Mode
 
-If you self-host Pixtral 12B and skip Nexar enrichment, **the entire pipeline runs offline** after the initial model download. The maker confirms parts locally, the embedding cache grows locally, and inventory commits are pure git operations. No request ever leaves the workstation. This is a real option, not an aspiration — Pixtral 12B is Apache-licensed and runs on a single consumer GPU.
+With self-hosted Pixtral 12B and no Nexar enrichment, the whole camera
+pipeline runs offline after the initial model download. No request leaves the
+workstation. Real option, not aspiration.
+
+## Directory Layout
+
+```text
+inventory/
+├── INVENTORY.md                  ← flat index, source of truth for stock
+├── parts/                        ← optional reference pages
+│   ├── 7660s.md
+│   ├── pic12f675.md
+│   ├── pic16f628.md              ← family page (PIC16F628 + PIC16F628A)
+│   ├── tl082.md                  ← family page (TL082CF + TL082CP)
+│   ├── tl084.md
+│   └── xr2206cp.md
+└── .embeddings/                  ← future, camera path only
+    └── vectors.sqlite            ← DINOv2 cache, regenerable from images + MDs
+```
+
+Truth lives in `INVENTORY.md` and the linked `parts/*.md`. Anything under
+`.embeddings/` is a regenerable cache.
+
+## Example: an LM358N entry
+
+Today, a single row in `inventory/INVENTORY.md`:
+
+```markdown
+| LM358N | 1 | Dual op-amp, single-supply | [LM358](https://www.ti.com/lit/ds/symlink/lm358.pdf) | [search](https://octopart.com/search?q=LM358N) | |
+```
+
+If/when the maker runs `/inventory-page LM358N`, a `parts/lm358n.md` is
+generated and the Part cell becomes `[LM358N](parts/lm358n.md)`. The page is
+prose — ELI5, At-a-glance specs, ASCII pinout, sample inverting-amplifier
+circuit, "Watch out for" gotchas, and a "Pairs naturally with" pointer to the
+[ICL7660S](inventory/parts/7660s.md) for ±V rails on a single supply.
+
+A real example to look at: [inventory/parts/7660s.md](inventory/parts/7660s.md).
+
+## Integration with CircuitSmith
+
+PartsLedger is the inventory layer; [CircuitSmith](../CircuitSmith/) (=
+IDEA-027) is the schematic layer. Honest framing:
+
+- The reference pages are **prose**, not structured component profiles —
+  CircuitSmith cannot consume them directly. CircuitSmith's own
+  `components/*.py` profiles remain the authoritative source for electrical
+  behaviour, pin functions, and SPICE-style parameters.
+- The bridge is a thin adapter that reads `inventory/INVENTORY.md` (and any
+  Pinout tables it can lift out of `parts/*.md`) and tells CircuitSmith
+  *"these part types are in stock, with these quantities"*.
+- CircuitSmith gains a `--prefer-inventory` mode: during component selection,
+  it prefers types the maker already owns over types that would need to be
+  ordered.
+- BOM generation gets three columns: **needed**, **already in stock**, **still
+  to order**.
+
+If a richer cross-walk becomes useful later (e.g. CircuitSmith importing
+pinouts from PartsLedger pages), the page format can be extended without
+breaking the human-readable shape — for example by adding a small machine-
+readable block at the end of a page, or by parsing the existing Pinout tables.
+
+## Data Flows
+
+| Step | Today | With camera path |
+|---|---|---|
+| Identification | LLM via `/inventory-add`, hedged | DINOv2 cache → VLM on miss |
+| Datasheet lookup | `WebSearch` (one call per add) | Nexar/Octopart (optional) |
+| Local store | Markdown files, git | Markdown files, git, vector cache |
+| Cloud calls | WebSearch only | VLM API + Nexar/Octopart, both optional |
+| Hardware needed | Keyboard | + USB webcam, ring light |
+
+Everything is file-based. No server. If a web interface is wanted later, run
+InvenTree or Part-DB alongside — they can read the same git tree.
 
 ## What We Build vs. What We Use
 
 | Component | Source | Status |
 |---|---|---|
-| Embedding backbone | `facebookresearch/dinov2` via `torch.hub` | ✅ pretrained |
-| Vector DB | `sqlite-vec` (or FAISS) | ✅ stable |
-| Camera capture | OpenCV (`cv2.VideoCapture`) | ✅ standard |
-| VLM (hosted) | Anthropic SDK (Claude Opus 4.7) | ✅ multimodal |
-| VLM (alternative, self-hostable) | Mistral Pixtral — Pixtral Large via API, or Pixtral 12B (open weights, Apache 2.0) via `vllm` | ✅ multimodal |
-| Metadata | Nexar GraphQL API (Octopart) | ✅ free tier |
-| OCR (optional) | PaddleOCR or Tesseract | ✅ open source |
-| Component datasets (fallback) | Roboflow Universe | ✅ CC BY 4.0 |
+| `/inventory-add` skill | This repo, `.claude/skills/inventory-add/` | ✅ in use |
+| `/inventory-page` skill | This repo, `.claude/skills/inventory-page/` | ✅ in use |
+| Datasheet lookup | `WebSearch` tool | ✅ in use |
+| Markdown writer + table padding | This repo, in the skills themselves | ✅ in use |
+| Embedding backbone *(camera path)* | `facebookresearch/dinov2` via `torch.hub` | ⏳ planned |
+| Vector cache *(camera path)* | `sqlite-vec` (or FAISS) | ⏳ planned |
+| Camera capture *(camera path)* | OpenCV (`cv2.VideoCapture`) | ⏳ planned |
+| VLM, hosted *(camera path)* | Anthropic SDK (Claude Opus 4.7 Vision) | ⏳ planned |
+| VLM, self-hosted *(camera path)* | Pixtral 12B via `vllm` (Apache 2.0) | ⏳ planned |
+| Metadata enrichment *(camera path)* | Nexar GraphQL API | ⏳ planned |
+| OCR for resistor colour bands *(optional)* | OpenCV + Tesseract / PaddleOCR | ⏳ planned |
+| CircuitSmith adapter | CircuitSmith repo, ~50-line loader patch | ⏳ planned |
 
-**We build**: pipeline orchestration, capture loop, confirmation UI, Markdown schema, index generator, CircuitSmith adapter.
+**We build**: the two skills, the `INVENTORY.md` schema and table-padding
+discipline, the reference-page conventions, the family-page pattern, and
+(later) the camera pipeline orchestration and CircuitSmith adapter.
+
+## Sincere-Language Convention
+
+Both paths share one rule: **hedge identifications, mark estimates as
+estimates, never use `must / always / never` as rhetorical emphasis.** The
+component on the bench is the ground truth; the LLM (or the VLM) is a guess
+until the maker confirms. This is enforced inside the skills (hedge phrasing
+in `inventory-add`, qualifying language in `inventory-page`) and is the same
+rule the camera path will follow when it lands.
 
 ## What PartsLedger Is *Not*
 
-- **Not a replacement for InvenTree / Part-DB / Binner**. If you want a web interface, multi-user access, and an audit trail, use one of those tools. PartsLedger is deliberately LLM-native and file-based.
-- **Not a competing schema to CircuitSmith** — PartsLedger is a superset of the CircuitSmith component profiles.
-- **Not an SMD identification tool**. For SMD marking codes (`A6`, `T4`), a standard webcam is optically insufficient; that would require a USB microscope and a separate SMD-code database — deliberately out of scope.
+- **Not a replacement for InvenTree / Part-DB / Binner.** If you want a web
+  interface, multi-user access, and a formal audit trail, use one of those.
+  PartsLedger is deliberately LLM-native and file-based.
+- **Not a competing schema to CircuitSmith.** PartsLedger holds stock and
+  hobbyist context; CircuitSmith holds electrical profiles. A small adapter
+  joins them.
+- **Not an SMD identification tool.** SMD marking codes (`A6`, `T4`) need a
+  USB microscope and a separate SMD-code database — deliberately out of scope.
+- **Not auto-populated from a camera *today*.** The camera path is documented
+  here, not implemented. The skill path covers everyday use in the meantime.
 
 ## Market Gap (as of 2026-05)
 
-- InvenTree issue #623 (photo-based component identification) has been open and unanswered since 2020.
-- Existing tools (InvenTree, Part-DB, Binner) use cameras exclusively for barcode scanning of supplier labels.
-- Visual component recognition exists only as research/student projects (`nazar`, `Electronic-Component-Sorter`) — no production-ready tools.
-- An Aalto Master's thesis (December 2025) confirms: hybrid approaches (VLM + traditional methods) are economically the most viable — exactly the architecture PartsLedger implements.
+- InvenTree issue #623 (photo-based component identification) has been open
+  and unanswered since 2020.
+- Existing tools (InvenTree, Part-DB, Binner) use cameras exclusively for
+  barcode scanning of supplier labels.
+- Visual component recognition exists only as research / student projects
+  (`nazar`, `Electronic-Component-Sorter`) — no production-ready tools.
+- An Aalto Master's thesis (December 2025) confirms: hybrid approaches
+  (VLM + traditional methods) are economically the most viable — exactly the
+  architecture PartsLedger's camera path will follow.
 
-**Bottom line**: we don't reinvent the wheel — we build the car that bolts the existing wheels together.
+**Bottom line**: we don't reinvent the wheel — we build the car that bolts
+the existing wheels together, and we start with the cheap wheel (skill path)
+before the expensive one (camera path).
 
 ## Sibling Projects
 
-- [CircuitSmith](https://github.com/tgd1975/CircuitSmith) (planned) — forges schematics, reads PartsLedger as its preferred component source.
-- [AwesomeStudioPedal](https://github.com/tgd1975/AwesomeStudioPedal) — currently hosts IDEA-027, which will move into CircuitSmith.
+- [CircuitSmith](https://github.com/tgd1975/CircuitSmith) (planned) — forges
+  schematics, reads PartsLedger as its preferred component source.
+- [AwesomeStudioPedal](https://github.com/tgd1975/AwesomeStudioPedal) —
+  currently hosts IDEA-027, which will move into CircuitSmith.
