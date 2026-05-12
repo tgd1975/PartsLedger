@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 1** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 12** | **Total: 13** | █████████░ 92%
+⚪ **Open: 0** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 13** | **Total: 13** | ██████████ 100%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -28,9 +28,7 @@ _No paused tasks._
 
 ## Open Tasks
 
-| ID | Title | Effort | Complexity | Status |
-|----|-------|--------|------------|--------|
-| [TASK-013](open/task-013-apply-branch-protection.md) | Apply server-side branch protection to tgd1975/PartsLedger main | Small | Senior | ⚪ open |
+_No open tasks._
 
 ## Closed Tasks
 
@@ -48,4 +46,5 @@ _No paused tasks._
 | [TASK-010](closed/task-010-codeowner-starter-skills.md) | Author starter co-* skills capturing PartsLedger invariants | Small |
 | [TASK-011](closed/task-011-claude-md-rewrite.md) | Rewrite CLAUDE.md to mirror CircuitSmith's verbatim | Small |
 | [TASK-012](closed/task-012-epic-run-and-autonomy.md) | Port /epic-run skill and AUTONOMY.md, sweep HIL frontmatter on open tasks | Medium |
+| [TASK-013](closed/task-013-apply-branch-protection.md) | Apply server-side branch protection to tgd1975/PartsLedger main | Small |
 <!-- END GENERATED -->

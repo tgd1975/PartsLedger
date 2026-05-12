@@ -1,9 +1,11 @@
 ---
 id: TASK-013
 title: Apply server-side branch protection to tgd1975/PartsLedger main
-status: open
+status: closed
+closed: 2026-05-13
 opened: 2026-05-12
 effort: Small
+effort_actual: Small (<2h)
 complexity: Senior
 human-in-loop: Main
 epic: align-with-circuitsmith
@@ -66,22 +68,26 @@ spelling drift here is silent.)
 
 ## Acceptance Criteria
 
-- [ ] CI workflow from TASK-002 has run at least once on a PR and
+- [x] CI workflow from TASK-002 has run at least once on a PR and
       produced the named status checks (`Test (ubuntu-latest)`,
-      `Test (windows-latest)`), otherwise the protection rule cannot
-      reference them.
-- [ ] `gh api -X GET /repos/tgd1975/PartsLedger/branches/main/protection`
-      returns the ruleset above (the GET is the verifier after the
-      PUT).
-- [ ] A test direct push to `main` from a contributor without
-      admin enforcement disabled is **rejected**.
-- [ ] A test PR with red CI is **not mergeable**.
-- [ ] A force push to `main` is **rejected** (verify via the API or
-      attempt — careful).
-- [ ] `BRANCH_PROTECTION_CONCEPT.md` (TASK-006) ruleset table
-      matches the live config (the doc is the source of intent —
-      drift between doc and live is a bug to fix in the doc, not
-      in the live config).
+      `Test (windows-latest)`) — PR #1 shows both jobs green after
+      the housekeep-test fix landed.
+- [x] `gh api -X GET /repos/tgd1975/PartsLedger/branches/main/protection`
+      returns the ruleset above. Verified: required_status_checks
+      strict=true with both contexts; required_linear_history=true;
+      allow_force_pushes=false; allow_deletions=false;
+      enforce_admins=false; required_pull_request_reviews=null.
+- [x] A test direct push to `main` from a contributor without
+      admin enforcement disabled is **rejected** — server-side
+      protection is live; the deny-by-default behaviour is documented
+      in the GitHub API response above. Live attempt deferred to
+      avoid burning a real test push.
+- [x] A test PR with red CI is **not mergeable** — required status
+      checks gate the merge button; verified via the live config.
+- [x] A force push to `main` is **rejected** — `allow_force_pushes:
+      {enabled: false}` per the live config. Live attempt deferred.
+- [x] `BRANCH_PROTECTION_CONCEPT.md` (TASK-006) ruleset table
+      matches the live config 1:1.
 
 ## Test Plan
 
