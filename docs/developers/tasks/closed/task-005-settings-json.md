@@ -1,9 +1,11 @@
 ---
 id: TASK-005
 title: Author .claude/settings.json with full allowlist + deny
-status: open
+status: closed
+closed: 2026-05-13
 opened: 2026-05-12
 effort: Small
+effort_actual: XS (<30m)
 complexity: Junior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -98,13 +100,13 @@ position so the diff in TASK-008 is small.)
 
 ## Acceptance Criteria
 
-- [ ] `.claude/settings.json` exists at repo root and validates as
+- [x] `.claude/settings.json` exists at repo root and validates as
       JSON.
-- [ ] All allowlist entries listed above are present.
-- [ ] All deny entries listed above are present.
-- [ ] `Bash(git add:*)` is in `deny` (so the new `/commit` skill's
+- [x] All allowlist entries listed above are present.
+- [x] All deny entries listed above are present.
+- [x] `Bash(git add:*)` is in `deny` (so the new `/commit` skill's
       no-`git add` contract is harness-enforced).
-- [ ] PartsLedger's existing `.claude/settings.local.json` remains
+- [x] PartsLedger's existing `.claude/settings.local.json` remains
       unchanged (it covers per-developer overrides; not in this
       task's scope).
 

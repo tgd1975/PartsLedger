@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 9** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 4** | **Total: 13** | ███░░░░░░░ 31%
+⚪ **Open: 8** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 5** | **Total: 13** | ████░░░░░░ 38%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -30,7 +30,6 @@ _No paused tasks._
 
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
-| [TASK-005](open/task-005-settings-json.md) | Author .claude/settings.json with full allowlist + deny | Small | Junior | ⚪ open |
 | [TASK-006](open/task-006-docs-verbatim-port.md) | Port the 13 verbatim developer docs from CircuitSmith | Medium | Junior | ⚪ open |
 | [TASK-007](open/task-007-architecture-doc.md) | Write docs/developers/ARCHITECTURE.md for the PartsLedger pipeline | Medium | Senior | ⚪ open |
 | [TASK-008](open/task-008-security-review-hooks.md) | Port security-review hooks (pre-merge-commit, post-merge, pre-rebase) | Medium | Junior | ⚪ open |
@@ -48,4 +47,5 @@ _No paused tasks._
 | [TASK-002](closed/task-002-python-skeleton.md) | Author Python project skeleton (pyproject, requirements-dev, CI, conftest, gitignore) | Small |
 | [TASK-003](closed/task-003-replace-pre-commit.md) | Replace scripts/pre-commit with the CircuitSmith version | Small |
 | [TASK-004](closed/task-004-upgrade-commit-skill.md) | Upgrade /commit skill and commit-pathspec.sh to the CircuitSmith versions | Small |
+| [TASK-005](closed/task-005-settings-json.md) | Author .claude/settings.json with full allowlist + deny | Small |
 <!-- END GENERATED -->
