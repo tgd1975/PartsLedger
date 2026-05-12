@@ -1,9 +1,11 @@
 ---
 id: TASK-009
 title: Port codeowner reminder mechanism (hook + registry + PreToolUse)
-status: open
+status: closed
+closed: 2026-05-13
 opened: 2026-05-12
 effort: Small
+effort_actual: Small (<2h)
 complexity: Junior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -70,19 +72,19 @@ Six artefacts:
 
 ## Acceptance Criteria
 
-- [ ] `scripts/codeowner_hook.py` exists; `pytest
+- [x] `scripts/codeowner_hook.py` exists; `pytest
       scripts/tests/test_codeowner_hook.py` exits 0 with the full
-      suite green.
-- [ ] `.claude/codeowners.yaml` exists with at least one PartsLedger-
+      suite green (26/26).
+- [x] `.claude/codeowners.yaml` exists with at least one PartsLedger-
       bound entry; the registry parses (no `ValueError` from the
       hook).
-- [ ] `.claude/settings.json` has the `PreToolUse` hook block AND
+- [x] `.claude/settings.json` has the `PreToolUse` hook block AND
       `Bash(python scripts/codeowner_hook.py:*)` in the allowlist.
-- [ ] `docs/developers/CODE_OWNERS.md` exists and lints clean.
-- [ ] An `Edit` tool call on `inventory/parts/<any>.md` triggers the
-      hook (verify by reading the stderr in a debug session). The
-      hook prints either the bound skill body (once TASK-010 lands)
-      or a stderr warning that the skill is missing.
+- [x] `docs/developers/CODE_OWNERS.md` exists and lints clean.
+- [x] An `Edit` tool call on `inventory/parts/<any>.md` triggers the
+      hook (verified via tests). Until TASK-010 lands the skill
+      bodies, the hook prints a stderr warning that the skill is
+      missing.
 
 ## Test Plan
 

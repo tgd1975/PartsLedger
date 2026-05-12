@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Bash(python scripts/codeowner_hook.py:*)",
       "Bash(python scripts/housekeep.py:*)",
       "Bash(python scripts/release_burnup.py:*)",
       "Bash(python scripts/release_snapshot.py:*)",
@@ -59,6 +60,19 @@
       "Bash(git push origin main:*)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PROJECT_DIR}/scripts/codeowner_hook.py"
+          }
+        ]
+      }
     ]
   }
 }

@@ -1,0 +1,38 @@
+# Code-owner skill registry — surfaces invariants at edit time.
+#
+# Each entry binds a file pattern to a co-* skill. When a file matching
+# the pattern is about to be edited or written by Claude, the
+# PreToolUse hook (`scripts/codeowner_hook.py`, registered in
+# `.claude/settings.json`) reads the bound skill's `SKILL.md` body and
+# prints it as a reminder. The hook is informational — it never blocks
+# the edit; it only surfaces context. Blocking guardrails live in the
+# contract tests and the lints.
+#
+# Schema:
+#   entries: list of mappings, each with two required fields:
+#     pattern: <fnmatch-style glob> — matched against the target file's
+#              repo-relative POSIX path. Examples:
+#                inventory/parts/*.md
+#                inventory/INVENTORY.md
+#                partsledger/embed_cache/*.py
+#     skill:   <directory name under .claude/skills/> — typically
+#              `co-<module-name>`. The hook reads
+#              `.claude/skills/<skill>/SKILL.md` and prints its body
+#              (the part after the frontmatter).
+#
+# Comments start with `#` at the line head or after whitespace.
+# String values may be unquoted or single-/double-quoted.
+
+entries:
+  # Inventory MD entries — the source-of-truth files. The bound skill
+  # captures the frontmatter schema (IDEA-001 + IDEA-027 vocabulary),
+  # pin-aliasing rules, and the "never write SQLite without a matching
+  # MD update" invariant.
+  - pattern: inventory/parts/*.md
+    skill: co-inventory-schema
+
+  # The master inventory index — auto-generatable but human-edited
+  # today. The bound skill captures per-row schema and category
+  # conventions.
+  - pattern: inventory/INVENTORY.md
+    skill: co-inventory-master-index

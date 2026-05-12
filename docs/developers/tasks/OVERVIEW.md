@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 5** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 8** | **Total: 13** | ██████░░░░ 62%
+⚪ **Open: 4** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 9** | **Total: 13** | ███████░░░ 69%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -30,7 +30,6 @@ _No paused tasks._
 
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
-| [TASK-009](open/task-009-codeowner-mechanism.md) | Port codeowner reminder mechanism (hook + registry + PreToolUse) | Small | Junior | ⚪ open |
 | [TASK-010](open/task-010-codeowner-starter-skills.md) | Author starter co-* skills capturing PartsLedger invariants | Small | Senior | ⚪ open |
 | [TASK-011](open/task-011-claude-md-rewrite.md) | Rewrite CLAUDE.md to mirror CircuitSmith's verbatim | Small | Junior | ⚪ open |
 | [TASK-012](open/task-012-epic-run-and-autonomy.md) | Port /epic-run skill and AUTONOMY.md, sweep HIL frontmatter on open tasks | Medium | Junior | ⚪ open |
@@ -48,4 +47,5 @@ _No paused tasks._
 | [TASK-006](closed/task-006-docs-verbatim-port.md) | Port the 13 verbatim developer docs from CircuitSmith | Medium |
 | [TASK-007](closed/task-007-architecture-doc.md) | Write docs/developers/ARCHITECTURE.md for the PartsLedger pipeline | Medium |
 | [TASK-008](closed/task-008-security-review-hooks.md) | Port security-review hooks (pre-merge-commit, post-merge, pre-rebase) | Medium |
+| [TASK-009](closed/task-009-codeowner-mechanism.md) | Port codeowner reminder mechanism (hook + registry + PreToolUse) | Small |
 <!-- END GENERATED -->
