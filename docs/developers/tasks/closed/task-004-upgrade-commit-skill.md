@@ -1,9 +1,11 @@
 ---
 id: TASK-004
 title: Upgrade /commit skill and commit-pathspec.sh to the CircuitSmith versions
-status: open
+status: closed
+closed: 2026-05-13
 opened: 2026-05-12
 effort: Small
+effort_actual: XS (<30m)
 complexity: Junior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -43,13 +45,13 @@ and are explanatory, not actionable.
 
 ## Acceptance Criteria
 
-- [ ] `scripts/commit-pathspec.sh` accepts both `--no-verify` and
+- [x] `scripts/commit-pathspec.sh` accepts both `--no-verify` and
       `--stage-untracked`, in any order, before the message.
-- [ ] `scripts/commit-pathspec.sh --stage-untracked "msg" new_file.md`
+- [x] `scripts/commit-pathspec.sh --stage-untracked "msg" new_file.md`
       commits a brand-new file without the caller running `git add`.
-- [ ] `.claude/skills/commit/SKILL.md` body matches CircuitSmith's
+- [x] `.claude/skills/commit/SKILL.md` body matches CircuitSmith's
       apart from the substitutions above.
-- [ ] The skill's fixer registry table lists `*.md` →
+- [x] The skill's fixer registry table lists `*.md` →
       `markdownlint-cli2 --fix <files>` and `*.py` →
       `ruff check --fix <files>`.
 

@@ -9,12 +9,25 @@
 # did not come from this wrapper. See docs/developers/COMMIT_POLICY.md
 # for the full design.
 #
-# Untracked files are NOT auto-added. The caller (the /commit skill)
-# must `git add` any untracked pathspec entries before invoking this
-# script. Auto-adding masks parallel-session races: a foreign session
-# can land a commit that adds the same path to the tree between the
-# wrapper's untracked check and its `git commit`, producing two
-# "successful" commits that both add the same file (TASK-329).
+# Untracked files: by default the wrapper rejects pathspec entries that
+# are unknown to git with exit code 2. Pass --stage-untracked to opt
+# into atomic in-wrapper staging — the wrapper detects untracked
+# entries, `git add`s them itself, then commits, all in one process.
+#
+# Why an opt-in flag instead of always auto-adding: TASK-329 removed
+# the original always-on auto-add because it masked parallel-session
+# races (a foreign session could land a commit that adds the same path
+# between the wrapper's untracked check and its `git commit`, producing
+# two "successful" adds of the same file). The flag preserves that
+# default-strict behaviour for any caller that wants race detection,
+# while giving the /commit skill a way to handle untracked files
+# without the agent typing `git add` (the project bans agent-typed
+# `git add` via a deny rule in .claude/settings.json — see the
+# no-git-add-use-commit-pathspec memory). The race window with the
+# flag is one wrapper process; without it, the window spans
+# skill-add + wrapper-commit (two processes) — so in-wrapper staging
+# is strictly tighter than skill-side staging, just less strict than
+# fail-fast.
 #
 # Renames and deletions ARE supported (TASK-347). The pre-flight check
 # accepts any pathspec entry that is in HEAD or has an index entry —
@@ -25,11 +38,14 @@
 # Usage:
 #   scripts/commit-pathspec.sh "<message>" <file> [<file> …]
 #   scripts/commit-pathspec.sh --no-verify "<message>" <file> [<file> …]
+#   scripts/commit-pathspec.sh --stage-untracked "<message>" <file> [<file> …]
+#   (flags may be combined; order does not matter)
 #
 # Exit codes:
 #   0  commit succeeded
 #   1  commit failed (hook, git, or invalid args)
-#   2  pathspec contains an untracked entry
+#   2  pathspec contains an untracked entry (and --stage-untracked
+#      was not passed)
 
 set -euo pipefail
 
@@ -38,15 +54,28 @@ GIT_DIR="$(git rev-parse --git-dir)"
 
 TOKEN_FILE="${GIT_DIR}/pl-commit-token"
 
-# Parse --no-verify flag (must come before message if present).
+# Parse flags (must come before message if present). Accept --no-verify
+# and --stage-untracked in either order.
 NO_VERIFY=""
-if [ "${1:-}" = "--no-verify" ]; then
-    NO_VERIFY="--no-verify"
-    shift
-fi
+STAGE_UNTRACKED=0
+while [ "$#" -gt 0 ]; do
+    case "${1:-}" in
+        --no-verify)
+            NO_VERIFY="--no-verify"
+            shift
+            ;;
+        --stage-untracked)
+            STAGE_UNTRACKED=1
+            shift
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
 
 if [ "$#" -lt 2 ]; then
-    echo "Usage: $0 [--no-verify] \"<message>\" <file> [<file> …]" >&2
+    echo "Usage: $0 [--no-verify] [--stage-untracked] \"<message>\" <file> [<file> …]" >&2
     exit 1
 fi
 
@@ -92,11 +121,19 @@ for f in "$@"; do
     UNTRACKED+=("$f")
 done
 if [ "${#UNTRACKED[@]}" -gt 0 ]; then
-    echo "ERROR: untracked pathspec entries (run 'git add' first):" >&2
-    for f in "${UNTRACKED[@]}"; do
-        echo "  $f" >&2
-    done
-    exit 2
+    if [ "${STAGE_UNTRACKED}" -eq 1 ]; then
+        # In-wrapper staging: add each untracked entry. One process, one
+        # race window — see the header comment for the rationale.
+        for f in "${UNTRACKED[@]}"; do
+            git add -- "$f"
+        done
+    else
+        echo "ERROR: untracked pathspec entries (pass --stage-untracked or stage them yourself):" >&2
+        for f in "${UNTRACKED[@]}"; do
+            echo "  $f" >&2
+        done
+        exit 2
+    fi
 fi
 
 # Step 2: write the provenance token. Format: <pid> <nonce> <unix-ts>.

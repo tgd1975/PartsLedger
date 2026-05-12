@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Commit user-named files atomically via scripts/commit-pathspec.sh (which wraps `git commit -m "..." -- <files>` and writes the provenance token the pre-commit hook validates). Applies the CLAUDE.md "Pre-commit hook failures on unrelated changes" protocol when the hook fails. Never adds --no-verify silently — explicit user approval is required.
+description: Commit user-named files atomically via scripts/commit-pathspec.sh (which wraps `git commit -m "..." -- <files>` and writes the provenance token the pre-commit hook validates). Runs registered auto-fixers (markdownlint --fix, etc.) scoped to the pathspec entries first so trivially-fixable lint issues don't bounce off the hook. Applies the CLAUDE.md "Pre-commit hook failures on unrelated changes" protocol when the hook still fails. Never adds --no-verify silently — explicit user approval is required.
 ---
 
 # commit
@@ -49,37 +49,81 @@ keeps blast radius scoped to the single commit attempt.
    Per the project's "Parallel sessions — commit only your own work"
    rule, the file list must be explicit.
 
-2. **Stage any untracked pathspec entries** (this skill — *not* the
-   caller — performs this step). Pathspec form requires every named
-   file to be known to git. For each file in the pathspec that does
-   not yet exist in the index, the skill runs:
+2. **Run auto-fixers scoped to the pathspec.** Before involving git
+   at all, group the pathspec entries by file class and, for each
+   class with a registered fixer, run the fixer against just those
+   files. Fixers are cheap; pre-commit hook failures are not (parse
+   stderr, diagnose, retry).
 
-   ```bash
-   git add -- <untracked-file>
-   ```
+   **Scope: pathspec only.** Never invoke a fixer on the whole tree,
+   even when the hook itself lints the whole tree (the markdown gate
+   uses `**/*.md`). Editing files outside the pathspec violates the
+   "commit only your own work" rule and would clobber parallel
+   sessions' working trees.
 
-   This is the **only** legitimate `git add` in the commit flow, and
-   it lives inside this skill. The wrapper script deliberately rejects
-   untracked pathspec entries with exit code 2 rather than auto-adding
-   them — auto-adding once existed in the wrapper and was removed in
-   TASK-329 because it masked parallel-session races (a foreign-session
-   commit could land the same path between the wrapper's untracked
-   check and its commit, producing two "added" commits). Failing fast
-   forces a refresh, and the skill is the one place that reads stderr,
-   re-checks state, and re-tries safely.
+   **No expensive operations.** Only lint / format auto-fixes that
+   complete in well under a second per file. No compilation, no
+   type-checking, no full test runs — those belong in the hook or CI,
+   not in the commit flow.
 
-   **Caller contract:** never `git add` before invoking this skill,
-   even "to be helpful". Pre-staging duplicates this step's work,
-   defeats the wrapper's untracked-detection signal, and mixes the
-   caller's intent with whatever foreign state the index already held.
-   Just pass the files; the skill handles the rest.
+   **Fixer registry.** The table below IS the contract — extend it
+   when the project adopts new tooling, and keep it in sync with
+   [`scripts/pre-commit`](../../../scripts/pre-commit).
 
-   Do **not** `git add` tracked files (modified or otherwise) — those
-   are committed directly via the pathspec on the next step. Staging
-   them now would defeat the parallel-session safety property of
-   pathspec form.
+   | File class | Fixer (run only on pathspec entries in this class) |
+   | ---------- | --------------------------------------------------- |
+   | `*.md`     | `markdownlint-cli2 --fix <files>`                   |
+   | `*.py`     | `ruff check --fix <files>`                          |
 
-   **Renames and deletions — name BOTH (or the deleted) path.**
+   Classes not in the table (`*.sh`, `*.yml`, `*.json`, …) are passed
+   through untouched until a follow-up task adopts tooling for them.
+   The Python row was added in TASK-061; ruff was chosen over black /
+   black+isort+flake8 / autopep8 because it subsumes lint + import
+   sort + most of black's formatting in a single fast binary (see
+   commit message + task body for rationale).
+
+   **Missing-tool behaviour.** If the pathspec contains files in a
+   class that *is* in the registry, but the fixer binary is not on
+   `$PATH`, stop and ask the user to install it before proceeding.
+   The pre-commit hook enforces the same tooling as a gate (e.g.
+   `markdownlint-cli2` is mandatory there too), so a missing fixer
+   here would just produce a slower failure at hook time. Per
+   CLAUDE.md's "Missing executables" rule: ask once, don't spiral
+   through fallbacks.
+
+   After fixers run, the pathspec files' working-tree contents may
+   have changed. Pathspec form (step 4) reads the working tree at
+   commit time, so the fixed content is what gets committed — no
+   extra `git add` is needed for already-tracked files. For untracked
+   files, the fixer runs before step 3's `git add`, so the staged
+   content is post-fix.
+
+3. **Untracked pathspec entries — handled by the wrapper, never by
+   you.** Pathspec form requires every named file to be known to git.
+   When the pathspec contains an untracked file, the wrapper takes
+   care of it via `--stage-untracked` (passed automatically in step
+   4 below). The wrapper detects untracked entries, stages them, and
+   commits — all in one process.
+
+   **You must never type `git add`.** Not before invoking the wrapper,
+   not after a hook failure, not "just this once because the file is
+   untracked." The project enforces this with a `permissions.deny`
+   entry on `Bash(git add:*)` in `.claude/settings.json`. If you try,
+   the harness blocks the tool call.
+
+   The original design (TASK-329) required the skill to `git add`
+   untracked entries before invoking the wrapper, because always-on
+   in-wrapper staging masked parallel-session races. The current
+   design is opt-in: callers that want strict fail-fast behaviour
+   call the wrapper without `--stage-untracked`; the /commit skill
+   passes the flag because its workflow already brackets the staging
+   inside a single agent action. The race window with the flag is
+   one wrapper process; without it, the window spans skill-add +
+   wrapper-commit (two processes) — so in-wrapper staging is
+   strictly tighter than skill-side staging.
+
+   **Renames and deletions — name BOTH (or the deleted) path.** These
+   rules are caller-side, not staging actions:
 
    - **Rename via `git mv A B`**: include *both* `A` and `B` in the
      pathspec list. Naming only `B` makes git's temp-index build see
@@ -93,20 +137,20 @@ keeps blast radius scoped to the single commit attempt.
      wrapper accepts paths that are in HEAD even when missing from
      both disk and index, so a `rm A` followed by
      `/commit "..." A` commits the deletion.
-   - **Pure addition** (untracked → committed): `git add` first as
-     described above, then name the path.
+   - **Pure addition** (untracked → committed): just name the path.
+     The wrapper's `--stage-untracked` (passed in step 4) does the
+     staging.
 
-   Do **not** `git add` rename sources or deletions — those are *not*
-   untracked, and adding them is at best a no-op and at worst stages
-   working-tree state you didn't intend.
-
-3. **Invoke the wrapper script** with the message via heredoc. Do **not**
-   add any `Co-Authored-By: Claude …` (or any other LLM/agent) trailer
-   — the project explicitly rejects such trailers as advertising. Write
-   the commit message as if a human authored it.
+4. **Invoke the wrapper script** with the commit message. Always pass
+   `--stage-untracked` — it's a no-op when every pathspec entry is
+   already tracked, and it's what handles new files without you ever
+   typing `git add`. Use a heredoc for multi-line messages so newlines
+   survive shell quoting. Do **not** append a `Co-Authored-By:`
+   trailer or any other "generated with" attribution — the user has
+   explicitly rejected those:
 
    ```bash
-   scripts/commit-pathspec.sh "$(cat <<'EOF'
+   scripts/commit-pathspec.sh --stage-untracked "$(cat <<'EOF'
    <commit message>
    EOF
    )" <file> [<file> …]
@@ -114,17 +158,17 @@ keeps blast radius scoped to the single commit attempt.
 
    The wrapper handles two things you must not duplicate:
 
-   1. Writing the provenance token at `.git/asp-commit-token` that the
+   1. Writing the provenance token at `.git/pl-commit-token` that the
       pre-commit hook validates.
    2. Running `git commit -m "..." -- <files>` in pathspec form.
 
    Do **not** call `git commit` directly — the pre-commit hook will
    reject it for missing the provenance token.
 
-4. **On hook success** — report the new commit's short hash + subject
+5. **On hook success** — report the new commit's short hash + subject
    (one line). Done.
 
-5. **On hook failure** — do **not** retry, do **not** add `--no-verify`
+6. **On hook failure** — do **not** retry, do **not** add `--no-verify`
    silently. Pathspec form leaves the real index untouched, so any
    foreign staged files from parallel sessions are still where they
    were before; do not "clean up" `git status` between failure and
@@ -147,7 +191,7 @@ keeps blast radius scoped to the single commit attempt.
      includes / imports / generated code), the answer is "yes, fix
      it" — do not bypass.
 
-6. **If all three checks pass**, present the standard message verbatim:
+7. **If all three checks pass**, present the standard message verbatim:
 
    > The pre-commit hook failed, but the failure is in `<file/check>`
    > which is unrelated to the files in this commit
@@ -160,12 +204,12 @@ keeps blast radius scoped to the single commit attempt.
    wrapper with `--no-verify`:
 
    ```bash
-   scripts/commit-pathspec.sh --no-verify "<message>" <file> [<file> …]
+   scripts/commit-pathspec.sh --no-verify --stage-untracked "<message>" <file> [<file> …]
    ```
 
    On refusal, stop — the user will fix the hook failure first.
 
-7. **If any of the three checks fails**, do **not** offer `--no-verify`.
+8. **If any of the three checks fails**, do **not** offer `--no-verify`.
    Report which check failed, surface the relevant hook output, and
    stop — the user diagnoses or fixes.
 
@@ -175,19 +219,23 @@ These are the failure modes that motivated the actor-clarification at
 the top of `## Steps`. Recognise and avoid them — every one of them
 duplicates work the skill is about to do.
 
-- **Pre-staging untracked files with `git add` "to help".** The skill
-  does this in step 2; doing it externally defeats the wrapper's
-  untracked-detection signal and mixes caller intent with whatever
-  the index already held. Just pass the files.
+- **Typing `git add` anywhere — under any circumstance.** Not "to
+  help". Not "the file is untracked." Not "the hook failed, let me
+  clean up." The wrapper's `--stage-untracked` flag is the *only*
+  mechanism that stages files in this project, and the harness
+  enforces this with a `permissions.deny` on `Bash(git add:*)`. If
+  you find yourself reaching for `git add`, you are in the wrong
+  branch of the flow — re-read step 3.
 - **Inspecting / unstaging the index before invoking.** The wrapper
   uses pathspec form, which builds a temp index from HEAD + the named
   files; it does not read the real index for the commit content. The
   real index's pre-state is irrelevant to what gets committed.
-- **Running `git add` after a hook failure to "clean up".** Pathspec
-  hook failures leave the real index untouched on purpose — that's
-  the parallel-session safety property. There is nothing to clean
-  up. Re-invoke `/commit` with the same arguments after fixing the
-  underlying cause, or follow step 6's three-check `--no-verify` flow.
+- **Trying to "clean up" the working tree after a hook failure.**
+  Pathspec hook failures leave the real index untouched on purpose —
+  that's the parallel-session safety property. There is nothing to
+  clean up. Re-invoke `/commit` with the same arguments after fixing
+  the underlying cause, or follow step 7's three-check `--no-verify`
+  flow.
 
 ## Local success ≠ mergeability — the CI gate
 
@@ -198,7 +246,7 @@ gate runs every required workflow on a real GitHub runner and
 catches things a fast local hook cannot — flaky integration tests,
 cross-platform formatting drift, generated-file staleness.
 
-Bypassing the local hook with `--no-verify` per step 6's three-check
+Bypassing the local hook with `--no-verify` per step 7's three-check
 protocol does **not** bypass the gate. The PR still fails CI.
 
 The required-checks list and the recipe for adding a new gate live in
