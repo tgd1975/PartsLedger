@@ -1,5 +1,5 @@
 skill_paths = [".claude/skills/"]
-enabled_skills = ["check-branch", "check-tool", "co-inventory-master-index", "co-inventory-schema", "commit", "fix-markdown", "housekeep", "os-context", "status", "tasks", "ts-epic-list", "ts-epic-new", "ts-idea-archive", "ts-idea-list", "ts-idea-new", "ts-task-active", "ts-task-done", "ts-task-list", "ts-task-new", "ts-task-pause", "ts-task-reopen", "update-scripts-readme"]
+enabled_skills = ["check-branch", "check-tool", "co-inventory-master-index", "co-inventory-schema", "commit", "epic-run", "fix-markdown", "housekeep", "os-context", "status", "tasks", "ts-epic-list", "ts-epic-new", "ts-idea-archive", "ts-idea-list", "ts-idea-new", "ts-task-active", "ts-task-done", "ts-task-list", "ts-task-new", "ts-task-pause", "ts-task-reopen", "update-scripts-readme"]
 disabled_skills = []
 agent_paths = [".claude/agents/"]
 enabled_agents = []

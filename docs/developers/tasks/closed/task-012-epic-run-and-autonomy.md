@@ -1,9 +1,11 @@
 ---
 id: TASK-012
 title: Port /epic-run skill and AUTONOMY.md, sweep HIL frontmatter on open tasks
-status: open
+status: closed
+closed: 2026-05-13
 opened: 2026-05-12
 effort: Medium
+effort_actual: Small (<2h)
 complexity: Junior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -39,14 +41,15 @@ plus one data sweep:
 
 ## Acceptance Criteria
 
-- [ ] `docs/developers/AUTONOMY.md` exists; all internal links
+- [x] `docs/developers/AUTONOMY.md` exists; all internal links
       resolve; `markdownlint-cli2` passes.
-- [ ] `.claude/skills/epic-run/SKILL.md` exists.
-- [ ] `epic-run` is in `.vibe/config.toml`'s `enabled_skills`.
-- [ ] Every open task file in `docs/developers/tasks/{open,active}/`
+- [x] `.claude/skills/epic-run/SKILL.md` exists.
+- [x] `epic-run` is in `.vibe/config.toml`'s `enabled_skills`.
+- [x] Every open task file in `docs/developers/tasks/{open,active}/`
       has a `human-in-loop:` field set to one of `No`,
-      `Clarification`, `Support`, or `Main`.
-- [ ] The `## Autonomy` section in `CLAUDE.md` (from TASK-011)
+      `Clarification`, `Support`, or `Main` (sweep was a no-op —
+      all EPIC-001 tasks already carried HIL).
+- [x] The `## Autonomy` section in `CLAUDE.md` (from TASK-011)
       points at `AUTONOMY.md` and the link resolves.
 
 ## Test Plan
