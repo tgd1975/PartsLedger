@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 7** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 6** | **Total: 13** | █████░░░░░ 46%
+⚪ **Open: 6** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 7** | **Total: 13** | █████░░░░░ 54%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -30,7 +30,6 @@ _No paused tasks._
 
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
-| [TASK-007](open/task-007-architecture-doc.md) | Write docs/developers/ARCHITECTURE.md for the PartsLedger pipeline | Medium | Senior | ⚪ open |
 | [TASK-008](open/task-008-security-review-hooks.md) | Port security-review hooks (pre-merge-commit, post-merge, pre-rebase) | Medium | Junior | ⚪ open |
 | [TASK-009](open/task-009-codeowner-mechanism.md) | Port codeowner reminder mechanism (hook + registry + PreToolUse) | Small | Junior | ⚪ open |
 | [TASK-010](open/task-010-codeowner-starter-skills.md) | Author starter co-* skills capturing PartsLedger invariants | Small | Senior | ⚪ open |
@@ -48,4 +47,5 @@ _No paused tasks._
 | [TASK-004](closed/task-004-upgrade-commit-skill.md) | Upgrade /commit skill and commit-pathspec.sh to the CircuitSmith versions | Small |
 | [TASK-005](closed/task-005-settings-json.md) | Author .claude/settings.json with full allowlist + deny | Small |
 | [TASK-006](closed/task-006-docs-verbatim-port.md) | Port the 13 verbatim developer docs from CircuitSmith | Medium |
+| [TASK-007](closed/task-007-architecture-doc.md) | Write docs/developers/ARCHITECTURE.md for the PartsLedger pipeline | Medium |
 <!-- END GENERATED -->

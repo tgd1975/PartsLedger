@@ -1,9 +1,11 @@
 ---
 id: TASK-007
 title: Write docs/developers/ARCHITECTURE.md for the PartsLedger pipeline
-status: open
+status: closed
+closed: 2026-05-13
 opened: 2026-05-12
 effort: Medium
+effort_actual: Small (<2h)
 complexity: Senior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -62,14 +64,14 @@ Every mermaid block gets a prose summary alongside per
 
 ## Acceptance Criteria
 
-- [ ] `docs/developers/ARCHITECTURE.md` exists.
-- [ ] Sections match the seven-block structure above.
-- [ ] Two mermaid diagrams (pipeline `flowchart LR`, module-boundary
+- [x] `docs/developers/ARCHITECTURE.md` exists.
+- [x] Sections match the seven-block structure above.
+- [x] Two mermaid diagrams (pipeline `flowchart LR`, module-boundary
       `graph TD`), each with prose summary.
-- [ ] Forbidden edges between modules are explicitly named and
+- [x] Forbidden edges between modules are explicitly named and
       annotated (red dashed style per `MERMAID_STYLE_GUIDE.md`).
-- [ ] All cross-doc links resolve.
-- [ ] `markdownlint-cli2` passes on the file.
+- [x] All cross-doc links resolve.
+- [x] `markdownlint-cli2` passes on the file.
 
 ## Test Plan
 
