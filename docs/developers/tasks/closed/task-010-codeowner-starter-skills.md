@@ -1,9 +1,11 @@
 ---
 id: TASK-010
 title: Author starter co-* skills capturing PartsLedger invariants
-status: open
+status: closed
+closed: 2026-05-13
 opened: 2026-05-12
 effort: Small
+effort_actual: Small (<2h)
 complexity: Senior
 human-in-loop: Clarification
 epic: align-with-circuitsmith
@@ -74,16 +76,18 @@ registration`).
 
 ## Acceptance Criteria
 
-- [ ] At least one `co-<name>/SKILL.md` exists under
-      `.claude/skills/`.
-- [ ] Each new skill is registered in `.vibe/config.toml`'s
+- [x] At least one `co-<name>/SKILL.md` exists under
+      `.claude/skills/` — both `co-inventory-schema` and
+      `co-inventory-master-index` landed.
+- [x] Each new skill is registered in `.vibe/config.toml`'s
       `enabled_skills` list.
-- [ ] Each new skill has a corresponding entry in
+- [x] Each new skill has a corresponding entry in
       `.claude/codeowners.yaml` (the registry pattern → skill
       binding).
-- [ ] Editing a file matched by an entry triggers the codeowner
-      hook and surfaces the skill body.
-- [ ] `markdownlint-cli2` passes on the SKILL.md files.
+- [x] Editing a file matched by an entry triggers the codeowner
+      hook and surfaces the skill body (verified via synthetic
+      Edit payload).
+- [x] `markdownlint-cli2` passes on the SKILL.md files.
 
 ## Test Plan
 
