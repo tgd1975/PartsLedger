@@ -1,9 +1,11 @@
 ---
 id: TASK-006
 title: Port the 13 verbatim developer docs from CircuitSmith
-status: open
+status: closed
+closed: 2026-05-13
 opened: 2026-05-12
 effort: Medium
+effort_actual: Medium (2-8h)
 complexity: Junior
 human-in-loop: No
 epic: align-with-circuitsmith
@@ -47,12 +49,16 @@ for name-substitution. Thirteen files:
 
 ## Acceptance Criteria
 
-- [ ] Each of the 13 files exists at the right path and lint-passes
+- [x] Each of the 13 files exists at the right path and lint-passes
       `markdownlint-cli2`.
-- [ ] No occurrence of `CircuitSmith` / `circuitsmith` / `CS_` /
-      `cs-` token in any of the ported files (run a final grep).
-- [ ] All in-doc cross-links resolve to a real file in the repo.
-- [ ] `CHANGELOG.md` `[Unreleased]` section has one bullet per
+- [x] No occurrence of `CircuitSmith` / `circuitsmith` / `CS_` /
+      `cs-` token in any of the ported files (run a final grep) —
+      remaining mentions in CHANGELOG.md, CODING_STANDARDS.md,
+      BRANCH_PROTECTION_CONCEPT.md, TASK_SYSTEM.md are intentional
+      references to the sibling project / the epic slug
+      `align-with-circuitsmith`, not stale substitution targets.
+- [x] All in-doc cross-links resolve to a real file in the repo.
+- [x] `CHANGELOG.md` `[Unreleased]` section has one bullet per
       preceding task in this epic (001–005) under appropriate
       Keep-a-Changelog subheadings.
 
