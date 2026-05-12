@@ -5,6 +5,10 @@ description: Transfer CircuitSmith's framework to PartsLedger (commit policy, do
 category: foundation
 ---
 
+## Archive Reason
+
+2026-05-12 — Converted to EPIC-001 (align-with-circuitsmith) with TASK-001..TASK-013.
+
 ## Background
 
 The sibling repo at `~/Dokumente/Projekte/CircuitSmith` was tuned over five
