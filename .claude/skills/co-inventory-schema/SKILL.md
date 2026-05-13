@@ -1,6 +1,6 @@
 ---
 name: co-inventory-schema
-description: Invariants for inventory/parts/<part>.md — frontmatter schema (IDEA-001 + IDEA-027), pin-aliasing, MD-as-source-of-truth, master-index linkage. Surfaced when an inventory part-MD is about to be edited.
+description: Invariants for inventory/parts/<part>.md — frontmatter schema (IDEA-004 + IDEA-027), pin-aliasing, MD-as-source-of-truth, master-index linkage. Surfaced when an inventory part-MD is about to be edited.
 ---
 
 # Invariants (checklist, not prose)
@@ -62,7 +62,7 @@ description: Invariants for inventory/parts/<part>.md — frontmatter schema (ID
 
 ## Authority
 
-See [`docs/developers/ideas/open/idea-001-partsledger-concept.md`](../../../docs/developers/ideas/open/idea-001-partsledger-concept.md)
+See [`docs/developers/ideas/open/idea-004-markdown-inventory-schema.md`](../../../docs/developers/ideas/open/idea-004-markdown-inventory-schema.md)
 for the inventory-MD shape and
 [`docs/developers/ARCHITECTURE.md` § Decoupling seams](../../../docs/developers/ARCHITECTURE.md#decoupling-seams)
 for the MD-is-truth invariant. The IDEA-027 vocabulary is canonical

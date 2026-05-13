@@ -7,10 +7,10 @@
 > work begins, the seams are already named.
 
 PartsLedger is the markdown-native inventory companion to the planned
-[CircuitSmith](https://github.com/tgd1975/CircuitSmith) (see
-[IDEA-001](../ideas/open/idea-001-partsledger-concept.md) for the
-design dossier). This doc is the **top-down view**: how the pieces fit,
-which invariants hold across them, and where the AI lives.
+[CircuitSmith](https://github.com/tgd1975/CircuitSmith). The per-piece
+design dossiers live in [`../ideas/`](../ideas/OVERVIEW.md) (IDEA-004
+through IDEA-009); this doc is the **top-down view** — how the pieces
+fit, which invariants hold across them, and where the AI lives.
 
 ## What it produces
 

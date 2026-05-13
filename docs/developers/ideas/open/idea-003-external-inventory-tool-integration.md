@@ -92,7 +92,7 @@ to integrate with first, and **in which direction** the data should flow.
 ### Option D — distributor catalog APIs (Nexar/Octopart, Mouser, Digi-Key)
 
 Already used in PartsLedger's identification pipeline (see
-[IDEA-001](idea-001-partsledger-concept.md)). These are **catalogs**, not
+[IDEA-008](idea-008-metadata-enrichment.md)). These are **catalogs**, not
 **personal inventories** — they answer "what is this part" but not
 "how many do I own and where is it". Out of scope for this idea; listed
 to make the distinction explicit.
@@ -176,8 +176,8 @@ multi-editor pain emerges.
 
 ## Related
 
-- [IDEA-001](idea-001-partsledger-concept.md) — defines the MD schema
-  that any external integration must round-trip against.
-- [IDEA-002](idea-002-align-with-circuitsmith.md) — CircuitSmith
-  component-profile alignment; the same parameter vocabulary should
+- [IDEA-004](idea-004-markdown-inventory-schema.md) — defines the MD
+  schema that any external integration must round-trip against.
+- [IDEA-009](idea-009-circuitsmith-prefer-inventory-adapter.md) — the
+  CircuitSmith bridge; the same parameter vocabulary (IDEA-027) should
   drive the InvenTree parameter-template mapping.

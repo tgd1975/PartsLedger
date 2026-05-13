@@ -61,9 +61,8 @@ description: Invariants for inventory/INVENTORY.md — the master ledger. Per-pa
 
 ## Authority
 
-See [`docs/developers/ideas/open/idea-001-partsledger-concept.md`](../../../docs/developers/ideas/open/idea-001-partsledger-concept.md)
-§ "Core Idea: LLM-Native Markdown Inventory" for the master-index
-shape.
+See [`docs/developers/ideas/open/idea-004-markdown-inventory-schema.md`](../../../docs/developers/ideas/open/idea-004-markdown-inventory-schema.md)
+§ "`INVENTORY.md` — the flat index" for the master-index shape.
 
 ## Downstream consumers
 

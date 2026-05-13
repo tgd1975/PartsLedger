@@ -37,7 +37,7 @@ default — multiple reasonable options, each costing real
 trade-offs — it:
 
 1. Picks the option most consistent with the existing ADRs and the
-   IDEA-001 dossier.
+   IDEA-004 — IDEA-009 dossier set (the per-toolchain-piece design docs).
 2. Records the decision in a new ADR under [`docs/developers/adr/`](adr/)
    using the format from [`adr/README.md`](adr/README.md).
 3. Continues the task.

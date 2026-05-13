@@ -2,8 +2,8 @@
 
 PartsLedger is at concept stage. The work breakdown lives in
 [`docs/developers/tasks/EPICS.md`](docs/developers/tasks/EPICS.md);
-the design dossier lives in
-[`docs/developers/ideas/open/idea-001-partsledger-concept.md`](docs/developers/ideas/open/idea-001-partsledger-concept.md).
+the design dossiers (one per toolchain piece, IDEA-004 through IDEA-009)
+live in [`docs/developers/ideas/`](docs/developers/ideas/OVERVIEW.md).
 
 ## First-time setup
 

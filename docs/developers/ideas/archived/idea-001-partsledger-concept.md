@@ -1,9 +1,24 @@
 ---
 id: IDEA-001
-title: PartsLedger concept
-description: PartsLedger's seed document — goal, scope, file format, skill+camera entry paths, CircuitSmith bridge.
+title: PartsLedger concept (superseded — split 2026-05-13)
+description: PartsLedger's original seed document. Split on 2026-05-13 into IDEA-004 through IDEA-009 so each toolchain piece can be honed independently. Kept here for historical context.
 category: foundation
 ---
+
+> ⚠️ **Superseded.** This dossier was the single-file seed; the team
+> decided on 2026-05-13 that each part of the toolchain should be honed
+> in its own dossier before any of it goes to epic/implementation. The
+> content was split into:
+>
+> - [IDEA-004 · Markdown inventory schema](../open/idea-004-markdown-inventory-schema.md) — file format, family pages, directory layout, example.
+> - [IDEA-005 · Skill path (today, as-built)](../open/idea-005-skill-path-today.md) — `/inventory-add` + `/inventory-page` + sincere-language convention.
+> - [IDEA-006 · USB camera capture](../open/idea-006-usb-camera-capture.md) — capture trigger UX, framing, lighting.
+> - [IDEA-007 · Visual recognition](../open/idea-007-visual-recognition-dinov2-vlm.md) — DINOv2 similarity cache + VLM identification + offline mode.
+> - [IDEA-008 · Metadata enrichment](../open/idea-008-metadata-enrichment.md) — Nexar/Octopart + optional resistor OCR.
+> - [IDEA-009 · CircuitSmith --prefer-inventory adapter](../open/idea-009-circuitsmith-prefer-inventory-adapter.md) — the bridge.
+
+Vision-level framing (goal, audience, non-goals, market gap, sibling
+projects) now lives in the top-level [README.md](../../../../README.md).
 
 > *"PartsLedger keeps the record. CircuitSmith reads it before forging."*
 

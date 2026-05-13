@@ -140,3 +140,18 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   mechanism, autonomous-epic-run skill, GitHub Actions CI matrix,
   server-side branch protection on `main`. See the closed epic at
   [docs/developers/tasks/closed/epic-001-align-with-circuitsmith.md](docs/developers/tasks/closed/epic-001-align-with-circuitsmith.md).
+
+### Ideas
+
+- IDEA-001 split (2026-05-13) into six per-toolchain-piece dossiers so
+  each part of the pipeline can be honed independently before any of it
+  reaches epic / implementation: **IDEA-004** (Markdown inventory
+  schema), **IDEA-005** (skill path — `/inventory-add` + `/inventory-page`,
+  as-built), **IDEA-006** (USB camera capture), **IDEA-007** (visual
+  recognition — DINOv2 cache + VLM), **IDEA-008** (metadata
+  enrichment — Nexar/Octopart + optional OCR), **IDEA-009** (CircuitSmith
+  `--prefer-inventory` adapter). The seed dossier moved to
+  `archived/idea-001-partsledger-concept.md` with a "superseded by"
+  header. Cross-references updated in README, CLAUDE.md, CONTRIBUTING,
+  ARCHITECTURE, AUTONOMY, CODE_OWNERS, TASK_SYSTEM, adr/README, the
+  two `co-inventory-*` SKILL.md files, and IDEA-003.

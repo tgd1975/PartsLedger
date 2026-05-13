@@ -20,10 +20,10 @@ The format here is intentionally minimal:
 - **Status** — `Accepted`, `Superseded by ADR-NNNN`, or `Deprecated`.
 - **See also** — a link to the dossier section that owns the depth.
 
-The dossier
-([`docs/developers/ideas/open/idea-001-partsledger-concept.md`](../../ideas/open/idea-001-partsledger-concept.md))
-remains authoritative for the *details* of every decision. ADRs are
-the **index**: read the ADR to understand which constraints are
+The dossier set under [`docs/developers/ideas/`](../../ideas/OVERVIEW.md)
+(IDEA-004 through IDEA-009 — one per toolchain piece) remains
+authoritative for the *details* of every decision. ADRs are the
+**index**: read the ADR to understand which constraints are
 load-bearing; follow the link to the dossier when you need the full
 argument.
 

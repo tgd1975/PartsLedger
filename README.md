@@ -8,7 +8,13 @@ An **LLM-native inventory for your parts bin**. Point a USB camera at a componen
 
 🚧 **Concept stage** — the repo currently contains only the concept docs. Code to follow.
 
-The full architecture and rationale live in **[IDEA-001](docs/developers/ideas/open/idea-001-partsledger-concept.md)**.
+The toolchain is dossiered piece-by-piece in [`docs/developers/ideas/`](docs/developers/ideas/OVERVIEW.md):
+**[IDEA-004](docs/developers/ideas/open/idea-004-markdown-inventory-schema.md)** (schema) ·
+**[IDEA-005](docs/developers/ideas/open/idea-005-skill-path-today.md)** (skill path, as-built) ·
+**[IDEA-006](docs/developers/ideas/open/idea-006-usb-camera-capture.md)** (camera capture) ·
+**[IDEA-007](docs/developers/ideas/open/idea-007-visual-recognition-dinov2-vlm.md)** (DINOv2 + VLM) ·
+**[IDEA-008](docs/developers/ideas/open/idea-008-metadata-enrichment.md)** (Nexar/Octopart) ·
+**[IDEA-009](docs/developers/ideas/open/idea-009-circuitsmith-prefer-inventory-adapter.md)** (CircuitSmith bridge).
 
 ## Who is it for?
 
@@ -50,7 +56,7 @@ USB camera ──► DINOv2 embedding ──► Search vector DB
                                                    → cache embedding
 ```
 
-Active learning without upfront training: the first photo of a new type runs the full pipeline; from the second photo onwards, the local embedding lookup suffices. Details, example frontmatter, component table, and boundaries are in **[IDEA-001](docs/developers/ideas/open/idea-001-partsledger-concept.md)**.
+Active learning without upfront training: the first photo of a new type runs the full pipeline; from the second photo onwards, the local embedding lookup suffices. Per-stage details live in **[IDEA-006](docs/developers/ideas/open/idea-006-usb-camera-capture.md)** (capture), **[IDEA-007](docs/developers/ideas/open/idea-007-visual-recognition-dinov2-vlm.md)** (DINOv2 + VLM), and **[IDEA-008](docs/developers/ideas/open/idea-008-metadata-enrichment.md)** (metadata enrichment); the file shape they all share is **[IDEA-004](docs/developers/ideas/open/idea-004-markdown-inventory-schema.md)**.
 
 ## Target Audience & Scope
 
@@ -74,7 +80,7 @@ Active learning without upfront training: the first photo of a new type runs the
 
 ## Roadmap
 
-- [x] Concept & schema sketch ([IDEA-001](docs/developers/ideas/open/idea-001-partsledger-concept.md))
+- [x] Concept & schema sketch (split 2026-05-13 into [IDEA-004 — IDEA-009](docs/developers/ideas/OVERVIEW.md); the seed lives in [archived/idea-001](docs/developers/ideas/archived/idea-001-partsledger-concept.md))
 - [ ] Markdown schema as a formal spec (frontmatter, CircuitSmith-compatible)
 - [ ] Python skeleton: USB camera + DINOv2 + sqlite-vec
 - [ ] Claude Vision integration for unknown parts

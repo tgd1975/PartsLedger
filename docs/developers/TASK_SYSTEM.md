@@ -13,7 +13,7 @@ protocol; this is the contributor's map.
 
 | Type | Lifetime | Purpose | Example |
 |---|---|---|---|
-| **IDEA** | Long. Lives in `docs/developers/ideas/{open,archived}/`. | A design proposal. Captures *what* and *why* before any *how* lands. Ideas archive when they convert into epics or get rejected. | [`idea-001-partsledger-concept`](../ideas/open/idea-001-partsledger-concept.md) — the dossier behind the inventory pipeline. |
+| **IDEA** | Long. Lives in `docs/developers/ideas/{open,archived}/`. | A design proposal. Captures *what* and *why* before any *how* lands. Ideas archive when they convert into epics or get rejected. | [`idea-004-markdown-inventory-schema`](../ideas/open/idea-004-markdown-inventory-schema.md) — the file-shape dossier; five siblings (IDEA-005 — IDEA-009) cover the rest of the toolchain. |
 | **EPIC** | Medium. Lives in `docs/developers/tasks/{open,active,closed}/`. | A bundle of related tasks that ship together on a single branch (`release/epic-NNN-<slug>` or `feature/<slug>`). Closes when every constituent task closes. | [`epic-001-align-with-circuitsmith`](tasks/active/epic-001-align-with-circuitsmith.md) — this very epic. |
 | **TASK** | Short. Lives in `docs/developers/tasks/{open,active,paused,closed}/`. | One concrete deliverable, sized Small/Medium/Large, with acceptance criteria and a test plan. The unit of one commit (or one tight commit cluster). | TASK-006 — port the 13 verbatim docs. |
 

@@ -46,7 +46,7 @@ cleanly (skill at write-time, CODEOWNERS at PR-time).
 
    ## Authority
 
-   See [`docs/developers/ideas/open/idea-001-partsledger-concept.md §<section>`](…)
+   See [`docs/developers/ideas/open/idea-NNN-<dossier>.md §<section>`](…)
    or the IDEA-027 vocabulary in the AwesomeStudioPedal repo.
 
    ## Downstream consumers
