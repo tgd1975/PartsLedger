@@ -46,3 +46,97 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   upgraded. Wrapper accepts `--stage-untracked` for atomic in-process
   staging. Skill body runs `markdownlint-cli2 --fix` / `ruff check
   --fix` scoped to the pathspec before invoking git.
+- TASK-011 closed: `CLAUDE.md` rewritten to mirror CircuitSmith's
+  operational framework — added sections on no-diagnostic-suffix
+  Bash, no-end-of-turn-checkpoints, squash-merge-to-main, CHANGELOG-
+  rides-with-merge, autonomy. PartsLedger-shaped retentions kept for
+  the inventory-is-source-of-truth invariant and the heavyweight-deps
+  Missing-executables body (with `pip` → `uv pip`).
+- TASK-013 closed: server-side branch protection applied on
+  `tgd1975/PartsLedger/main` via `gh api -X PUT`. Required status
+  checks (`Test (ubuntu-latest)`, `Test (windows-latest)`), linear
+  history required, force-push and deletion forbidden, admin
+  enforcement off (owner keeps hot-fix path), PR review off (solo
+  project — trigger to flip is contributor #2 landing).
+
+### Documentation
+
+- TASK-006 closed: 13 verbatim developer docs ported from
+  CircuitSmith with `cs-` → `pl-` substitutions — `CONTRIBUTING.md`,
+  `CHANGELOG.md` shape, `docs/developers/{COMMIT_POLICY, CODING_STANDARDS,
+  CI_PIPELINE, DEVELOPMENT_SETUP, TASK_SYSTEM, TESTING,
+  MERMAID_STYLE_GUIDE, CODE_OF_CONDUCT, BRANCH_PROTECTION_CONCEPT}.md`,
+  plus the `adr/` scaffold (`0000-template.md`, `README.md`).
+  DEVELOPMENT_SETUP expanded for PartsLedger's heavy deps
+  (torch / opencv / sqlite-vec, optional OCR); CI_PIPELINE uses uv +
+  ruff and drops the CS-specific portability-lint step;
+  MERMAID_STYLE_GUIDE example diagrams adapted to PartsLedger's
+  pipeline.
+- TASK-007 closed: `docs/developers/ARCHITECTURE.md` fresh-authored
+  for PartsLedger's pipeline (camera → DINOv2 → KNN → Claude Vision →
+  Nexar → MD entry). Mermaid pipeline (`flowchart LR`) and module-
+  boundary graph (`graph TD`) with the forbidden
+  `embed_cache → inventory_md` edge in red-dashed style per
+  MERMAID_STYLE_GUIDE.md. Decoupling-seams section names the two
+  load-bearing invariants (MD is source of truth; CircuitSmith reads
+  PartsLedger one-way via `--prefer-inventory`).
+
+### Governance
+
+- TASK-008 closed: security-review hook layer ported —
+  `scripts/security_review_changes.py`, the three git-hooks
+  (`pre-merge-commit`, `post-merge`, `pre-rebase`),
+  `scripts/install_git_hooks.sh`, and
+  `docs/developers/SECURITY_REVIEW.md`. Bypass with
+  `PL_SKIP_SECURITY_REVIEW=1` / `PL_SKIP_CLAUDE_REVIEW=1`.
+  Allowlist gained `Bash(python scripts/security_review_changes.py:*)`.
+- TASK-009 closed: codeowner reminder mechanism —
+  `scripts/codeowner_hook.py` (PreToolUse hook), `.claude/codeowners.yaml`
+  registry with `inventory/parts/*.md` → `co-inventory-schema` and
+  `inventory/INVENTORY.md` → `co-inventory-master-index` bindings.
+  Settings.json gains the `hooks.PreToolUse` block. Full 26-test suite
+  ported (parser, glob, hook flow) and green.
+  `docs/developers/CODE_OWNERS.md` documents the mechanism.
+- TASK-010 closed: starter `co-*` skills authored —
+  `co-inventory-schema` (frontmatter schema per IDEA-027 vocabulary,
+  pin-aliasing per ADR-0010, MD-is-truth invariant, master-index
+  linkage rule) and `co-inventory-master-index` (per-row schema,
+  category sections, qty-rides-here-not-in-MD invariant). Both
+  registered in `.vibe/config.toml` `enabled_skills`.
+
+### Autonomy
+
+- TASK-012 closed: autonomous-implementation mode wired up.
+  - `docs/developers/AUTONOMY.md` codifies the four HIL values
+    (`No` / `Clarification` / `Support` / `Main`), the
+    ADR-on-ambiguity rule, the epic-driver loop (work-phase +
+    commit-phase + hand-off phase + CHANGELOG-delta phase), the
+    definition-of-done checklist, the review-packet format, and
+    the no-published-effect-without-approval policy.
+  - `.claude/skills/epic-run/SKILL.md` is the protocol-scaffold
+    driver skill the agent follows (composer over `/ts-task-active`,
+    `/commit`, `/housekeep`, `/ts-task-done`, `/check-branch`).
+  - HIL frontmatter sweep was a no-op — every existing task already
+    carried the field.
+
+### CI
+
+- `chore(ci)`: fixed pre-existing housekeep test failures so the
+  CI gate goes green and TASK-013's branch-protection rule could
+  reference the named status checks. Five drift-fixes in
+  `scripts/tests/test_housekeep.py`,
+  `scripts/tests/test_housekeep_concurrency.py`, and
+  `scripts/housekeep.py`'s `Move.describe()` (path normalization for
+  cross-platform stable output). Not in EPIC-001's scope but
+  blocked TASK-013.
+
+### EPIC-001 closed
+
+- **EPIC-001 (align-with-circuitsmith) closed** — all 13 tasks
+  done. PartsLedger now mirrors CircuitSmith's project framework:
+  commit policy with one-shot provenance token, mandatory ruff +
+  markdownlint gates, full developer-docs set + fresh
+  ARCHITECTURE.md, security-review hooks, codeowner reminder
+  mechanism, autonomous-epic-run skill, GitHub Actions CI matrix,
+  server-side branch protection on `main`. See the closed epic at
+  [docs/developers/tasks/closed/epic-001-align-with-circuitsmith.md](docs/developers/tasks/closed/epic-001-align-with-circuitsmith.md).
