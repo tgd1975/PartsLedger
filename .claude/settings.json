@@ -1,0 +1,78 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python scripts/codeowner_hook.py:*)",
+      "Bash(python scripts/housekeep.py:*)",
+      "Bash(python scripts/release_burnup.py:*)",
+      "Bash(python scripts/release_snapshot.py:*)",
+      "Bash(python scripts/security_review_changes.py:*)",
+      "Bash(python scripts/task_system_config.py:*)",
+      "Bash(python scripts/update_idea_overview.py:*)",
+      "Bash(python scripts/update_task_overview.py:*)",
+      "Bash(python scripts/update_scripts_readme.py:*)",
+
+      "Bash(uv venv:*)",
+      "Bash(uv pip install:*)",
+      "Bash(uv pip sync:*)",
+      "Bash(uv run:*)",
+      "Bash(uv sync:*)",
+
+      "Bash(.venv/bin/python:*)",
+      "Bash(.venv/bin/pytest:*)",
+      "Bash(.venv/bin/ruff:*)",
+
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git ls-remote:*)",
+      "Bash(git blame:*)",
+
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(wc:*)",
+
+      "Bash(markdownlint-cli2:*)",
+      "Bash(ruff:*)",
+
+      "Bash(pytest:*)",
+      "Bash(python -m pytest:*)",
+
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh api repos/:*)"
+    ],
+    "deny": [
+      "Bash(git add:*)",
+
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+
+      "Bash(git push origin main:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PROJECT_DIR}/scripts/codeowner_hook.py"
+          }
+        ]
+      }
+    ]
+  }
+}

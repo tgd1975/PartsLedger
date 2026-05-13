@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Virtualenv
+.venv/
+venv/
+env/
+
+# Build artefacts
+build/
+dist/
+*.egg
+
+# IDE / editor
+.idea/
+.vscode/launch.json
+.vscode/c_cpp_properties.json
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local Claude settings (user-specific permissions)
+.claude/settings.local.json
+.claude/*.lock
+
+# Security-review hook output (regenerable; never commit the report)
+.claude/security-review-latest.md
+
+# direnv local env (per-developer paths, API keys, camera index — see .envrc.example)
+.envrc
+
+# Housekeep single-instance lock
+.housekeep.lock
+
+# Secrets (never commit)
+.env
+.env.local
+*.key
+*.pem
+
+# PartsLedger runtime data — regenerable caches and large blobs
+# (inventory/parts/*.md and inventory/images/ ARE the data — keep those)
+inventory/.embeddings/
+*.sqlite
+*.sqlite-journal

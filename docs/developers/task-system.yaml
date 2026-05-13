@@ -1,0 +1,53 @@
+# Task-system configuration. Every script and skill in the task system
+# reads this file (or the path pointed to by the TASK_SYSTEM_CONFIG env
+# var) to decide which subsystems are enabled and where files live.
+#
+# If this file is missing or a key is absent, scripts fall back to the
+# documented defaults shown here.
+
+ideas:
+  enabled: true
+  base_folder: docs/developers/ideas
+
+tasks:
+  enabled: true
+  base_folder: docs/developers/tasks
+  # When active.enabled is false, housekeep.py does not create or scan
+  # the active/ folder and ts-task-active effectively becomes a no-op.
+  active:
+    enabled: true
+  # When paused.enabled is false (or active.enabled is false), housekeep
+  # does not create or scan the paused/ folder and `paused` collapses
+  # back to the pre-pause status in renderers and skills. Paused depends
+  # on active — turning active off forces paused off too.
+  paused:
+    enabled: true
+  # When epics.enabled is false, epic files are ignored and EPICS.md is
+  # not generated. Individual task files may still carry an `epic:`
+  # field — it is just not rendered anywhere.
+  epics:
+    enabled: true
+  # When releases.enabled is false, the release skill and archive/
+  # folder are not used. Tasks move directly to closed/ and stay there.
+  releases:
+    enabled: true
+
+scripts:
+  base_folder: scripts
+
+visualizations:
+  epics:
+    enabled: true
+    # `dependency-graph` (default) renders a Mermaid graph from
+    # `prerequisites:` between tasks. `gantt` renders a Mermaid Gantt
+    # chart instead.
+    style: dependency-graph
+  kanban:
+    enabled: true
+  # When burnup.enabled is false, housekeep.py does not insert the
+  # release burn-up block into tasks/OVERVIEW.md and removes any block
+  # that is already there. The Jump-to index also drops its [Burn-up]
+  # entry. Disable this on repos where releases.enabled is false or
+  # where the chart isn't useful.
+  burnup:
+    enabled: true

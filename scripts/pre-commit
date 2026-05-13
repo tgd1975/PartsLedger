@@ -1,0 +1,150 @@
+#!/usr/bin/env bash
+# Pre-commit hook for PartsLedger.
+#
+# Checks (in order):
+#   1. /commit provenance — every commit must come through
+#      scripts/commit-pathspec.sh (the /commit skill). Bypass with
+#      PL_COMMIT_BYPASS="<reason>" in the env.
+#   2. Markdown lint (markdownlint-cli2 — mandatory; missing tool fails
+#      the hook so the contributor installs it rather than silently
+#      shipping unlinted Markdown).
+#   3. Python lint (ruff — mandatory; missing tool fails the hook).
+#      Mirrors the markdown block. Configuration lives in pyproject.toml
+#      `[tool.ruff]`.
+#
+# Add C++ / Flutter gates here when the project gains them.
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+GIT_DIR="$(git rev-parse --git-dir)"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+# ---------------------------------------------------------------------------
+# Commit-provenance check
+# ---------------------------------------------------------------------------
+TOKEN_FILE="${GIT_DIR}/pl-commit-token"
+BYPASS_LOG="${GIT_DIR}/pl-commit-bypass.log"
+
+if [ -n "${PL_COMMIT_BYPASS:-}" ]; then
+    NOW_ISO="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+    USER_NAME="${USER:-$(id -un)}"
+    printf '%s\t%s\t%s\t%s\t%s\n' \
+        "${NOW_ISO}" "${PL_COMMIT_BYPASS}" "pending" \
+        "${BRANCH}" "${USER_NAME}" >> "${BYPASS_LOG}"
+    echo -e "${YELLOW}/commit bypass: ${PL_COMMIT_BYPASS} (logged to ${BYPASS_LOG})${NC}"
+    rm -f "${TOKEN_FILE}"
+else
+    if [ ! -f "${TOKEN_FILE}" ]; then
+        echo -e "${RED}ERROR: commit did not flow through /commit.${NC}" >&2
+        echo "  Use the /commit skill (scripts/commit-pathspec.sh) for every commit." >&2
+        echo "  Bypass for rebase / recovery: set PL_COMMIT_BYPASS=\"<reason>\" in the env." >&2
+        exit 1
+    fi
+    TOKEN_LINE="$(head -n1 "${TOKEN_FILE}")"
+    if ! echo "${TOKEN_LINE}" | grep -qE '^[0-9]+ [0-9a-f]+ [0-9]+$'; then
+        rm -f "${TOKEN_FILE}"
+        echo -e "${RED}ERROR: malformed commit-provenance token. Rejecting.${NC}" >&2
+        exit 1
+    fi
+    TOKEN_PID="$(echo "${TOKEN_LINE}" | awk '{print $1}')"
+    TOKEN_TS="$(echo "${TOKEN_LINE}" | awk '{print $3}')"
+    NOW_TS="$(date +%s)"
+    AGE=$((NOW_TS - TOKEN_TS))
+    if [ "${AGE}" -lt 0 ] || [ "${AGE}" -gt 60 ]; then
+        rm -f "${TOKEN_FILE}"
+        echo -e "${RED}ERROR: commit-provenance token is stale (age ${AGE}s, max 60s). Re-run /commit.${NC}" >&2
+        exit 1
+    fi
+    PID_OK=0
+    if [ -d /proc ]; then
+        CHECK_PID="$$"
+        for _ in 1 2 3; do
+            if [ ! -r "/proc/${CHECK_PID}/status" ]; then break; fi
+            PARENT="$(awk '/^PPid:/ {print $2}' "/proc/${CHECK_PID}/status" 2>/dev/null || echo 0)"
+            if [ -z "${PARENT}" ] || [ "${PARENT}" = "0" ] || [ "${PARENT}" = "${CHECK_PID}" ]; then break; fi
+            CHECK_PID="${PARENT}"
+            if [ "${CHECK_PID}" = "${TOKEN_PID}" ]; then PID_OK=1; break; fi
+        done
+    else
+        [ "${PPID}" = "${TOKEN_PID}" ] && PID_OK=1
+    fi
+    if [ "${PID_OK}" -ne 1 ]; then
+        rm -f "${TOKEN_FILE}"
+        echo -e "${RED}ERROR: commit-provenance token PID ${TOKEN_PID} is not an ancestor of this hook. Re-run /commit.${NC}" >&2
+        exit 1
+    fi
+    rm -f "${TOKEN_FILE}"
+fi
+echo -e "${GREEN}/commit provenance OK.${NC}"
+
+# ---------------------------------------------------------------------------
+# Markdown lint (mandatory — missing markdownlint-cli2 fails the hook so the
+# contributor installs it rather than silently shipping unlinted Markdown).
+# ---------------------------------------------------------------------------
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.md$' || true)
+if [ -n "$STAGED_MD" ]; then
+    MARKDOWNLINT=$(command -v markdownlint-cli2 2>/dev/null || true)
+    if [ -z "$MARKDOWNLINT" ]; then
+        NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+        if [ -s "$NVM_DIR/nvm.sh" ]; then
+            \. "$NVM_DIR/nvm.sh" --no-use 2>/dev/null || true
+            MARKDOWNLINT=$(command -v markdownlint-cli2 2>/dev/null || true)
+        fi
+    fi
+    if [ -z "$MARKDOWNLINT" ]; then
+        echo -e "${RED}ERROR: markdownlint-cli2 is required but not installed.${NC}" >&2
+        echo "  Install: npm install -g markdownlint-cli2" >&2
+        echo "  (or via nvm: nvm use && npm install -g markdownlint-cli2)" >&2
+        exit 1
+    fi
+    echo -e "${YELLOW}Checking Markdown formatting...${NC}"
+    # Exclude:
+    # - `node_modules` — vendored JS deps.
+    # - `.claude/security-review-latest.md` — a gitignored runtime
+    #   report written by the security-review hook on every merge.
+    # - `.venv` — Python virtual env directory. Once uv is the standard
+    #   bootstrap (EPIC-001 onward), third-party `LICENSE.md` and other
+    #   package markdown inside `.venv/lib/.../site-packages/` are
+    #   reachable by the `**/*.md` glob and would always fail.
+    # markdownlint-cli2 does not read `.gitignore`, hence the explicit `#`
+    # exclude patterns.
+    "$MARKDOWNLINT" "**/*.md" "#node_modules" "#.venv" "#.claude/security-review-latest.md" 2>&1
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}Markdown lint failed. Commit aborted.${NC}" >&2
+        exit 1
+    fi
+    echo -e "${GREEN}Markdown OK.${NC}"
+fi
+
+# ---------------------------------------------------------------------------
+# Python lint (mandatory — missing ruff fails the hook so the contributor
+# installs it rather than silently shipping unlinted Python). Mirrors the
+# markdown block; configuration in pyproject.toml `[tool.ruff]`.
+# ---------------------------------------------------------------------------
+STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$' || true)
+if [ -n "$STAGED_PY" ]; then
+    RUFF=$(command -v ruff 2>/dev/null || true)
+    if [ -z "$RUFF" ]; then
+        echo -e "${RED}ERROR: ruff is required but not installed.${NC}" >&2
+        echo "  Install: pip install -r requirements-dev.txt" >&2
+        echo "  (or directly: pip install 'ruff>=0.7')" >&2
+        exit 1
+    fi
+    echo -e "${YELLOW}Checking Python lint (ruff check)...${NC}"
+    # Lint only the staged files — the /commit auto-fixer already ran
+    # against the same pathspec, so a residual error is a real one.
+    # shellcheck disable=SC2086
+    if ! echo "$STAGED_PY" | xargs "$RUFF" check; then
+        echo -e "${RED}Ruff lint failed. Commit aborted.${NC}" >&2
+        exit 1
+    fi
+    echo -e "${GREEN}Ruff lint OK.${NC}"
+fi
+
+exit 0

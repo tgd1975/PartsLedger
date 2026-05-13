@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# post-merge: review changes that were just merged. Catches the fast-forward
+# pull case (which fires no pre-merge-commit). Cannot block (the merge already
+# happened) — runs in non-blocking mode and prints the rollback command on
+# HIGH/CRITICAL findings.
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# $1 is 1 if squash-merge, else 0. ORIG_HEAD points at the pre-merge tip.
+if ! git rev-parse --verify -q ORIG_HEAD >/dev/null; then
+    exit 0
+fi
+
+# Run in non-blocking mode (the merge already happened); the script will still
+# write the report and print the rollback command on HIGH/CRITICAL.
+python3 "$REPO_ROOT/scripts/security_review_changes.py" \
+    ORIG_HEAD HEAD --label "post-merge (fast-forward or completed merge)" --non-blocking || true
+
+# Re-check severity from the report so we can shout if it was bad.
+REPORT="$REPO_ROOT/.claude/security-review-latest.md"
+if [ -f "$REPORT" ] && grep -qE "^- max severity: \*\*(CRITICAL|HIGH)\*\*" "$REPORT"; then
+    echo "" >&2
+    echo -e "\033[1;31m[security-review] HIGH/CRITICAL findings on changes already merged.\033[0m" >&2
+    echo "  To roll back the pull: git reset --hard ORIG_HEAD" >&2
+    echo "  Review first:          $REPORT" >&2
+    echo "" >&2
+fi
