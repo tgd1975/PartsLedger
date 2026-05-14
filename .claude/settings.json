@@ -44,6 +44,8 @@
 
       "Bash(pytest:*)",
       "Bash(python -m pytest:*)",
+      "Bash(python -m partsledger.capture:*)",
+      "Bash(scripts/skills/capture-cli.sh:*)",
 
       "Bash(gh pr list:*)",
       "Bash(gh pr view:*)",

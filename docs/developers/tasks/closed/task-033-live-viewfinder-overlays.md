@@ -1,9 +1,11 @@
 ---
 id: TASK-033
 title: Live viewfinder + capture overlays (framing rect, focus, lighting, trigger hint)
-status: open
+status: closed
+closed: 2026-05-14
 opened: 2026-05-14
 effort: Large (8-24h)
+effort_actual: Medium (2-8h)
 complexity: Senior
 human-in-loop: Support
 epic: usb-camera-capture
@@ -62,22 +64,22 @@ overlay off"* breadcrumb — it does **not** kill the session.
 
 ## Acceptance Criteria
 
-- [ ] `partsledger/capture/viewfinder.py` exposes a
+- [x] `partsledger/capture/viewfinder.py` exposes a
       `Viewfinder` context manager that opens the camera,
       pumps `cv2.imshow`, and guarantees `release()` +
       `destroyAllWindows()` on exit (any of: normal return,
       exception, signal).
-- [ ] All four overlay decorators render correctly on top of
+- [x] All four overlay decorators render correctly on top of
       the live feed: framing rectangle at the configured
       coordinates, Laplacian-variance focus traffic light,
       mean-luminance / clipping lighting indicator,
       trigger-hint text.
-- [ ] Window opens once at session start, stays open across
+- [x] Window opens once at session start, stays open across
       multiple frame-grab iterations, closes cleanly on
       `q` / `<Esc>` / WM-close / `SIGINT` / `SIGTERM` — same
       cleanup path for all five.
-- [ ] Overlay decorators sustain >= 30 fps on the dev hardware.
-- [ ] A crashing per-frame overlay disables that overlay
+- [x] Overlay decorators sustain >= 30 fps on the dev hardware.
+- [x] A crashing per-frame overlay disables that overlay
       and surfaces a corner *"overlay off"* breadcrumb —
       session keeps running.
 

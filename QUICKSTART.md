@@ -53,19 +53,104 @@ direnv allow                                    # if you use direnv
 The full variable list is in [`.envrc.example`](.envrc.example) —
 don't retype it here, it's the source of truth.
 
-## 3. First capture *(Phase 1+ — placeholder)*
+## 3. First capture
 
-The camera-capture entry point (`partsledger capture` or
-`python -m partsledger.capture`) lands in **EPIC-005** (TASK-032
-through TASK-038). Until that epic closes the skill-path and
-camera-path workflows are independent: use `/inventory-add` from
-Claude Code to seed entries by hand; come back here once the
-camera path lands.
+EPIC-005 Phase 1 has landed: the camera-selection wizard, live
+viewfinder with capture overlays, capture trigger + single-still
+emit, and the thin `/capture` slash-skill are all in. Recognition
+(EPIC-006) is a separate epic — for now, `<Space>` produces a
+shutter-flash receipt + an in-memory frame (optionally dumped to
+disk for inspection); identification still goes through
+`/inventory-add` in Section 4.
 
-When EPIC-005 closes this section will document the V4L2 /
-DirectShow camera-selection wizard, the live viewfinder, the
-trigger-and-still capture flow, and the recognition-overlay
-state machine.
+From inside the repo, with the venv active:
+
+```bash
+python -m partsledger.capture
+```
+
+First run only: the camera-selection wizard prints a numbered list
+of connected cameras by **friendly name** (e.g. *"046d Logitech
+StreamCam DAE9AA45"*, *"Integrated Camera 0001"*). Pick the one
+pointed at your parts mat; the choice is persisted to
+`~/.config/partsledger/config.toml`. Re-running the CLI uses the
+persisted choice silently.
+
+Once the viewfinder is up:
+
+- **Green rectangle** in the middle is the framing overlay — line
+  the part up inside it.
+- **Focus** (top-left) — Laplacian-variance traffic light. Green =
+  sharp, amber = soft, red = blurry. Adjust working distance until
+  it goes green.
+- **Light** (top-left, below Focus) — mean luminance + clip-fraction
+  traffic light. Green = balanced, amber = dim or hot, red = too
+  dark / too clipped.
+- **Press `<Space>` to capture** — bottom edge.
+
+Press `<Space>` to capture. You'll see a brief shutter flash (white
+border + "Captured") as visual confirmation. The frame is held in
+memory ready for the recognition pipeline; nothing is written to
+inventory at this stage (yet — that's EPIC-006 + EPIC-007).
+
+Exit with `q`, `Esc`, the WM close button, or `Ctrl-C`. All four
+release the camera cleanly.
+
+Useful flags:
+
+- `--pick-camera` — force the wizard to re-enter, even if a
+  persisted choice still resolves.
+- `--no-preview` — headless mode for scripted regression runs (no
+  window opens; returns immediately).
+- `--dump-captures-to <path>` — write each captured frame as a PNG
+  into `<path>`. Filename is the metadata timestamp; files are
+  **not** cleaned up at session end. Useful for collecting fixture
+  images during EPIC-006 development.
+
+Exit codes: `0` clean, `1` camera not resolvable, `2` display
+backend unusable, `130` interrupted by `Ctrl-C`.
+
+From inside Claude Code, `/capture` wraps the same CLI as a
+subprocess — the viewfinder opens on your display, control returns
+to the session when you exit.
+
+### Troubleshooting
+
+**Qt font warnings on Ubuntu** (`QFontDatabase: Cannot find font
+directory ...cv2/qt/fonts`). Harmless — cv2's bundled Qt can't find
+fallback fonts. The viewfinder still works.
+
+The `opencv-python` wheel's embedded Qt looks for fonts inside its
+own site-packages tree and **ignores `QT_QPA_FONTDIR`**. The fix is
+a one-time symlink:
+
+```bash
+sudo apt install fonts-dejavu          # if not already installed
+
+# Point the wheel's Qt at the system DejaVu fonts. Adjust the python3.X
+# segment to match your venv.
+mkdir -p .venv/lib/python3.X/site-packages/cv2/qt/fonts
+ln -sf /usr/share/fonts/truetype/dejavu/*.ttf \
+       .venv/lib/python3.X/site-packages/cv2/qt/fonts/
+```
+
+Persists for the lifetime of the venv; re-run after a `uv sync` that
+rebuilds the cv2 install.
+
+**`Warning: Ignoring XDG_SESSION_TYPE=wayland on Gnome.`** OpenCV's
+window backend runs under XWayland. Harmless; the WM-close button,
+`q`, `Esc`, and `Ctrl-C` all still route through the same cleanup
+path.
+
+**`No module named 'cv2'`.** You're not in the venv, or the venv
+was built without the runtime deps. Re-run `uv sync` (or `uv pip
+install opencv-python numpy` for the minimum capture-path footprint).
+
+**Wizard re-enters every time.** Either no `[camera]` section
+exists in `~/.config/partsledger/config.toml` yet, or the persisted
+device no longer opens (unplugged, USB ID changed). This is the
+fail-loud contract from IDEA-006 — the camera path will never
+silently fall back to a different device.
 
 ## 4. First `/inventory-add` walk-through
 

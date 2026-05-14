@@ -164,6 +164,69 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   missing — replacing the default opaque `ModuleNotFoundError`.
   Two unit tests in `tests/unit/test_extras.py`.
 
+### Camera path
+
+- TASK-032 closed: `src/partsledger/capture/camera_select.py` lands
+  the first-run camera-selection wizard. Platform-aware enumeration
+  (Linux: `/dev/v4l/by-id/usb-…` symlinks; Windows: DirectShow via
+  `pygrabber` with a cv2-index fallback). Friendly names only — no
+  `/dev/...` paths, GUIDs, or bare integers ever reach the maker.
+  Choice persists to the `[camera]` section of
+  `~/.config/partsledger/config.toml`; fail-loud re-prompt when the
+  device no longer opens. `$PL_CAMERA` env-var override for headless
+  / scripted use. 17 unit tests in `tests/unit/test_camera_select.py`
+  cover enumeration, persistence, resolver, wizard UX, and the
+  maker-UX guardrail.
+- TASK-033 closed: `src/partsledger/capture/viewfinder.py` lands the
+  `Viewfinder` context manager. Owns the camera + window lifecycle
+  with guaranteed `try…finally` cleanup across five exit paths
+  (`q` / `Esc` / WM-close / `SIGINT` / `SIGTERM`). Four per-frame
+  overlay decorators (framing rectangle, Laplacian-variance focus
+  traffic light, mean-luminance + clip-fraction lighting traffic
+  light, trigger-hint text). Overlay-crash isolation per IDEA-006 —
+  a failing decorator disables itself for the rest of the session
+  and renders an "overlay off" breadcrumb; the session keeps
+  running. 15 unit tests cover overlay logic, crash isolation,
+  context-manager cleanup paths, and the camera-lost detector.
+- TASK-034 closed: `Viewfinder.capture()` emits the
+  `(image, metadata)` packet per IDEA-006 § Output contract — image
+  is a fresh `np.ndarray (H, W, 3) BGR uint8` copy; metadata
+  dict carries ISO-8601 UTC timestamp (filesystem-safe form, no
+  colons), friendly camera name + stable id, resolution, and the
+  literal `trigger: "keyboard"`. `<Space>` dispatched via
+  `cv2.waitKey` returns the `"trigger"` event. Shutter-flash receipt
+  (white border + "Captured" label for ~5 frames) gives immediate
+  visual feedback at capture time, independent of any downstream
+  recognition pipeline. 6 unit tests cover the packet shape, the
+  not-a-stale-buffer invariant, the copy-not-view contract, and the
+  five-consecutive-failures camera-lost path.
+- TASK-035 closed: `src/partsledger/capture/__main__.py` is the
+  `python -m partsledger.capture` CLI. Three flags: `--no-preview`
+  (scripted regression, no window), `--pick-camera` (force the
+  wizard to re-enter even when a persisted choice resolves), and
+  `--dump-captures-to <path>` (write each capture as a PNG named
+  after the metadata timestamp). Exit codes: `0` clean, `1` camera
+  not resolvable, `2` display backend unusable, `130` interrupted.
+  10 unit tests cover the flag matrix and every exit code.
+- TASK-038 closed: `/capture` thin slash-skill wrapper.
+  `.claude/skills/capture/SKILL.md` declares the skill;
+  `scripts/skills/capture-cli.{sh,cmd}` spawn `python -m
+  partsledger.capture` as a subprocess and stream stdout/stderr
+  back to the Claude session. The Unix wrapper auto-detects
+  `<repo>/.venv/bin/python` when `$PL_PYTHON` is unset — covers
+  the direnv-versus-non-interactive-shell gap the Claude Code Bash
+  tool surfaces. `capture` registered in `.vibe/config.toml`
+  `enabled_skills`; allowlist entries
+  `Bash(python -m partsledger.capture:*)` and
+  `Bash(scripts/skills/capture-cli.sh:*)` added to
+  `.claude/settings.json`. 8 unit tests cover SKILL.md registration,
+  wrapper argument forwarding, env-var inheritance, exit-code
+  propagation, the venv auto-detect path, and `$PL_PYTHON`
+  precedence over auto-detect.
+- EPIC-005 **Phase 1 closed.** Phases 2-4 (TASK-036 state machine,
+  TASK-037 R/X/U key dispatch) remain open, gated on EPIC-006's
+  recognition pipeline.
+
 ### Policy
 
 - TASK-003 closed: `scripts/pre-commit` replaced with CircuitSmith's
@@ -333,6 +396,13 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   body vs MPN-token-shape narrow) made while landing TASK-019;
   legitimate datasheet-derived absolutes use `<!-- lint: ok -->`
   rather than being filtered out of the pattern set.
+- ADR-0003 — `/capture` slash-skill ships in EPIC-005 Phase 1
+  without waiting for TASK-037 secondary-key dispatch. Records the
+  scoping decision to land TASK-038's subprocess wrapper alongside
+  TASK-032..035 in one epic-run, since the TASK-037 prerequisite
+  captures a UX-completeness recommendation, not a code-level
+  dependency. When TASK-037 lands later, no change to the wrapper
+  or SKILL.md is needed.
 
 ### Ideas
 

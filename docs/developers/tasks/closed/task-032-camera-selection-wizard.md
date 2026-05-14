@@ -1,9 +1,11 @@
 ---
 id: TASK-032
 title: Camera-selection wizard (V4L2 / DirectShow enumeration, friendly names)
-status: open
+status: closed
+closed: 2026-05-14
 opened: 2026-05-14
 effort: Large (8-24h)
+effort_actual: Medium (2-8h)
 complexity: Senior
 human-in-loop: Support
 epic: usb-camera-capture
@@ -59,20 +61,20 @@ available device. The `$PL_CAMERA` env-var override from
 
 ## Acceptance Criteria
 
-- [ ] `partsledger/capture/camera_select.py` exists with
+- [x] `partsledger/capture/camera_select.py` exists with
       `list_cameras()`, `resolve_camera()`, and a wizard CLI entry-point.
-- [ ] On Linux, enumeration uses `/dev/v4l/by-id/usb-…` symlinks
+- [x] On Linux, enumeration uses `/dev/v4l/by-id/usb-…` symlinks
       plus `v4l2` capability queries; on Windows, DirectShow
       device-properties API. Stable IDs survive a USB replug.
-- [ ] The wizard prompt shows **only** friendly names — no
+- [x] The wizard prompt shows **only** friendly names — no
       `/dev/...` paths, no DirectShow GUIDs, no integer indices.
-- [ ] The chosen `(stable_id, friendly_name)` pair is persisted
+- [x] The chosen `(stable_id, friendly_name)` pair is persisted
       to the `[camera]` section of
       `~/.config/partsledger/config.toml`.
-- [ ] Deleting the `[camera]` section retriggers the wizard on
+- [x] Deleting the `[camera]` section retriggers the wizard on
       next invocation; persisted choice that no longer resolves
       also retriggers (fail-loud, never silent fall-through).
-- [ ] `$PL_CAMERA` env-var override bypasses the wizard.
+- [x] `$PL_CAMERA` env-var override bypasses the wizard.
 
 ## Test Plan
 

@@ -12,6 +12,7 @@ This folder contains utility scripts for development, CI/CD, and maintenance tas
 | [`install_git_hooks.sh`](install_git_hooks.sh) | Install repo-side git hooks into .git/hooks/. | `./install_git_hooks.sh` |
 | [`lint_hedge_language.py`](lint_hedge_language.py) | Pre-commit shim for ``partsledger.inventory.hedge_lint``. | `python3 lint_hedge_language.py` |
 | [`lint_inventory.py`](lint_inventory.py) | Pre-commit shim for ``partsledger.inventory.lint``. | `python3 lint_inventory.py` |
+| [`portability_lint.py`](portability_lint.py) | Pre-commit / CI shim for ``partsledger._dev.portability_lint``. | `python3 portability_lint.py` |
 | [`pre-commit`](pre-commit) | Pre-commit hook for PartsLedger. | `python3 pre-commit` |
 | [`release_burnup.py`](release_burnup.py) | Generate the burn-up section for OVERVIEW.md. | `python3 release_burnup.py` |
 | [`release_snapshot.py`](release_snapshot.py) | Snapshot OVERVIEW / EPICS / KANBAN into `archive/<version>/` on release. | `python3 release_snapshot.py` |
@@ -58,6 +59,12 @@ This folder contains utility scripts for development, CI/CD, and maintenance tas
 **Purpose**: Pre-commit shim for ``partsledger.inventory.lint``.
 
 **Usage**: `python3 lint_inventory.py`
+
+### portability_lint.py
+
+**Purpose**: Pre-commit / CI shim for ``partsledger._dev.portability_lint``.
+
+**Usage**: `python3 portability_lint.py`
 
 ### pre-commit
 

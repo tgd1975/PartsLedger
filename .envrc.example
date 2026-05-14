@@ -59,6 +59,10 @@ export PL_NEXAR_CLIENT_SECRET=""
 # friendly name), but a raw integer index is also accepted as a fallback.
 # export PL_CAMERA=""
 
+# The opencv-python wheel's bundled Qt looks for fonts inside its own
+# site-packages tree and ignores QT_QPA_FONTDIR. The fix is a one-time symlink
+# into the wheel's fonts directory — see QUICKSTART.md § Troubleshooting.
+
 # ---------------------------------------------------------------------------
 # Paths and runtime defaults.
 

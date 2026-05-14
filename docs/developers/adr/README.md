@@ -52,6 +52,7 @@ the original reasoning stays as historical record.
 
 - [ADR-0001 — PartsLedger ships as an installable Python package](0001-library-as-installable-package.md)
 - [ADR-0002 — Hedge-lint pattern set is the four literals from IDEA-005](0002-hedge-lint-pattern-set.md)
+- [ADR-0003 — /capture slash-skill ships in EPIC-005 Phase 1 without waiting for TASK-037](0003-capture-skill-lands-before-secondary-keys.md)
 
 ### Superseded
 

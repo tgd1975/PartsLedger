@@ -1,9 +1,11 @@
 ---
 id: TASK-035
 title: CLI wrapper python -m partsledger.capture
-status: open
+status: closed
+closed: 2026-05-14
 opened: 2026-05-14
 effort: Small (<2h)
+effort_actual: Small (<2h)
 complexity: Medium
 human-in-loop: No
 epic: usb-camera-capture
@@ -50,17 +52,17 @@ corpus the recognition stage needs.
 
 ## Acceptance Criteria
 
-- [ ] `python -m partsledger.capture` opens the viewfinder and
+- [x] `python -m partsledger.capture` opens the viewfinder and
       behaves identically to invoking the `Viewfinder` library
       directly from a Python REPL.
-- [ ] `--no-preview --dump-captures-to /tmp/test` runs against
+- [x] `--no-preview --dump-captures-to /tmp/test` runs against
       a fixture image source, emits PNGs with the right
       timestamp filenames, never opens a window.
-- [ ] `--pick-camera` re-enters the wizard even when a
+- [x] `--pick-camera` re-enters the wizard even when a
       persisted `[camera]` choice still resolves.
-- [ ] `Ctrl-C` at any state exits cleanly with code 130; no
+- [x] `Ctrl-C` at any state exits cleanly with code 130; no
       orphan X11 / Win32 window left behind.
-- [ ] Camera-resolve failure exits with code 1; display-backend
+- [x] Camera-resolve failure exits with code 1; display-backend
       failure (e.g. `cv2.imshow` cannot create a window) exits
       with code 2.
 

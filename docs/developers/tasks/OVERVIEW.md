@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 26** | 🔵 **Active: 0** | 🟡 **Paused: 3** | 🟢 **Closed: 29** | **Total: 58** | █████░░░░░ 50%
+⚪ **Open: 21** | 🔵 **Active: 0** | 🟡 **Paused: 3** | 🟢 **Closed: 34** | **Total: 58** | ██████░░░░ 59%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -35,13 +35,8 @@ _No active tasks._
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
 | [TASK-020](open/task-020-page-gen-auto-trigger.md) | Auto-trigger /inventory-page on row creation via /inventory-add | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-032](open/task-032-camera-selection-wizard.md) | Camera-selection wizard (V4L2 / DirectShow enumeration, friendly names) | Large (8-24h) | Senior | ⚪ open |
-| [TASK-033](open/task-033-live-viewfinder-overlays.md) | Live viewfinder + capture overlays (framing rect, focus, lighting, trigger hint) | Large (8-24h) | Senior | ⚪ open |
-| [TASK-034](open/task-034-capture-trigger-and-still.md) | Capture trigger + single-still emit per Output contract | Medium (2-8h) | Medium | ⚪ open |
-| [TASK-035](open/task-035-camera-cli-wrapper.md) | CLI wrapper python -m partsledger.capture | Small (&lt;2h) | Medium | ⚪ open |
 | [TASK-036](open/task-036-recognition-overlay-state-machine.md) | Recognition-status overlay state machine + hint-family tokeniser | Large (8-24h) | Senior | ⚪ open |
 | [TASK-037](open/task-037-secondary-key-dispatch.md) | Secondary key dispatch — R / X / U handlers | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-038](open/task-038-capture-slash-skill.md) | /capture thin slash-skill subprocess wrapper | Small (&lt;2h) | Medium | ⚪ open |
 | [TASK-039](open/task-039-recognition-embed-module.md) | Implement src/partsledger/recognition/embed.py — DINOv2-ViT-S/14 via torch.hub | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-040](open/task-040-recognition-cache-module.md) | Implement src/partsledger/recognition/cache.py — sqlite-vec backed | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-041](open/task-041-cache-only-banded-recognition.md) | Cache-only recognition with tight / tight_ambiguous / medium / miss bands | Medium (2-8h) | Senior | ⚪ open |
@@ -94,4 +89,9 @@ _No active tasks._
 | [TASK-029](closed/task-029-optional-dependencies-extras.md) | Configure [project.optional-dependencies] for partsledger[resistor-reader] extra | Small (&lt;2h) |
 | [TASK-030](closed/task-030-adr-0001-library-as-installable-package.md) | Write ADR-0001 — library as installable package | Small (&lt;2h) |
 | [TASK-031](closed/task-031-bootstrap-readme-quickstart.md) | Write README.md / QUICKSTART.md bootstrap section | Medium (2-8h) |
+| [TASK-032](closed/task-032-camera-selection-wizard.md) | Camera-selection wizard (V4L2 / DirectShow enumeration, friendly names) | Large (8-24h) |
+| [TASK-033](closed/task-033-live-viewfinder-overlays.md) | Live viewfinder + capture overlays (framing rect, focus, lighting, trigger hint) | Large (8-24h) |
+| [TASK-034](closed/task-034-capture-trigger-and-still.md) | Capture trigger + single-still emit per Output contract | Medium (2-8h) |
+| [TASK-035](closed/task-035-camera-cli-wrapper.md) | CLI wrapper python -m partsledger.capture | Small (&lt;2h) |
+| [TASK-038](closed/task-038-capture-slash-skill.md) | /capture thin slash-skill subprocess wrapper | Small (&lt;2h) |
 <!-- END GENERATED -->

@@ -1,9 +1,11 @@
 ---
 id: TASK-038
 title: /capture thin slash-skill subprocess wrapper
-status: open
+status: closed
+closed: 2026-05-14
 opened: 2026-05-14
 effort: Small (<2h)
+effort_actual: Small (<2h)
 complexity: Medium
 human-in-loop: No
 epic: usb-camera-capture
@@ -53,20 +55,20 @@ TASK-032 through TASK-037.
 
 ## Acceptance Criteria
 
-- [ ] `.claude/skills/capture/SKILL.md` exists with a clear
+- [x] `.claude/skills/capture/SKILL.md` exists with a clear
       description and the subprocess-wrapper contract.
-- [ ] `capture` is registered in `enabled_skills` in
+- [x] `capture` is registered in `enabled_skills` in
       `.vibe/config.toml`.
-- [ ] `/capture` in a Claude Code session opens the
+- [x] `/capture` in a Claude Code session opens the
       viewfinder window exactly as the bare CLI invocation
       does.
-- [ ] `$PL_*` env vars from the surrounding session are
+- [x] `$PL_*` env vars from the surrounding session are
       passed through to the subprocess.
-- [ ] Closing the viewfinder returns control to the Claude
+- [x] Closing the viewfinder returns control to the Claude
       session with the right exit code surfaced (0 clean, 1
       camera not resolvable, 2 display backend unusable, 130
       interrupted).
-- [ ] Any `inventory/parts/<part>.md` updates the camera-path
+- [x] Any `inventory/parts/<part>.md` updates the camera-path
       session produces are visible to Claude after the
       subprocess returns.
 

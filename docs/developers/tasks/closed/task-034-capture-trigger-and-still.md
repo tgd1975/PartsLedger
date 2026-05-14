@@ -1,9 +1,11 @@
 ---
 id: TASK-034
 title: Capture trigger + single-still emit per Output contract
-status: open
+status: closed
+closed: 2026-05-14
 opened: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Small (<2h)
 complexity: Medium
 human-in-loop: Support
 epic: usb-camera-capture
@@ -60,16 +62,16 @@ swallowed.
 
 ## Acceptance Criteria
 
-- [ ] `<Space>` press yields exactly one `np.ndarray` with shape
+- [x] `<Space>` press yields exactly one `np.ndarray` with shape
       `(H, W, 3)` and dtype `uint8`, BGR.
-- [ ] Metadata dict carries the camera's friendly name and
+- [x] Metadata dict carries the camera's friendly name and
       stable id byte-identically to what TASK-032 persisted;
       timestamp is ISO 8601; resolution matches the open device;
       `trigger` is the literal string `"keyboard"`.
-- [ ] The same captured frame fed into a no-op downstream stub
+- [x] The same captured frame fed into a no-op downstream stub
       produces a deterministic non-zero hash — i.e. the array
       isn't a stale buffer.
-- [ ] 5 consecutive frame-grab failures trigger the
+- [x] 5 consecutive frame-grab failures trigger the
       *"camera lost"* exit path with non-zero exit code.
 
 ## Test Plan
