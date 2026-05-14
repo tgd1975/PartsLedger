@@ -117,6 +117,52 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   pattern when matches surface; `/inventory-page` SKILL.md's Family
   pages section gains the proactive sibling check before drafting a
   fresh page.
+- TASK-023 closed: `RELEASING.md` at repo root + `/release` skill
+  (`.claude/skills/release/SKILL.md`). PartsLedger's release
+  pipeline plumbed on its terms — three public surfaces (Python
+  API, CLI, inventory-MD schema) instead of CircuitSmith's two,
+  with the schema surface coordinated against CircuitSmith's
+  `--prefer-inventory` adapter for MAJOR releases. `--dry-run`
+  documented. `release` added to `enabled_skills`.
+- TASK-024 closed: `.github/workflows/{ci.yml,release.yml}`.
+  `ci.yml` refreshed for src-layout — installs `-e .[dev]` and
+  verifies `python -c "import partsledger"` succeeds. `release.yml`
+  is tag-triggered (`v*`), builds wheel + sdist via `uv build`,
+  publishes to PyPI via trusted publishing (token fallback wired
+  but commented), creates a GitHub Release with the CHANGELOG
+  slice for the tag.
+- TASK-025 closed: `uv.lock` adopted at repo root. CI gains a
+  `uv lock --check` freshness gate that fails the build when
+  `pyproject.toml` is edited without re-running `uv lock`.
+  CONTRIBUTING.md gains a Lockfile-workflow section
+  (`uv sync` for the default flow, `uv pip install -r
+  requirements-dev.txt` as fallback).
+- TASK-026 closed: `src/partsledger/_dev/portability_lint.py` +
+  `scripts/portability_lint.py` shim + pre-commit hook stanza +
+  CI step. Enforces the no-host-imports invariant from ADR-0001
+  (forbids `from scripts.<...>`, `from .claude.<...>`,
+  parent-traversal escapes, hard-coded repo paths). 11 patterns,
+  9 documented allow-list exceptions for legitimate docstring
+  mentions. 13 unit tests covering pattern matrix + shim parity.
+  Allowlist entry `Bash(python scripts/portability_lint.py:*)`
+  added to `.claude/settings.json`.
+- TASK-028 closed: `scripts/DRIFT_AUDIT.md` records the per-file
+  audit against `../CircuitSmith/scripts/`. All 9 drifted files
+  resolve to **keep-local** with documented rationale
+  (`cs-`/`pl-` substitutions, divergent housekeep evolution,
+  CS-specific features omitted like the Phase 2b release gate
+  and PII leak detector). Three byte-identical files
+  (`update_idea_overview.py`, `update_task_overview.py`,
+  `update_scripts_readme.py`) need no action.
+  `security_review_changes.py` flagged as a candidate for
+  future pull-from-upstream (PII detector).
+- TASK-029 closed: `pyproject.toml` declares
+  `resistor-reader = ["scikit-image>=0.22", "scipy>=1.11"]`
+  under `[project.optional-dependencies]`.
+  `src/partsledger/resistor_reader/__init__.py` raises a clear
+  `ImportError` with install hint when the extras-only deps are
+  missing — replacing the default opaque `ModuleNotFoundError`.
+  Two unit tests in `tests/unit/test_extras.py`.
 
 ### Policy
 
@@ -139,6 +185,13 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   history required, force-push and deletion forbidden, admin
   enforcement off (owner keeps hot-fix path), PR review off (solo
   project — trigger to flip is contributor #2 landing).
+- TASK-027 closed: `CLAUDE.md` gains a `## Shim convention` section.
+  Project-wide policy that Python product code lives in
+  `src/partsledger/<module>/`; `scripts/*.py` and
+  `.claude/skills/*/*.py` files are thin shims (argparse + one call
+  into `partsledger.*`). The portability lint enforces the
+  no-host-imports half; shim-thinness is code-review.
+  `scripts/portability_lint.py` named as the reference shim.
 
 ### Documentation
 
@@ -161,6 +214,15 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   MERMAID_STYLE_GUIDE.md. Decoupling-seams section names the two
   load-bearing invariants (MD is source of truth; CircuitSmith reads
   PartsLedger one-way via `--prefer-inventory`).
+- TASK-031 closed: `QUICKSTART.md` at repo root. Fresh-clone
+  bootstrap walk-through — install (clone → hooks → `uv venv` →
+  `uv sync`), `.envrc` configuration, first capture placeholder
+  pointing at EPIC-005, first `/inventory-add LM358N 5`
+  walk-through, hand-off to CONTRIBUTING / RELEASING /
+  CODING_STANDARDS. `README.md` gains a pointer right after the
+  Status banner. `partsledger doctor` deferred per IDEA-012 Gap 5;
+  trigger to flip is a real contributor getting stuck where a
+  doctor command would have unblocked them.
 
 ### Governance
 
@@ -235,6 +297,19 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
 
 ### EPIC-001 closed
 
+- **EPIC-004 (project-setup) closed** — all 10 tasks done
+  (TASK-022 rode on EPIC-002's branch as Phase 0b prerequisite;
+  TASK-023..031 closed here). PartsLedger now has the full
+  Phase 0b cross-cutting prerequisite stack: src-layout package,
+  release pipeline (RELEASING + /release skill), GitHub workflows
+  (CI + release), `uv.lock` for reproducible installs, portability
+  lint enforcing no-host-imports, shim convention codified in
+  CLAUDE.md, drift audit against CircuitSmith, optional-dependencies
+  extras shape (`partsledger[resistor-reader]`), ADR-0001 recording
+  the founding layout decision, and a fresh-clone bootstrap doc.
+  Unblocks EPICs 005, 006, 007, 008 in parallel. Closed epic at
+  [docs/developers/tasks/closed/epic-004-project-setup.md](docs/developers/tasks/closed/epic-004-project-setup.md).
+
 - **EPIC-001 (align-with-circuitsmith) closed** — all 13 tasks
   done. PartsLedger now mirrors CircuitSmith's project framework:
   commit policy with one-shot provenance token, mandatory ruff +
@@ -246,6 +321,13 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
 
 ### Architecture decisions
 
+- ADR-0001 — PartsLedger ships as an installable Python package.
+  Records the founding layout decision (src-layout, package name
+  `partsledger`) made by TASK-022 and codified by TASK-030.
+  Cross-references CLAUDE.md § Shim convention, RELEASING.md
+  (public-surface definitions), IDEA-014, and CircuitSmith's
+  analogue ADR-0012. Consequences section names the EPICs that
+  depend on the decision (EPICs 005-008).
 - ADR-0002 — Hedge-lint pattern set is the four literals from
   IDEA-005. Records the calibration call (four-literals-from-task-
   body vs MPN-token-shape narrow) made while landing TASK-019;

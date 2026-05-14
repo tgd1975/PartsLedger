@@ -1,0 +1,23 @@
+# Portability-lint exceptions for src/partsledger/.
+# Format: <relative-path>:<pattern-substring>:<reason>
+#
+# Exceptions are for legitimate docstring / comment mentions of host-side
+# paths and sibling project names. Active hard-coded uses (path traversal
+# at runtime, scripts.* imports) stay flagged.
+
+# The lint module itself documents what it forbids — all references are
+# in docstrings / pattern literals / comments.
+_dev/portability_lint.py:project-side `scripts.` module:self-reference in docstring describing forbidden pattern
+_dev/portability_lint.py:escape-out-of-package path traversal:self-reference in docstring describing forbidden pattern
+_dev/portability_lint.py:user-home path:regex literal for the matched pattern
+_dev/portability_lint.py:sibling project name `CircuitSmith`:docstring + pattern message text
+_dev/portability_lint.py:sibling project name `AwesomeStudioPedal`:pattern message text
+
+# Inventory modules name their canonical path in docstrings. The
+# actual path resolution flows through PL_INVENTORY_PATH env var
+# (writer.py:_resolve_inventory_path) and CLI args (lint.py shim),
+# both of which are configurable interfaces per the task-026 contract.
+inventory/__init__.py:hard-coded repo path `inventory/...`:docstring describing the canonical store
+inventory/hedge_lint.py:hard-coded repo path `inventory/...`:docstring naming the linted glob
+inventory/lint.py:hard-coded repo path `inventory/...`:docstring naming the linted file
+inventory/writer.py:hard-coded repo path `inventory/...`:docstring naming the target file; resolved via PL_INVENTORY_PATH at runtime

@@ -1,9 +1,11 @@
 ---
 id: TASK-027
 title: Document shim convention (scripts/ and skill .py files as thin shims)
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Small (<2h)
+effort_actual: Small (<2h)
 complexity: Medium
 human-in-loop: No
 epic: project-setup
@@ -45,13 +47,13 @@ minimal `scripts/_shim_example.py` that calls into a trivial
 
 ## Acceptance Criteria
 
-- [ ] [`CLAUDE.md`](../../../../CLAUDE.md) carries a `## Shim convention`
+- [x] [`CLAUDE.md`](../../../../CLAUDE.md) carries a `## Shim convention`
       section (or equivalent) stating the rule.
-- [ ] The section references at least one concrete shim in the tree
+- [x] The section references at least one concrete shim in the tree
       as a worked example.
-- [ ] The section calls out both `scripts/*.py` *and*
+- [x] The section calls out both `scripts/*.py` *and*
       `.claude/skills/*/*.py` — not just one of the two.
-- [ ] The shim convention is also referenced from the EPIC-004 epic
+- [x] The shim convention is also referenced from the EPIC-004 epic
       file (`docs/developers/tasks/open/epic-004-project-setup.md`),
       which already mentions it; cross-link to CLAUDE.md.
 

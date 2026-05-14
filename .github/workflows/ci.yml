@@ -25,12 +25,28 @@ jobs:
 
       - uses: astral-sh/setup-uv@v3
 
+      - name: Lockfile freshness (uv lock --check)
+        # Fails if pyproject.toml has been edited without re-running
+        # `uv lock`. Catches the case where a dep bump landed without
+        # the matching lockfile update.
+        run: uv lock --check
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install Python dev dependencies
-        run: uv pip install --system -r requirements-dev.txt
+      - name: Install partsledger in editable mode with [dev] extra
+        # `-e .[dev]` installs the runtime deps from pyproject.toml plus
+        # the `dev` optional-dependencies (ruff, pytest), matching
+        # requirements-dev.txt's one-liner.
+        run: uv pip install --system -e .[dev]
+
+      - name: Verify package import (src-layout took)
+        # Confirms TASK-022's package layout — fails fast if pyproject.toml
+        # or setuptools-find-packages drifted such that `partsledger`
+        # isn't actually installable as a top-level import.
+        shell: bash
+        run: python -c "import partsledger; print(partsledger.__version__)"
 
       - name: Install markdownlint-cli2
         run: npm install -g markdownlint-cli2
@@ -39,10 +55,16 @@ jobs:
         # Mirror of scripts/pre-commit. Keep the glob and ignore-arg
         # in sync with that file's `markdownlint-cli2 …` invocation.
         shell: bash
-        run: markdownlint-cli2 "**/*.md" "#node_modules" "#.claude/security-review-latest.md"
+        run: markdownlint-cli2 "**/*.md" "#node_modules" "#.venv" "#.claude/security-review-latest.md"
 
       - name: Ruff lint
         run: ruff check .
+
+      - name: Portability lint (src/partsledger/)
+        # Enforces the no-host-imports invariant from ADR-0001.
+        # Unconditional per TASK-026 AC.
+        shell: bash
+        run: python scripts/portability_lint.py src/partsledger
 
       - name: Pytest
         run: pytest

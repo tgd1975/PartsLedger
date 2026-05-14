@@ -8,6 +8,8 @@ An **LLM-native inventory for your parts bin**. Point a USB camera at a componen
 
 🚧 **Concept stage** — the repo currently contains only the concept docs. Code to follow.
 
+To stand up the system from a fresh clone, follow [`QUICKSTART.md`](QUICKSTART.md) — install, env-var setup, first `/inventory-add` walk-through. Vision and architecture stay here; operational steps live there.
+
 The toolchain is dossiered piece-by-piece in [`docs/developers/ideas/`](docs/developers/ideas/OVERVIEW.md):
 **[IDEA-004](docs/developers/ideas/open/idea-004-markdown-inventory-schema.md)** (schema) ·
 **[IDEA-005](docs/developers/ideas/open/idea-005-skill-path-today.md)** (skill path, as-built) ·

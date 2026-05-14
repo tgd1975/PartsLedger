@@ -1,9 +1,11 @@
 ---
 id: TASK-026
 title: Add src/partsledger/_dev/portability_lint.py with scripts/ shim
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Medium (2-8h)
 complexity: Medium
 human-in-loop: No
 epic: project-setup
@@ -41,15 +43,15 @@ and into `.github/workflows/ci.yml` as a standalone step.
 
 ## Acceptance Criteria
 
-- [ ] `src/partsledger/_dev/portability_lint.py` exists and implements
+- [x] `src/partsledger/_dev/portability_lint.py` exists and implements
       the import-graph walk.
-- [ ] `scripts/portability_lint.py` is a thin shim (≤ 15 lines of
+- [x] `scripts/portability_lint.py` is a thin shim (≤ 15 lines of
       executable code) calling into the package.
-- [ ] A deliberate test case (e.g. `src/partsledger/_dev/_test_import.py`
+- [x] A deliberate test case (e.g. `src/partsledger/_dev/_test_import.py`
       with `from scripts.housekeep import …`) is flagged by the lint.
-- [ ] The clean tree passes the lint with exit code 0.
-- [ ] The pre-commit hook runs the lint and rejects offending diffs.
-- [ ] CI runs `python scripts/portability_lint.py` as a dedicated step.
+- [x] The clean tree passes the lint with exit code 0.
+- [x] The pre-commit hook runs the lint and rejects offending diffs.
+- [x] CI runs `python scripts/portability_lint.py` as a dedicated step.
 
 ## Test Plan
 

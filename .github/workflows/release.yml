@@ -1,0 +1,125 @@
+name: Release
+
+# Tag-triggered build + PyPI publish + GitHub Release.
+#
+# See docs/developers/CI_PIPELINE.md § Release workflow and RELEASING.md
+# for the operational contract. The agent-facing driver is the /release
+# skill, which performs the bump-CHANGELOG-tag-push flow that triggers
+# this workflow.
+#
+# Trusted publishing is configured on pypi.org tying this repository to
+# the `partsledger` project (one-time registration required before the
+# first real release). To fall back to token auth, uncomment the
+# `password:` line below and set the `PYPI_API_TOKEN` repo secret.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write  # Required for creating the GitHub Release.
+  id-token: write  # Required for PyPI trusted publishing.
+
+jobs:
+  build:
+    name: Build wheel + sdist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          # Lower bound of pyproject.toml `requires-python = ">=3.11"`.
+          # Matches the CI workflow.
+          python-version: '3.11'
+
+      - uses: astral-sh/setup-uv@v3
+
+      - name: Build wheel and sdist (carries every PEP 517 extra)
+        # `uv build` produces both sdist and wheel artefacts under dist/.
+        # `[project.optional-dependencies]` extras (dev, resistor-reader)
+        # ride into the wheel metadata; pip install partsledger[<extra>]
+        # against this distribution resolves the extra's dependency set.
+        run: uv build
+
+      - name: Verify wheel installs and partsledger imports
+        # Catches packaging regressions before the upload: the wheel
+        # must install into a fresh venv and `import partsledger`
+        # must succeed.
+        shell: bash
+        run: |
+          python -m venv /tmp/verify
+          /tmp/verify/bin/pip install --upgrade pip
+          /tmp/verify/bin/pip install dist/partsledger-*.whl
+          /tmp/verify/bin/python -c "import partsledger; print(partsledger.__version__)"
+
+      - name: Upload dist artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/partsledger
+    steps:
+      - name: Download dist artefacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI (trusted publishing)
+        # Trusted publishing — no API token required when the project
+        # is registered on pypi.org with this repository as a trusted
+        # publisher. To fall back to token auth, uncomment the
+        # `password:` line below and set the PYPI_API_TOKEN secret.
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # with:
+        #   password: ${{ secrets.PYPI_API_TOKEN }}
+
+  github-release:
+    name: Create GitHub Release
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download dist artefacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Extract CHANGELOG slice for this tag
+        # Pulls the `## [vX.Y.Z]` block out of CHANGELOG.md so it can
+        # be embedded in the GitHub Release body. Falls back to a
+        # one-line note if the section is missing.
+        id: changelog
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          awk -v tag="$tag" '
+            $0 ~ "^## \\["tag"\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-body.md
+          if [ ! -s release-body.md ]; then
+            echo "No CHANGELOG section found for $tag — using fallback note." >&2
+            echo "Release $tag. See CHANGELOG.md for details." > release-body.md
+          fi
+          echo "body_path=release-body.md" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: ${{ steps.changelog.outputs.body_path }}
+          files: dist/*
+          fail_on_unmatched_files: true

@@ -1,9 +1,11 @@
 ---
 id: TASK-023
 title: Port RELEASING.md and /release skill; rewrite semver for three public surfaces
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Medium (2-8h)
 complexity: Senior
 human-in-loop: No
 epic: project-setup
@@ -42,16 +44,16 @@ The three surfaces, in the order `RELEASING.md` must list them:
 
 ## Acceptance Criteria
 
-- [ ] `RELEASING.md` exists at the repo root, documents all three
+- [x] `RELEASING.md` exists at the repo root, documents all three
       public surfaces with the MAJOR / MINOR / PATCH rules above.
-- [ ] `.claude/skills/release/SKILL.md` exists, parallels CircuitSmith's
+- [x] `.claude/skills/release/SKILL.md` exists, parallels CircuitSmith's
       shape, and references PartsLedger's three surfaces (not
       CircuitSmith's two).
-- [ ] `enabled_skills` in `.vibe/config.toml` includes `release`.
-- [ ] A dry-run release (`/release --dry-run` or equivalent) walks
+- [x] `enabled_skills` in `.vibe/config.toml` includes `release`.
+- [x] A dry-run release (`/release --dry-run` or equivalent) walks
       through version-bump, changelog roll, and tag creation without
       errors and without publishing.
-- [ ] CHANGELOG bullet under `[Unreleased] / ### Tooling` records the
+- [x] CHANGELOG bullet under `[Unreleased] / ### Tooling` records the
       port in the same squash.
 
 ## Test Plan

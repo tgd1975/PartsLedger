@@ -1,9 +1,11 @@
 ---
 id: TASK-024
 title: Add .github/workflows/ci.yml and release.yml
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Medium (2-8h)
 complexity: Medium
 human-in-loop: No
 epic: project-setup
@@ -36,17 +38,17 @@ Two workflows:
 
 ## Acceptance Criteria
 
-- [ ] `.github/workflows/ci.yml` runs cleanly on a PR — Ubuntu and
+- [x] `.github/workflows/ci.yml` runs cleanly on a PR — Ubuntu and
       Windows legs both green.
-- [ ] CI step `python -c "import partsledger"` passes (confirms
+- [x] CI step `python -c "import partsledger"` passes (confirms
       TASK-022's package layout took).
-- [ ] `.github/workflows/release.yml` exists and is validated by
+- [x] `.github/workflows/release.yml` exists and is validated by
       `actionlint` (or equivalent) without errors.
-- [ ] A dry-run tag push (to a throwaway prerelease tag, e.g.
+- [x] A dry-run tag push (to a throwaway prerelease tag, e.g.
       `v0.0.1.dev1`) walks the release workflow through `uv build`
       successfully; the publish step is gated on a real tag and not
       executed in the dry run.
-- [ ] The release workflow carries the `partsledger[resistor-reader]`
+- [x] The release workflow carries the `partsledger[resistor-reader]`
       extra through into the published distribution metadata.
 
 ## Test Plan

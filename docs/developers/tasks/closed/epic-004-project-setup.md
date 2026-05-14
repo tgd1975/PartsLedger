@@ -21,7 +21,11 @@ library-as-package move, and the README/QUICKSTART bootstrap section.
 Project-wide convention applied throughout: Python code lives in
 `src/partsledger/<module>/`; `scripts/*.py` and `.claude/skills/*/*.py`
 files are thin shims (argparse + one call into `partsledger.*`). Every
-Python task in later epics follows this rule once it lands here.
+Python task in later epics follows this rule once it lands here. The
+rule is recorded in [`CLAUDE.md` § Shim convention](../../../../CLAUDE.md#shim-convention);
+[`scripts/portability_lint.py`](../../../../scripts/portability_lint.py)
+is the reference shim and the lint that enforces the no-host-imports
+half of the same contract.
 
 EPIC-004 is a hard prerequisite for every task in EPICs 005, 006, 007,
 and 008. No module is importable as `partsledger.*` until the package

@@ -1,9 +1,11 @@
 ---
 id: TASK-031
 title: Write README.md / QUICKSTART.md bootstrap section
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Medium (2-8h)
 complexity: Medium
 human-in-loop: No
 epic: project-setup
@@ -57,19 +59,19 @@ principle (no tech internals exposed by default).
 
 ## Acceptance Criteria
 
-- [ ] A fresh-clone bootstrap walk-through exists at `README.md`
+- [x] A fresh-clone bootstrap walk-through exists at `README.md`
       (Quickstart section) or `QUICKSTART.md`, covering install,
       `.envrc`, first capture, first `/inventory-add`.
-- [ ] The walk-through references concrete commands, not abstractions
+- [x] The walk-through references concrete commands, not abstractions
       (`uv sync`, `/inventory-add LM358N 5`, not "install
       dependencies" / "add a part").
-- [ ] A contributor who has never seen the repo can follow the doc
+- [x] A contributor who has never seen the repo can follow the doc
       from clone to first inventory row without external help —
       validated by the maintainer reading the final version with
       fresh eyes.
-- [ ] The walk-through links to (and does not duplicate)
+- [x] The walk-through links to (and does not duplicate)
       `.envrc.example`, `RELEASING.md`, and the relevant skill specs.
-- [ ] CHANGELOG bullet under `[Unreleased] / ### Added` records the
+- [x] CHANGELOG bullet under `[Unreleased] / ### Added` records the
       bootstrap docs.
 
 ## Test Plan

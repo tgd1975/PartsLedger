@@ -169,6 +169,26 @@ if [ -n "$STAGED_INVENTORY" ]; then
 fi
 
 # ---------------------------------------------------------------------------
+# Portability lint over src/partsledger/ (mandatory when any file under
+# the package is staged — enforces the no-host-imports invariant from
+# ADR-0001). Thin shim over `partsledger._dev.portability_lint`.
+# ---------------------------------------------------------------------------
+STAGED_PKG=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^src/partsledger/' || true)
+if [ -n "$STAGED_PKG" ]; then
+    PYTHON=$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)
+    if [ -z "$PYTHON" ]; then
+        echo -e "${RED}ERROR: python is required but not on PATH.${NC}" >&2
+        exit 1
+    fi
+    echo -e "${YELLOW}Checking package portability (portability_lint.py)...${NC}"
+    if ! "$PYTHON" "${REPO_ROOT}/scripts/portability_lint.py" "${REPO_ROOT}/src/partsledger"; then
+        echo -e "${RED}Portability lint failed. Commit aborted.${NC}" >&2
+        exit 1
+    fi
+    echo -e "${GREEN}Package portability OK.${NC}"
+fi
+
+# ---------------------------------------------------------------------------
 # Hedge-language lint over inventory/parts/*.md (mandatory when any parts
 # page is staged — flags absolute-claim phrasing that should be hedged).
 # IDEA-005 § Stage 1 — backstop for the sincere-language convention.

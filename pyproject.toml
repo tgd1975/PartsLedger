@@ -53,6 +53,13 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.7",
 ]
+# EPIC-008 reader. `opencv-python` is already a runtime dep, so the
+# extra only carries the resistor-reader-specific tools. Final list
+# may refine when EPIC-008 surfaces its actual import surface.
+resistor-reader = [
+    "scikit-image>=0.22",
+    "scipy>=1.11",
+]
 
 [project.urls]
 Homepage = "https://github.com/tgd1975/PartsLedger"

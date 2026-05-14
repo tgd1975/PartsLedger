@@ -1,9 +1,11 @@
 ---
 id: TASK-025
 title: Adopt uv.lock for reproducible installs
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Small (<2h)
+effort_actual: Small (<2h)
 complexity: Junior
 human-in-loop: No
 epic: project-setup
@@ -35,10 +37,10 @@ Steps:
 
 ## Acceptance Criteria
 
-- [ ] `uv.lock` is present at the repo root and committed.
-- [ ] `uv sync` in a clean checkout produces a working env (`python -c "import partsledger"` succeeds).
-- [ ] CI fails when `pyproject.toml` is changed without re-running `uv lock`.
-- [ ] CONTRIBUTING (or RELEASING.md, whichever covers the dev loop)
+- [x] `uv.lock` is present at the repo root and committed.
+- [x] `uv sync` in a clean checkout produces a working env (`python -c "import partsledger"` succeeds).
+- [x] CI fails when `pyproject.toml` is changed without re-running `uv lock`.
+- [x] CONTRIBUTING (or RELEASING.md, whichever covers the dev loop)
       documents the lockfile workflow.
 
 ## Test Plan

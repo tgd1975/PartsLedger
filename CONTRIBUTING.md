@@ -14,7 +14,24 @@ order for Ubuntu and Windows 11, env-var configuration, and a
 
 Short version: clone → `bash scripts/install_git_hooks.sh` →
 `npm install -g markdownlint-cli2` →
-`uv venv && uv pip install -r requirements-dev.txt` → `pytest`.
+`uv venv && uv sync` → `pytest`.
+
+## Lockfile workflow
+
+PartsLedger pins its dependency tree in `uv.lock` so every contributor
+and every CI run resolves the same versions. Day-to-day rules:
+
+- **Install / refresh env:** `uv sync` (uses `uv.lock`).
+- **Bump a dependency:** edit `pyproject.toml`, then run
+  `uv lock --upgrade-package <name>` (or `uv lock --upgrade` for an
+  across-the-board refresh). Commit `uv.lock` in the same commit as
+  the `pyproject.toml` edit — drift between the two is a shipping
+  bug, caught by the CI `uv lock --check` freshness gate.
+- **Lockfile-free install (fallback):** `uv pip install -r requirements-dev.txt`
+  still works for a quick spin-up without lock-resolution.
+- **The lockfile is owned by uv** — unlike the task-system index
+  files, `/housekeep` does not regenerate it. Treat it like a
+  generated artefact that nonetheless lives in git.
 
 ## Working on a task
 

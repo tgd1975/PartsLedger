@@ -50,6 +50,7 @@ the original reasoning stays as historical record.
 
 ### Accepted
 
+- [ADR-0001 — PartsLedger ships as an installable Python package](0001-library-as-installable-package.md)
 - [ADR-0002 — Hedge-lint pattern set is the four literals from IDEA-005](0002-hedge-lint-pattern-set.md)
 
 ### Superseded

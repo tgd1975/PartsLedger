@@ -1,9 +1,11 @@
 ---
 id: TASK-030
 title: Write ADR-0001 — library as installable package
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Small (<2h)
+effort_actual: Small (<2h)
 complexity: Senior
 human-in-loop: No
 epic: project-setup
@@ -42,17 +44,17 @@ the founding decision.
 
 ## Acceptance Criteria
 
-- [ ] `docs/developers/adr/0001-library-as-installable-package.md`
+- [x] `docs/developers/adr/0001-library-as-installable-package.md`
       exists, follows the ADR template, status `Accepted`.
-- [ ] The ADR references CircuitSmith's ADR-0012 as the analogue
+- [x] The ADR references CircuitSmith's ADR-0012 as the analogue
       decision in the sibling repo.
-- [ ] The ADR captures the layout decision (src-layout, package name
+- [x] The ADR captures the layout decision (src-layout, package name
       `partsledger`), the shim convention (cross-link to CLAUDE.md per
       TASK-027), and the public-surface definition (cross-link to
       RELEASING.md per TASK-023).
-- [ ] The "Consequences" section names the EPICs that depend on this
+- [x] The "Consequences" section names the EPICs that depend on this
       decision (EPICs 005, 006, 007, 008).
-- [ ] CHANGELOG bullet under `[Unreleased] / ### Policy` records the
+- [x] CHANGELOG bullet under `[Unreleased] / ### Policy` records the
       ADR.
 
 ## Test Plan

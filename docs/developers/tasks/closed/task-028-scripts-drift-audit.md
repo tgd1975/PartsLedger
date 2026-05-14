@@ -1,9 +1,11 @@
 ---
 id: TASK-028
 title: Drift audit on already-copied scripts/ files vs CircuitSmith
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Medium (2-8h)
 complexity: Senior
 human-in-loop: Clarification
 epic: project-setup
@@ -52,13 +54,13 @@ a sequenced follow-up if the diff is large enough to warrant one).
 
 ## Acceptance Criteria
 
-- [ ] Every Python file under `scripts/` (plus shared `.sh` plumbing)
+- [x] Every Python file under `scripts/` (plus shared `.sh` plumbing)
       is enumerated in the audit output.
-- [ ] Each file has a decision (`pull-from-upstream`, `keep-local`,
+- [x] Each file has a decision (`pull-from-upstream`, `keep-local`,
       `merge`) plus a one-line rationale.
-- [ ] Drift is resolved per classification — pulled files replaced,
+- [x] Drift is resolved per classification — pulled files replaced,
       kept files annotated, merged files updated.
-- [ ] CHANGELOG bullet under `[Unreleased] / ### Tooling` names the
+- [x] CHANGELOG bullet under `[Unreleased] / ### Tooling` names the
       audit and references this task.
 
 ## Test Plan

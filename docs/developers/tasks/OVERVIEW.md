@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 35** | 🔵 **Active: 0** | 🟡 **Paused: 3** | 🟢 **Closed: 20** | **Total: 58** | ███░░░░░░░ 34%
+⚪ **Open: 26** | 🔵 **Active: 0** | 🟡 **Paused: 3** | 🟢 **Closed: 29** | **Total: 58** | █████░░░░░ 50%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -35,15 +35,6 @@ _No active tasks._
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
 | [TASK-020](open/task-020-page-gen-auto-trigger.md) | Auto-trigger /inventory-page on row creation via /inventory-add | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-023](open/task-023-releasing-docs-and-release-skill.md) | Port RELEASING.md and /release skill; rewrite semver for three public surfaces | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-024](open/task-024-github-workflows.md) | Add .github/workflows/ci.yml and release.yml | Medium (2-8h) | Medium | ⚪ open |
-| [TASK-025](open/task-025-uv-lock.md) | Adopt uv.lock for reproducible installs | Small (&lt;2h) | Junior | ⚪ open |
-| [TASK-026](open/task-026-portability-lint.md) | Add src/partsledger/_dev/portability_lint.py with scripts/ shim | Medium (2-8h) | Medium | ⚪ open |
-| [TASK-027](open/task-027-shim-convention-doc.md) | Document shim convention (scripts/ and skill .py files as thin shims) | Small (&lt;2h) | Medium | ⚪ open |
-| [TASK-028](open/task-028-scripts-drift-audit.md) | Drift audit on already-copied scripts/ files vs CircuitSmith | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-029](open/task-029-optional-dependencies-extras.md) | Configure [project.optional-dependencies] for partsledger[resistor-reader] extra | Small (&lt;2h) | Medium | ⚪ open |
-| [TASK-030](open/task-030-adr-0001-library-as-installable-package.md) | Write ADR-0001 — library as installable package | Small (&lt;2h) | Senior | ⚪ open |
-| [TASK-031](open/task-031-bootstrap-readme-quickstart.md) | Write README.md / QUICKSTART.md bootstrap section | Medium (2-8h) | Medium | ⚪ open |
 | [TASK-032](open/task-032-camera-selection-wizard.md) | Camera-selection wizard (V4L2 / DirectShow enumeration, friendly names) | Large (8-24h) | Senior | ⚪ open |
 | [TASK-033](open/task-033-live-viewfinder-overlays.md) | Live viewfinder + capture overlays (framing rect, focus, lighting, trigger hint) | Large (8-24h) | Senior | ⚪ open |
 | [TASK-034](open/task-034-capture-trigger-and-still.md) | Capture trigger + single-still emit per Output contract | Medium (2-8h) | Medium | ⚪ open |
@@ -94,4 +85,13 @@ _No active tasks._
 | [TASK-019](closed/task-019-hedge-language-lint.md) | Hedge-language lint over inventory/parts/*.md + pre-commit hook | Medium (2-8h) |
 | [TASK-021](closed/task-021-family-page-proactive-suggestion.md) | Family-page proactive suggestion at add-time + page-gen-time | Medium (2-8h) |
 | [TASK-022](closed/task-022-adopt-src-layout.md) | Adopt src/partsledger/ layout in pyproject | Medium (2-8h) |
+| [TASK-023](closed/task-023-releasing-docs-and-release-skill.md) | Port RELEASING.md and /release skill; rewrite semver for three public surfaces | Medium (2-8h) |
+| [TASK-024](closed/task-024-github-workflows.md) | Add .github/workflows/ci.yml and release.yml | Medium (2-8h) |
+| [TASK-025](closed/task-025-uv-lock.md) | Adopt uv.lock for reproducible installs | Small (&lt;2h) |
+| [TASK-026](closed/task-026-portability-lint.md) | Add src/partsledger/_dev/portability_lint.py with scripts/ shim | Medium (2-8h) |
+| [TASK-027](closed/task-027-shim-convention-doc.md) | Document shim convention (scripts/ and skill .py files as thin shims) | Small (&lt;2h) |
+| [TASK-028](closed/task-028-scripts-drift-audit.md) | Drift audit on already-copied scripts/ files vs CircuitSmith | Medium (2-8h) |
+| [TASK-029](closed/task-029-optional-dependencies-extras.md) | Configure [project.optional-dependencies] for partsledger[resistor-reader] extra | Small (&lt;2h) |
+| [TASK-030](closed/task-030-adr-0001-library-as-installable-package.md) | Write ADR-0001 — library as installable package | Small (&lt;2h) |
+| [TASK-031](closed/task-031-bootstrap-readme-quickstart.md) | Write README.md / QUICKSTART.md bootstrap section | Medium (2-8h) |
 <!-- END GENERATED -->

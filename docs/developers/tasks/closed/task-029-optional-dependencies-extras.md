@@ -1,9 +1,11 @@
 ---
 id: TASK-029
 title: Configure [project.optional-dependencies] for partsledger[resistor-reader] extra
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Small (<2h)
+effort_actual: Small (<2h)
 complexity: Medium
 human-in-loop: No
 epic: project-setup
@@ -41,15 +43,15 @@ That decision means three things must align here:
 
 ## Acceptance Criteria
 
-- [ ] `pyproject.toml` declares `[project.optional-dependencies]` with
+- [x] `pyproject.toml` declares `[project.optional-dependencies]` with
       a `resistor-reader` key listing the resistor-reader-only deps.
-- [ ] `pip install partsledger[resistor-reader]` succeeds in a clean
+- [x] `pip install partsledger[resistor-reader]` succeeds in a clean
       venv and the extras' packages are importable.
-- [ ] Importing `partsledger.resistor_reader` without the extra
+- [x] Importing `partsledger.resistor_reader` without the extra
       installed raises an `ImportError` with the install-hint message.
-- [ ] Importing `partsledger.resistor_reader` with the extra installed
+- [x] Importing `partsledger.resistor_reader` with the extra installed
       succeeds.
-- [ ] The release workflow publishes one distribution; `pip install partsledger`
+- [x] The release workflow publishes one distribution; `pip install partsledger`
       and `pip install partsledger[resistor-reader]` both resolve
       against it.
 

@@ -153,6 +153,38 @@ The four index files (`docs/developers/tasks/{OVERVIEW,EPICS,KANBAN}.md`,
 modified in `git status`, sweep them into any commit — they have no per-author
 authorship.
 
+## Shim convention
+
+All Python product code lives in `src/partsledger/<module>/`. Files
+under `scripts/*.py` and `.claude/skills/*/*.py` are **thin shims** —
+argparse (or click) plus a single call into `partsledger.*`. Module-
+deep logic never lives at either location.
+
+Rationale:
+
+- `.claude/skills/*/*.py` files are not packaged with the wheel —
+  putting logic there means the published distribution is missing
+  functionality the agent uses.
+- `scripts/*.py` files are runnable from a developer checkout but
+  also not part of the wheel — same problem.
+- Keeping both as thin shims gives one canonical implementation
+  (in-package), one canonical test surface
+  (`tests/unit/test_<module>.py`), and one canonical place to look
+  when behaviour changes.
+
+The portability lint (`scripts/portability_lint.py` →
+`partsledger._dev.portability_lint`) enforces the no-host-imports
+half of this on every commit; the shim-thinness half is a code-
+review convention.
+
+**Reference shim:** [`scripts/portability_lint.py`](scripts/portability_lint.py)
+is the canonical example — five executable lines that import and
+invoke `partsledger._dev.portability_lint.main`. Match its shape
+when adding new shims under `scripts/` or `.claude/skills/<name>/`.
+
+The underlying layout decision is recorded in
+[`docs/developers/adr/0001-library-as-installable-package.md`](docs/developers/adr/0001-library-as-installable-package.md).
+
 ## Task-system installation
 
 The task-system scripts (`scripts/housekeep.py`, `update_*.py`, etc.) and
