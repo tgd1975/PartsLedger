@@ -53,13 +53,38 @@ difference. Ask the user before merging if it's borderline.
 
 ## Page structure
 
-Use these sections in order. Skip ones that don't apply.
+Use these sections in order. **Section list and shape are
+part-class-adaptive** — pick the variant that fits the part. The four
+classes the skill recognises are:
+
+- **DIP-N IC** (the default — chips like TL082, NE555, PIC16F628,
+  XR2206). Full DIP ASCII pinout + pin table; full ELI5.
+- **NPN/PNP transistor** (TO-92, TO-126, TO-220 leaded transistors —
+  2N3904, BC547, KT3102, …). TO-92 sketch + 3-row pin table; no DIP
+  ASCII; manufacturer-varying-pinout flag in *Watch out for*.
+- **2-pin part** (LEDs, signal diodes, electrolytic caps — 1N4148,
+  1N5404, generic LEDs). Pinout collapses to a one-line polarity
+  note. ELI5 typically omitted. Sample circuit one line.
+- **Module / breakout** (STM32 Blue Pill, MAX7219 board, sensor
+  breakouts). Pinout is a header diagram naming each pin along each
+  edge of the board, not a DIP ASCII. Level-shifting and power-input
+  gotchas typically flagged in *Watch out for*.
+- **Connector** (USB-C, barrel jack, JST-XH). Pinout is a V+ / V- /
+  data note with a physical-orientation hint where it matters.
+
+When in doubt, pick from the INVENTORY.md section the part lives in:
+ICs / MCUs → DIP-N; Transistors → transistor; Modules / breakouts →
+module; Bulk / kits → Loose / discrete → 2-pin or connector,
+depending on the part.
+
+Sections in order — apply the variant from your class pick. Skip
+sections that don't apply.
 
 1. **Title** — `# <CANONICAL-ID> — <one-phrase function>`. Use the canonical
    manufacturer name (`ICL7660S`) in the title even when the inventory uses a
    shorter form (`7660S`); the reader should recognise both.
 
-2. **One-paragraph overview** — what the chip is, what it's most often used
+2. **One-paragraph overview** — what the part is, what it's most often used
    for, package and pin count. Two to four sentences.
 
 3. **Datasheet + Octopart links** — two adjacent lines:
@@ -78,27 +103,70 @@ Use these sections in order. Skip ones that don't apply.
    short paragraphs. Optionally followed by a "what it can do / what it can't"
    bullet pair. The ELI5 is allowed to be more confident than the technical
    sections — metaphors are explicitly approximate.
+   - **2-pin parts** (diodes, LEDs, caps): omit this section unless
+     the part has a non-obvious behaviour worth explaining. A 1N4148
+     does not need an ELI5; a Zener at a non-standard breakdown
+     voltage might.
 
 5. **At a glance** — bulleted list of headline specs: pin count, supply range,
    output current / frequency range / memory, and anything notable. Hedge
    numbers with `~`, `up to`, `typically`.
 
-6. **Pinout (DIP-N, top view)** — ASCII diagram followed by a markdown table.
-   - Use a **`text`-fenced** code block for the ASCII (markdown lint requires a
-     language).
-   - **Pad pin labels so the chip walls (`│`) align vertically.** This is the
-     most common first-draft defect — count columns before writing.
-   - Pin numbers sit just inside the wall: `label N│   │N label`. Use a U-notch
-     at the top: `┌──U──┐`.
-   - Table columns: `Pin | Name | Use`. For multi-function pins, list roles
-     separated by `/`. Bold any role that is critical or surprising (e.g.
-     **input-only**, **ICSPDAT**).
+6. **Pinout** — shape depends on class:
+
+   - **DIP-N IC** — `### Pinout (DIP-N, top view)`. ASCII diagram
+     followed by a markdown table.
+     - Use a **`text`-fenced** code block for the ASCII (markdown
+       lint requires a language).
+     - **Pad pin labels so the chip walls (`│`) align vertically.**
+       This is the most common first-draft defect — count columns
+       before writing.
+     - Pin numbers sit just inside the wall: `label N│   │N label`.
+       Use a U-notch at the top: `┌──U──┐`.
+     - Table columns: `Pin | Name | Use`. For multi-function pins,
+       list roles separated by `/`. Bold any role that is critical
+       or surprising (e.g. **input-only**, **ICSPDAT**).
+
+   - **NPN/PNP transistor** — `### Pinout (TO-92, flat side facing
+     you)`. Small TO-92 sketch followed by a 3-row pin table.
+     - The sketch is a **`text`-fenced** code block showing the flat
+       side with the leads pointing down and the labels `E B C` (or
+       the part-specific order) reading left to right under the
+       leads.
+     - Table columns: `Pin | Name | Use`. Three rows for a BJT
+       (Emitter, Base, Collector); JFETs / MOSFETs use the
+       Source / Gate / Drain naming.
+     - **No DIP ASCII** and no walls-must-align rule.
+     - In *Watch out for*, flag that **TO-92 pinout varies between
+       manufacturers** (e.g. 2N3904 EBC vs BC547 CBE vs BC547 EBC
+       depending on the maker) — always cross-check against the
+       datasheet for the *specific* marking before wiring up.
+
+   - **2-pin part** (diodes, LEDs, electrolytic caps) —
+     `### Polarity`. **One-line note** describing which lead is the
+     cathode / anode (or +/-) and how to identify it physically
+     (banded end, shorter lead, marked stripe on the can). No
+     ASCII, no table.
+
+   - **Module / breakout** — `### Pinout (header diagram)`. A
+     **`text`-fenced** sketch that names each pin along each edge of
+     the board, in the order they physically appear. Optionally a
+     supporting table for the less-obvious pins.
+
+   - **Connector** — `### Pinout (V+ / V- / data note)`. A short
+     note listing each contact with its role (V+, V-, D+, D-,
+     CC1/CC2 for USB-C; tip / ring / sleeve for a barrel jack).
+     Include a physical-orientation hint where it matters
+     (USB-C is reversible; a barrel jack is not).
 
 7. **Sample circuit** — heading: `## Sample circuit — <what it does>`. Body is
    a **connection list**, not ASCII schematic art. Be explicit about pin
    numbers, component values, polarity where it matters, and which pins to
    leave open. End with a one-line note on what the user should see at the
    output.
+   - **2-pin parts**: this section collapses to **one line** —
+     e.g. *"In series with a 330 Ω resistor across a 5 V supply, banded
+     end to ground, the LED lights."*
 
 8. **Variations** *(optional)* — short bullets describing other common modes
    (e.g. triangle vs sine output, FSK, sweep, external crystal). Include only
@@ -106,7 +174,15 @@ Use these sections in order. Skip ones that don't apply.
 
 9. **Watch out for** — bullets covering: easy-to-miss constraints, datasheet
    gotchas, silent-failure modes, configuration that matters. Start each
-   bullet with a bolded short tag.
+   bullet with a bolded short tag. Class-specific flags worth carrying
+   by default:
+   - **Transistor:** *"Pinout varies between manufacturers"* — the
+     same generic part (e.g. BC547) is shipped with different lead
+     orders by different makers; always check the datasheet for the
+     *specific* marking before wiring up.
+   - **Module:** level-shifting requirements (3.3 V vs 5 V logic),
+     power-input gotchas (VIN regulator vs 3V3 direct), and any
+     onboard pull-ups / pull-downs that surprise.
 
 10. **Pairs naturally with** — bullets relating this part to other items in
     `inventory/INVENTORY.md`. Use real part numbers from the inventory. Be
@@ -122,17 +198,26 @@ Use these sections in order. Skip ones that don't apply.
    marking-variant ID; the page title should use the manufacturer's canonical
    form when that is the more recognised name.
 
-3. **Decide which sections apply.** Full structure for chips. For modules with
-   on-board labelling, skip the ASCII pinout but include a connector table.
+3. **Pick the part class** from the five above (DIP-N IC, transistor,
+   2-pin, module, connector). The INVENTORY.md section the part lives
+   in is the strongest signal; the description is the next one. If
+   the class is genuinely ambiguous (e.g. an optocoupler in a DIP
+   package), default to the variant that matches the package most
+   closely — a DIP-8 optocoupler gets the DIP ASCII even though its
+   internals are a phototransistor pair.
 
-4. **Draft the page** following the structure. Apply sincere language: hedge
-   specs, avoid `must / always / never` as rhetorical emphasis, mark estimates
-   as estimates. The datasheet is authoritative; this page is a curated entry
-   point.
+4. **Draft the page** following the structure, applying the
+   class-specific variant for the Pinout / ELI5 / Sample circuit /
+   Watch out for sections. Apply sincere language: hedge specs,
+   avoid `must / always / never` as rhetorical emphasis, mark
+   estimates as estimates. The datasheet is authoritative; this
+   page is a curated entry point.
 
-5. **Verify ASCII pinout alignment** before writing. Count characters from the
-   left edge to each `│` and confirm they match across all lines of the chip
-   body. This is the single most common defect.
+5. **For DIP-N parts, verify ASCII pinout alignment** before
+   writing. Count characters from the left edge to each `│` and
+   confirm they match across all lines of the chip body. This is
+   the single most common defect for DIP pages; the other classes
+   are not subject to this rule.
 
 6. **Write the page file** to `inventory/parts/<id-lower>.md`.
 

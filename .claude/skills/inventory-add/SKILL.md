@@ -11,14 +11,20 @@ The user invokes this as `/inventory-add <part-id> <qty>`, optionally with more
 If `<qty>` is omitted for any part, assume **qty = 1** without asking. Mention the
 default briefly in the report so the user can correct it if wrong.
 
-The target file is `inventory/INVENTORY.md` at the repo root. It has these
-sections:
+The target file is `inventory/INVENTORY.md` at the repo root. The
+sections are **whatever H2 headings the file already contains** —
+the canonical defaults are MCUs, ICs, Sensors, Modules / breakouts,
+Transistors, Bulk / kits, but the maker is free to rename or add
+sections (`## Linear ICs`, `## Connectors`, etc.) without changing
+the schema.
 
-- **MCUs**, **ICs**, **Sensors**, **Modules / breakouts** — tables with columns
-  `Part | Qty | Description | Datasheet | Octopart | Notes`.
-- **Bulk / kits** — bullet list for assortments where we don't catalogue
-  individual values (resistors, diodes, ceramic & electrolytic capacitors,
-  LEDs, generic small-signal transistors, etc.).
+Standard parts tables carry the canonical seven columns:
+`Part | Qty | Description | Datasheet | Octopart | Source | Notes`.
+
+The Bulk / kits section is a bullet list / kit-content table area
+for assortments where individual values aren't catalogued
+(resistors, diodes, ceramic & electrolytic capacitors, LEDs,
+generic small-signal transistors, etc.).
 
 When the part is a **bulk / kit item** (a generic class like "resistors" or
 "1N4148 diodes" rather than a specific marked IC), skip steps 3–6 below and
@@ -77,8 +83,13 @@ For each `<part-id> <qty>` pair:
    doubt Octopart has any results, leave the cell empty rather than linking to
    a guaranteed-empty search.
 
-5. **Locate the right section** in `inventory/INVENTORY.md` (MCUs / ICs / Sensors /
-   Modules / breakouts).
+5. **Locate the right section** in `inventory/INVENTORY.md`.
+   Enumerate the file's `## …` H2 headings first and propose
+   from that list. Only fall back to the default category names
+   (MCUs / ICs / Sensors / Modules / breakouts) when the file
+   has *no* H2 headings yet — i.e. the inventory is brand new.
+   Adding a new section without an ADR is fine; renaming an
+   existing section is the maker's call.
 
 6. **Update or insert.**
    - If the part is already in that section's table → **bump the existing row's
@@ -87,6 +98,10 @@ For each `<part-id> <qty>` pair:
      within the section's table. Sort key is the displayed Part text (for a
      linked cell `[7660S](parts/7660s.md)`, the key is `7660S`). Digits sort
      before letters (ASCII order). Do not append at the end.
+   - **Source cell:** write `Source: manual` on every new row.
+     The `/inventory-add` flow is the human-curated path; the
+     camera-path pipeline writes `Source: camera` from a separate
+     entry point. Never silently mix sources on a single row.
 
 7. **Keep the table aligned.** Markdownlint enforces aligned-style tables (rule
    MD060). When a new row's content makes any column wider than its current

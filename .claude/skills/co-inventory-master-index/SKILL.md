@@ -7,8 +7,9 @@ description: Invariants for inventory/INVENTORY.md — the master ledger. Per-pa
 
 ## Per-row schema
 
-- [ ] Each row carries the canonical six columns in order:
-      `Part | Qty | Description | Datasheet | Octopart | Notes`.
+- [ ] Each row in a standard parts table carries the canonical
+      seven columns in order:
+      `Part | Qty | Description | Datasheet | Octopart | Source | Notes`.
       No reordering, no hidden columns. CircuitSmith's
       `--prefer-inventory` reader assumes this header.
 - [ ] `Part` cell:
@@ -23,18 +24,34 @@ description: Invariants for inventory/INVENTORY.md — the master ledger. Per-pa
 - [ ] `Datasheet` and `Octopart` cells contain links, not raw URLs
       naked in the table — `[datasheet](https://...)` /
       `[octopart](https://...)` keeps the table scannable.
+- [ ] `Source` cell records who added the row. Validate as a
+      **non-empty lowercase token, no allow-list**. The
+      well-known values are `manual` (human-curated or
+      `/inventory-add`) and `camera` (visual-recognition pipeline);
+      future importers may add their own literal (`imported`, …)
+      without a schema bump. Reject empty cells, whitespace-only
+      cells, and mixed-case tokens.
 
 ## Category sections
 
-- [ ] Sections are H2 headings (`## MCUs`, `## ICs`, `## Sensors`,
-      `## Modules`, `## Transistors`, `## Bulk / kits`). The set
-      stays small — a new top-level category needs an ADR; sub-
-      categorise inside Notes if you need to.
-- [ ] A section may be empty (header without a table) while the
-      maker hasn't added any parts of that kind yet — that's fine;
-      it documents intent.
-- [ ] The order of sections is alphabetical except `Bulk / kits`
-      which goes last (it's the catch-all and pushes off-bottom).
+- [ ] Sections are H2 headings (`## …`). The skill **does not
+      hard-code** a fixed list — enumerate the `## …` headings
+      from the file at lint time and treat each one as a legitimate
+      bucket. Renaming `## ICs` to `## Linear ICs`, or adding a
+      `## Connectors` section, must not trip the lint. Every row
+      must live under *some* H2, not under a *specific* one.
+- [ ] A section may be empty (header without a table, or a header
+      with a placeholder row) while the maker hasn't added any
+      parts of that kind yet — that's fine; it documents intent.
+- [ ] Section ordering is the maker's call — alphabetical is a
+      reasonable default but not enforced.
+- [ ] Section-specific tables (e.g. the Transistors DDR/USSR
+      table with custom columns like `Type | Equivalent | Package
+      | Umax | Imax`, or kit-content tables like `Decade range |
+      E12 values`) are legitimate divergences from the canonical
+      seven-column row schema. They append `Source` at the end
+      for parts tables; pure kit-content tables (no per-part rows)
+      do not carry a `Source` column.
 
 ## Quantity changes ride here, not in the per-part MD
 

@@ -1,9 +1,11 @@
 ---
 id: TASK-017
 title: Implement src/partsledger/inventory/lint.py + scripts/lint_inventory.py shim
-status: open
+status: closed
+closed: 2026-05-14
 opened: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Medium (2-8h)
 complexity: Medium
 human-in-loop: No
 epic: markdown-inventory-schema
@@ -50,19 +52,52 @@ markdownlint stanza.
 
 ## Acceptance Criteria
 
-- [ ] `src/partsledger/inventory/lint.py` exists with a callable entry
+- [x] `src/partsledger/inventory/lint.py` exists with a callable entry
       point that returns a list of diagnostics (or raises) per invariant
       violation.
-- [ ] `scripts/lint_inventory.py` exists as a thin shim that imports
+- [x] `scripts/lint_inventory.py` exists as a thin shim that imports
       from the package and exits non-zero on diagnostics.
-- [ ] Each invariant (table padding, alphabetical row order, hedge
+- [x] Each invariant (alphabetical row order, hedge
       language in Notes, Source-column shape, link-into-parts/
       correctness) is caught by a positive test (violation rejected)
       and passes a negative test (clean tree accepted).
-- [ ] `scripts/pre-commit` is wired to fire the lint on every commit
+- [x] `scripts/pre-commit` is wired to fire the lint on every commit
       touching `inventory/INVENTORY.md`.
-- [ ] The current `inventory/INVENTORY.md` (post-TASK-014) passes the
+- [x] The current `inventory/INVENTORY.md` (post-TASK-014) passes the
       lint clean.
+
+Verification notes:
+
+- `lint_text()` returns a list of `Diagnostic` records; the writer's
+  pre-flush check (TASK-016) wraps the list in `InventoryLintError`
+  on non-empty result.
+- `lint_path()` is the file-path convenience wrapper used by both
+  the pre-commit shim and the test suite.
+- `tests/unit/test_lint_inventory.py` — 16 tests covering: Source
+  shape (empty / mixed-case / whitespace / unknown-but-lowercase),
+  alphabetical order (positive + linked-Part-sort-by-visible-text +
+  negative), hedge language (camera+hedge / camera+no-hedge /
+  manual+no-hedge / camera+empty-notes), parts-link (existing +
+  missing target), `InventoryLintError` integration, and a smoke
+  test confirming the checked-in `inventory/INVENTORY.md` lints
+  clean.
+- **Scoping note on "table padding":** the task body lists table
+  padding as an invariant, but MD060 is enforced by the
+  markdownlint-cli2 stanza already in `scripts/pre-commit` (and the
+  full repo gate runs over the same file). The inventory lint
+  module deliberately does **not** duplicate that check — its job
+  is the schema-level invariants markdownlint cannot see (column
+  shape, row order, hedge language, link resolution). This is
+  noted explicitly in `lint.py`'s module docstring.
+- The `scripts/pre-commit` stanza fires only when
+  `inventory/INVENTORY.md` is in the staged-paths set (`git diff
+  --cached --diff-filter=ACM`), mirroring the existing
+  markdownlint / ruff gates' shape.
+- Activates a permission allowlist entry
+  `Bash(python scripts/lint_inventory.py:*)` in
+  `.claude/settings.json` so the agent can run the linter without a
+  prompt (riding alongside this commit per the "commit only your
+  own work" rule).
 
 ## Test Plan
 

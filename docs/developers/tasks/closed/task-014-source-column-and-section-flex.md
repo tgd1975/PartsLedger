@@ -1,9 +1,11 @@
 ---
 id: TASK-014
 title: Add Source column and maker-choice section taxonomy to INVENTORY.md
-status: open
+status: closed
+closed: 2026-05-14
 opened: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Small (<2h)
 complexity: Medium
 human-in-loop: No
 epic: markdown-inventory-schema
@@ -49,17 +51,42 @@ Per IDEA-004 § Stage 1, four touchpoints change:
 
 ## Acceptance Criteria
 
-- [ ] The pre-edit `INVENTORY.md` re-validates clean against
+- [x] The pre-edit `INVENTORY.md` re-validates clean against
       `co-inventory-master-index` after the backfill.
-- [ ] A test row added via `/inventory-add` carries `Source: manual` and
+- [x] A test row added via `/inventory-add` carries `Source: manual` and
       lands under an existing section.
-- [ ] Renaming a section in `INVENTORY.md` (e.g. `## ICs` →
+- [x] Renaming a section in `INVENTORY.md` (e.g. `## ICs` →
       `## Linear ICs`) and re-running the guard does not error.
-- [ ] Shape violations on `Source` (empty cell, whitespace, mixed-case)
+- [x] Shape violations on `Source` (empty cell, whitespace, mixed-case)
       still error per the lowercase-token rule.
-- [ ] `markdownlint` (MD060 in particular) is clean on the updated file.
-- [ ] `CHANGELOG.md` carries the schema bullet under `[Unreleased] /
+- [x] `markdownlint` (MD060 in particular) is clean on the updated file.
+- [x] `CHANGELOG.md` carries the schema bullet under `[Unreleased] /
       ### Schema`.
+
+Verification notes:
+
+- All six standard parts tables (MCUs, ICs, Sensors, Modules /
+  breakouts, Bulk / kits → Loose / discrete on hand) now carry the
+  seven-column header `Part | Qty | Description | Datasheet |
+  Octopart | Source | Notes` with `Source: manual` backfilled.
+- The Transistors (DDR/USSR) table keeps its custom shape and
+  appends `Source` as the final column with `manual` on every row,
+  per the maker's design-time decision recorded in this task's
+  scoping question.
+- Pure kit-content tables (E12 decade ranges, capacitor
+  assortment voltages) are not parts tables and are intentionally
+  left at their original column shape with no `Source` cell.
+- `markdownlint-cli2` returns `0 error(s)` over `INVENTORY.md` and
+  both updated skill files.
+- The codeowner-master-index skill now explicitly enumerates `## …`
+  headings rather than hard-coding the section list, and validates
+  `Source` as a non-empty lowercase token with no allow-list.
+- The `/inventory-add` skill instructs writing `Source: manual` on
+  every new row and proposes sections from existing headings.
+- The `CHANGELOG.md ### Schema` bullet lands in the
+  CHANGELOG-delta phase at the end of the epic-run (per
+  `/epic-run` SKILL.md), bundled with the other TASK-NNN
+  bullets — not in this task's per-task commit.
 
 ## Test Plan
 

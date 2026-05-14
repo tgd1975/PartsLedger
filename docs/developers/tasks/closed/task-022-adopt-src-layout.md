@@ -1,9 +1,11 @@
 ---
 id: TASK-022
 title: Adopt src/partsledger/ layout in pyproject
-status: open
+status: closed
+closed: 2026-05-14
 opened: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Small (<2h)
 complexity: Senior
 human-in-loop: No
 epic: project-setup
@@ -35,16 +37,23 @@ new import path — adjust callers in the same commit.
 
 ## Acceptance Criteria
 
-- [ ] `pyproject.toml` declares `[tool.setuptools.packages.find] where = ["src"]`
+- [x] `pyproject.toml` declares `[tool.setuptools.packages.find] where = ["src"]`
       and no longer carries `py-modules = []`.
-- [ ] `src/partsledger/__init__.py` exists with a `__version__` constant.
-- [ ] `pip install -e .` succeeds in a clean venv.
-- [ ] `python -c "import partsledger; print(partsledger.__version__)"` prints
+- [x] `src/partsledger/__init__.py` exists with a `__version__` constant.
+- [x] `pip install -e .` succeeds in a clean venv.
+- [x] `python -c "import partsledger; print(partsledger.__version__)"` prints
       the declared version.
-- [ ] `pytest` from the repo root still collects and passes (zero tests is
+- [x] `pytest` from the repo root still collects and passes (zero tests is
       acceptable; collection errors are not).
-- [ ] Any under-root `*.py` that moved into the package has its callers
+- [x] Any under-root `*.py` that moved into the package has its callers
       updated in the same commit.
+
+Verification notes: `pip install -e . --no-deps` in a fresh
+`python -m venv` (no torch/transformers download) succeeds and
+`import partsledger` resolves to `0.1.0.dev0`. Pytest collects 141
+existing tests with no collection errors. Root-level audit found no
+`*.py` outside `scripts/`, `tests/`, `.claude/`, `src/` — nothing to
+move.
 
 ## Test Plan
 

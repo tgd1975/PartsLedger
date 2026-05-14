@@ -1,9 +1,11 @@
 ---
 id: TASK-016
 title: Implement src/partsledger/inventory/writer.py with upsert_row() contract
-status: open
+status: closed
+closed: 2026-05-14
 opened: 2026-05-14
 effort: Large (8-24h)
+effort_actual: Medium (2-8h)
 complexity: Senior
 human-in-loop: No
 epic: markdown-inventory-schema
@@ -77,21 +79,70 @@ package layout TASK-022 lands).
 
 ## Acceptance Criteria
 
-- [ ] `src/partsledger/inventory/writer.py` exists with the exact
+- [x] `src/partsledger/inventory/writer.py` exists with the exact
       `upsert_row` signature from IDEA-004 (positional `part_id`,
       `qty_delta`; keyword-only `source`, `section`, `cells`).
-- [ ] `WriteResult` exposes `disposition`, post-write `qty`, and
+- [x] `WriteResult` exposes `disposition`, post-write `qty`, and
       `section`.
-- [ ] All file writes use the atomic-rename pattern (temp file +
+- [x] All file writes use the atomic-rename pattern (temp file +
       `os.replace`); a simulated crash mid-write leaves the file in a
       consistent pre- or post-call state.
-- [ ] Pre-flush calls into `partsledger.inventory.lint` (TASK-017) and
+- [x] Pre-flush calls into `partsledger.inventory.lint` (TASK-017) and
       raises with the lint diagnostic on failure.
-- [ ] Raises the four documented errors (malformed pre-state, section
+- [x] Raises the four documented errors (malformed pre-state, section
       unresolvable, source-shape violation, lint failure on post-state).
-- [ ] Idempotent on `part_id` for same-args calls (except `qty_delta`
+- [x] Idempotent on `part_id` for same-args calls (except `qty_delta`
       accumulates).
-- [ ] Extra keys in `cells` are silently ignored.
+- [x] Extra keys in `cells` are silently ignored.
+
+Verification notes:
+
+- The public ``upsert_row`` carries the IDEA-004 signature
+  verbatim (positional ``part_id``, ``qty_delta``; keyword-only
+  ``source``, ``section``, ``cells``); a private
+  ``_upsert_row_at`` carries an extra ``path`` kwarg for test
+  isolation. ``upsert_row`` resolves the path via the
+  ``PL_INVENTORY_PATH`` env var or by walking up to ``pyproject.toml``.
+- ``WriteResult`` is a frozen dataclass with the three documented
+  fields.
+- Atomicity test: ``test_replace_failure_leaves_pre_state`` patches
+  ``os.replace`` to raise; the pre-state is unchanged after the
+  exception propagates. The real write path uses ``tempfile.mkstemp``
+  in the same directory followed by ``os.replace``.
+- Pre-flush lint test: ``test_lint_failure_blocks_write`` patches
+  ``lint_text`` to synthesise a diagnostic; the writer raises
+  ``InventoryLintError`` and the file is unchanged.
+- The four error contracts are covered by:
+  - ``MalformedPreStateError`` — ``test_missing_file_raises``
+  - ``SectionUnresolvableError`` — ``test_unknown_named_section_raises``,
+    ``test_empty_file_no_headings_raises``
+  - ``SourceShapeError`` — ``test_empty_source_raises``,
+    ``test_whitespace_source_raises``, ``test_mixed_case_source_raises``
+  - ``InventoryLintError`` (re-raised) —
+    ``test_lint_failure_blocks_write``
+- Idempotency: ``test_bump_idempotency_accumulates_qty`` confirms
+  two same-arg calls produce qty=3 (from a starting qty=1, +1, +1).
+- Extra-cells: ``test_extra_keys_silently_ignored`` checks that
+  unknown keys (``NotAColumn``) do not appear in the rendered file
+  and do not raise.
+- Insertion behaviour: alphabetical ordering by Part visible text
+  is preserved; the all-empty placeholder rows (Sensors, Modules)
+  are dropped on first real insert into those sections.
+- Bump / metadata_updated / no_op dispositions are each covered by
+  dedicated tests.
+- 20 unit tests in ``tests/unit/test_writer.py``, all passing.
+  Combined writer + lint test suite: 36 tests passing, 0 failures.
+
+## Sizing rationale (effort_actual)
+
+The original sizing rationale ranked this Large (8-24h) on the
+risk of signature drift between partial scaffolds. The actual
+implementation closed faster (Medium) because TASK-017 landed
+first, exposing the lint surface as a stable callable —
+``_upsert_row_at`` slotted in over a pre-validated pre-flush gate
+instead of having to grow the lint and writer in parallel. The
+"land lint first" sequencing within EPIC-002 is the practical
+takeaway.
 
 ## Test Plan
 

@@ -59,13 +59,8 @@ Homepage = "https://github.com/tgd1975/PartsLedger"
 Issues = "https://github.com/tgd1975/PartsLedger/issues"
 Changelog = "https://github.com/tgd1975/PartsLedger/blob/main/CHANGELOG.md"
 
-# No importable Python package yet — the product code lands as the
-# inventory-add / inventory-page skills under .claude/skills/ and as
-# scripts/ utilities. Tell setuptools to install metadata only so
-# `pip install -e .` and `uv pip install -e .[dev]` both succeed
-# without auto-discovery guessing wrong.
-[tool.setuptools]
-py-modules = []
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.pytest.ini_options]
 # Two test roots: product-code tests at `tests/` (created when the

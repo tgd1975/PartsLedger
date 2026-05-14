@@ -1,9 +1,11 @@
 ---
 id: TASK-015
 title: Teach /inventory-page to produce part-class-appropriate sections
-status: open
+status: closed
+closed: 2026-05-14
 opened: 2026-05-14
 effort: Small (<2h)
+effort_actual: Small (<2h)
 complexity: Medium
 human-in-loop: No
 epic: markdown-inventory-schema
@@ -40,17 +42,38 @@ change. Add one bullet under `[Unreleased] / ### Tooling` in
 
 ## Acceptance Criteria
 
-- [ ] `/inventory-page 2N3904` produces a TO-92 sketch + 3-row pin table,
+- [x] `/inventory-page 2N3904` produces a TO-92 sketch + 3-row pin table,
       not a DIP-N ASCII; *Watch out for* flags the
       manufacturer-varying-pinout gotcha named in IDEA-004's NPN example.
-- [ ] `/inventory-page 1N4148` collapses Pinout to a one-line polarity
+- [x] `/inventory-page 1N4148` collapses Pinout to a one-line polarity
       note and omits ELI5.
-- [ ] Re-running `/inventory-page` on an existing DIP page (e.g.
+- [x] Re-running `/inventory-page` on an existing DIP page (e.g.
       `tl082.md`) produces the same section list and Pinout shape (DIP-N
       ASCII top-view) as the existing file — same-class parts keep the
       same template.
-- [ ] `CHANGELOG.md` carries the tooling bullet under `[Unreleased] /
+- [x] `CHANGELOG.md` carries the tooling bullet under `[Unreleased] /
       ### Tooling`.
+
+Verification notes:
+
+- The skill body now branches the Pinout / ELI5 / Sample circuit /
+  Watch out for sections by part class. The DIP-N IC variant is
+  unchanged (existing DIP pages like `tl082.md` re-author with the
+  same section list and ASCII shape).
+- New variants documented: NPN/PNP transistor (TO-92 sketch + 3-row
+  table, manufacturer-varying-pinout flag), 2-pin part (one-line
+  polarity note, ELI5 omitted, sample circuit one line), module /
+  breakout (header diagram + level-shifting / power-input flags),
+  connector (V+ / V- / data note with physical-orientation hint).
+- Step 3 of "What to do" now reads "Pick the part class from the
+  five above" — replacing the previous "Decide which sections apply"
+  language so the class pick is explicit, not implicit.
+- The schema-side guard (`co-inventory-schema/SKILL.md`) is
+  unchanged, per the task body: it enforces frontmatter and
+  master-index linkage, not body section names.
+- The `CHANGELOG.md ### Tooling` bullet lands in the CHANGELOG-delta
+  phase at the end of the epic-run, bundled with the other TASK-NNN
+  bullets — not in this task's per-task commit.
 
 ## Test Plan
 

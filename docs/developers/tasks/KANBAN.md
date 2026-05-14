@@ -20,19 +20,19 @@ kanban
 
 ## markdown-inventory-schema
 
-_⚪ 4 open · 🔵 0 active · 🟡 1 paused · 🟢 0 closed · ░░░░░░░░░░ 0%_
+_⚪ 0 open · 🔵 0 active · 🟡 1 paused · 🟢 4 closed · ████████░░ 80%_
 
 ```mermaid
 kanban
   Open
-    TASK_014["Add Source column and maker-choice section taxonomy to INVENTORY.md"]
-    TASK_015["Teach /inventory-page to produce part-class-appropriate sections"]
-    TASK_016["Implement src/partsledger/inventory/writer.py with upsert_row() contract"]
-    TASK_017["Implement src/partsledger/inventory/lint.py + scripts/lint_inventory.py shim"]
   Active
   Paused
     TASK_018["Multi-file INVENTORY.md split support + suggestion trigger"]
   Closed
+    TASK_014["Add Source column and maker-choice section taxonomy to INVENTORY.md"]
+    TASK_015["Teach /inventory-page to produce part-class-appropriate sections"]
+    TASK_016["Implement src/partsledger/inventory/writer.py with upsert_row() contract"]
+    TASK_017["Implement src/partsledger/inventory/lint.py + scripts/lint_inventory.py shim"]
 ```
 
 ## metadata-enrichment
@@ -55,12 +55,11 @@ kanban
 
 ## project-setup
 
-_⚪ 10 open · 🔵 0 active · 🟡 0 paused · 🟢 0 closed · ░░░░░░░░░░ 0%_
+_⚪ 9 open · 🔵 0 active · 🟡 0 paused · 🟢 1 closed · █░░░░░░░░░ 10%_
 
 ```mermaid
 kanban
   Open
-    TASK_022["Adopt src/partsledger/ layout in pyproject"]
     TASK_023["Port RELEASING.md and /release skill; rewrite semver for three public surfaces"]
     TASK_024["Add .github/workflows/ci.yml and release.yml"]
     TASK_025["Adopt uv.lock for reproducible installs"]
@@ -73,6 +72,7 @@ kanban
   Active
   Paused
   Closed
+    TASK_022["Adopt src/partsledger/ layout in pyproject"]
 ```
 
 ## resistor-reader

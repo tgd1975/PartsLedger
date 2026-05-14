@@ -9,6 +9,22 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
 
 ## [Unreleased]
 
+### Schema
+
+- TASK-014 closed: add `Source` column and maker-choice section
+  taxonomy to `inventory/INVENTORY.md`. Every standard parts table
+  carries the seven-column `Part | Qty | Description | Datasheet |
+  Octopart | Source | Notes` shape; existing rows backfilled with
+  `Source: manual`. The Transistors (DDR/USSR) table keeps its
+  custom shape with `Source` appended; pure kit-content tables
+  (E12 decade ranges, capacitor assortment) intentionally remain
+  column-shape divergent because they describe kit contents, not
+  parts. `co-inventory-master-index` SKILL.md drops the hard-coded
+  section list (enumerates `## …` headings from the file) and
+  validates `Source` as a non-empty lowercase token with no
+  allow-list. `inventory-add` SKILL.md writes `Source: manual` on
+  every new row and proposes sections from existing H2 headings.
+
 ### Bootstrap
 
 - Repository concept-staged from IDEA-001 (the markdown-native inventory
@@ -45,6 +61,38 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
 - `scripts/security_review_changes.py` sensitised to hardcoded API keys
   and private-key blocks; `docs/developers/SECURITY_REVIEW.md` updated
   to match.
+- TASK-015 closed: `/inventory-page` skill rewritten to branch the
+  Pinout / ELI5 / Sample circuit / *Watch out for* sections by part
+  class (DIP-N IC, NPN/PNP transistor, 2-pin part, module /
+  breakout, connector). Existing DIP pages re-author with the same
+  section list and ASCII shape.
+- TASK-016 closed: `src/partsledger/inventory/writer.py` lands the
+  single `upsert_row()` writer that three downstream call-sites
+  share — `/inventory-add`, the camera-path Stage 4 hook, and the
+  enrichment integrator. Idempotent on `part_id`; atomic via
+  `tempfile.mkstemp` + `os.replace`; pre-flush lint integration
+  with `partsledger.inventory.lint`; four documented errors
+  (`MalformedPreStateError`, `SectionUnresolvableError`,
+  `SourceShapeError`, re-raised `InventoryLintError`); 20 unit
+  tests in `tests/unit/test_writer.py`.
+- TASK-017 closed: `src/partsledger/inventory/lint.py` +
+  `scripts/lint_inventory.py` shim + pre-commit hook stanza in
+  `scripts/pre-commit`. Mechanical enforcement of Source-column
+  shape (non-empty lowercase token, no allow-list), alphabetical
+  row order, hedge language for camera-path Notes (only when
+  `Source: camera` and Notes is non-empty), and link-into-`parts/`
+  correctness. 16 unit tests covering positive + negative per
+  invariant. Allowlist entry
+  `Bash(python scripts/lint_inventory.py:*)` added to
+  `.claude/settings.json`.
+- TASK-022 closed: adopted the `src/partsledger/` package layout —
+  `pyproject.toml` flips from the `py-modules = []` opt-out to
+  `[tool.setuptools.packages.find] where = ["src"]`,
+  `src/partsledger/__init__.py` carries the `__version__`
+  constant. TASK-022 belongs to EPIC-004 (project-setup) but
+  rode on EPIC-002's branch as a Phase 0b prerequisite for
+  TASK-016 / TASK-017 — the package layout had to land before
+  the writer and lint modules could.
 
 ### Policy
 

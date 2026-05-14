@@ -147,4 +147,25 @@ if [ -n "$STAGED_PY" ]; then
     echo -e "${GREEN}Ruff lint OK.${NC}"
 fi
 
+# ---------------------------------------------------------------------------
+# Inventory schema lint (mandatory when inventory/INVENTORY.md is staged —
+# enforces Source-column shape, alphabetical row order, hedge language on
+# camera-path notes, and link-into-parts/ correctness). The script is a
+# thin shim over `partsledger.inventory.lint`.
+# ---------------------------------------------------------------------------
+STAGED_INVENTORY=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^inventory/INVENTORY\.md$' || true)
+if [ -n "$STAGED_INVENTORY" ]; then
+    PYTHON=$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)
+    if [ -z "$PYTHON" ]; then
+        echo -e "${RED}ERROR: python is required but not on PATH.${NC}" >&2
+        exit 1
+    fi
+    echo -e "${YELLOW}Checking inventory schema (lint_inventory.py)...${NC}"
+    if ! "$PYTHON" "${REPO_ROOT}/scripts/lint_inventory.py"; then
+        echo -e "${RED}Inventory lint failed. Commit aborted.${NC}" >&2
+        exit 1
+    fi
+    echo -e "${GREEN}Inventory schema OK.${NC}"
+fi
+
 exit 0
