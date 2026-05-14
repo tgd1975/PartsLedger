@@ -123,9 +123,37 @@ For each `<part-id> <qty>` pair:
    The goal: a reader scanning the table should immediately see why two
    similar rows are not duplicates.
 
-9. **Report** per part: category, part number used, qty after the operation
-   (new row vs. updated from N to M), and whether a datasheet URL and an
-   Octopart link were found.
+9. **Family-page proactive suggestion (IDEA-005 § Stage 2).** After
+   the row has been written, scan the section for MPN-stem siblings
+   of the new part. Use the mechanical heuristic:
+
+   ```python
+   from partsledger.inventory.family import find_siblings
+   siblings = find_siblings(new_mpn, existing_mpns_in_section)
+   ```
+
+   `existing_mpns_in_section` is the list of Part-cell values
+   (visible text, not the link target) for the section's table,
+   **including the just-committed row in the batched-add case** so
+   the second pair of `/inventory-add LM358P 2, LM358N 3` sees the
+   first.
+
+   When `siblings` is non-empty, offer the family-page pattern:
+
+   - Propose marking the new row's Notes and each sibling's Notes
+     with a *"Shares page with `<canonical-family>`"* breadcrumb
+     (IDEA-004 § Family pages).
+   - Offer to generate the family page now (chain into
+     `/inventory-page <canonical-family>`) or defer.
+   - **Advisory only — the maker decides.** Declining proceeds with
+     a clean fresh row and no Notes-cell cross-links. No
+     retroactive prompt after the batch completes.
+
+   Skip this step entirely when `siblings` is empty.
+
+10. **Report** per part: category, part number used, qty after the operation
+    (new row vs. updated from N to M), and whether a datasheet URL and an
+    Octopart link were found.
 
 ## What this skill does *not* do
 

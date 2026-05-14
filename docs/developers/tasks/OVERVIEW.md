@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 37** | 🔵 **Active: 0** | 🟡 **Paused: 3** | 🟢 **Closed: 18** | **Total: 58** | ███░░░░░░░ 31%
+⚪ **Open: 35** | 🔵 **Active: 0** | 🟡 **Paused: 3** | 🟢 **Closed: 20** | **Total: 58** | ███░░░░░░░ 34%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -34,9 +34,7 @@ _No active tasks._
 
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
-| [TASK-019](open/task-019-hedge-language-lint.md) | Hedge-language lint over inventory/parts/*.md + pre-commit hook | Medium (2-8h) | Medium | ⚪ open |
 | [TASK-020](open/task-020-page-gen-auto-trigger.md) | Auto-trigger /inventory-page on row creation via /inventory-add | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-021](open/task-021-family-page-proactive-suggestion.md) | Family-page proactive suggestion at add-time + page-gen-time | Medium (2-8h) | Medium | ⚪ open |
 | [TASK-023](open/task-023-releasing-docs-and-release-skill.md) | Port RELEASING.md and /release skill; rewrite semver for three public surfaces | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-024](open/task-024-github-workflows.md) | Add .github/workflows/ci.yml and release.yml | Medium (2-8h) | Medium | ⚪ open |
 | [TASK-025](open/task-025-uv-lock.md) | Adopt uv.lock for reproducible installs | Small (&lt;2h) | Junior | ⚪ open |
@@ -93,5 +91,7 @@ _No active tasks._
 | [TASK-015](closed/task-015-parts-page-template-adaptivity.md) | Teach /inventory-page to produce part-class-appropriate sections | Small (&lt;2h) |
 | [TASK-016](closed/task-016-inventory-writer-module.md) | Implement src/partsledger/inventory/writer.py with upsert_row() contract | Large (8-24h) |
 | [TASK-017](closed/task-017-inventory-lint-module.md) | Implement src/partsledger/inventory/lint.py + scripts/lint_inventory.py shim | Medium (2-8h) |
+| [TASK-019](closed/task-019-hedge-language-lint.md) | Hedge-language lint over inventory/parts/*.md + pre-commit hook | Medium (2-8h) |
+| [TASK-021](closed/task-021-family-page-proactive-suggestion.md) | Family-page proactive suggestion at add-time + page-gen-time | Medium (2-8h) |
 | [TASK-022](closed/task-022-adopt-src-layout.md) | Adopt src/partsledger/ layout in pyproject | Medium (2-8h) |
 <!-- END GENERATED -->

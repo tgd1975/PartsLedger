@@ -51,6 +51,22 @@ Suggest a family page when you see two or more inventory rows whose
 descriptions are obviously of the same chip with a revision/marking
 difference. Ask the user before merging if it's borderline.
 
+**Proactive sibling check (IDEA-005 § Stage 2).** Before drafting a
+fresh page, call the mechanical heuristic against the parts/
+directory:
+
+```python
+from partsledger.inventory.family import find_sibling_pages
+matches = find_sibling_pages(new_mpn, "inventory/parts")
+```
+
+When `matches` is non-empty, propose *"join the existing
+`<sibling>.md` as a family page"* rather than creating a new file.
+Advisory only — the maker decides. The heuristic implements the
+length-gate + suffix-only-divergence rules from IDEA-005; if a
+candidate is a real family member the regex misses, the maker can
+still ask for the merge by hand.
+
 ## Page structure
 
 Use these sections in order. **Section list and shape are

@@ -1,9 +1,11 @@
 ---
 id: TASK-021
 title: Family-page proactive suggestion at add-time + page-gen-time
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Medium (2-8h)
 complexity: Medium
 human-in-loop: Clarification
 epic: skill-path-today
@@ -58,22 +60,22 @@ retroactive prompt after the batch completes.
 
 ## Acceptance Criteria
 
-- [ ] Adding `LM358P` while `LM358N` is already a row fires the
+- [x] Adding `LM358P` while `LM358N` is already a row fires the
       suggestion; accepting it updates both Notes cells with the
       *"Shares page with …"* breadcrumb and produces a single family
       page.
-- [ ] Adding `LM2904` while `LM358` exists does **not** fire the
+- [x] Adding `LM2904` while `LM358` exists does **not** fire the
       suggestion (IDEA-004's family-boundary ❌ example).
-- [ ] Adding `LM358N` while `LM386N` exists does **not** fire either
+- [x] Adding `LM358N` while `LM386N` exists does **not** fire either
       (common prefix `LM3` is below the 4-character threshold).
-- [ ] Batched `/inventory-add LM358P 2, LM358N 3` against an empty
+- [x] Batched `/inventory-add LM358P 2, LM358N 3` against an empty
       inventory: first pair commits silently, second pair fires the
       suggestion against the just-committed first pair.
-- [ ] A maker who declines and proceeds gets a clean fresh row / fresh
+- [x] A maker who declines and proceeds gets a clean fresh row / fresh
       page — no artefacts.
-- [ ] `/inventory-page <mpn>` proposes the family-join when a
+- [x] `/inventory-page <mpn>` proposes the family-join when a
       stem-sibling page already exists.
-- [ ] `CHANGELOG.md` carries the tooling bullet under `[Unreleased] /
+- [x] `CHANGELOG.md` carries the tooling bullet under `[Unreleased] /
       ### Tooling`.
 
 ## Test Plan

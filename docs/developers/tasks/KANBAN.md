@@ -95,17 +95,17 @@ kanban
 
 ## skill-path-today
 
-_⚪ 3 open · 🔵 0 active · 🟡 0 paused · 🟢 0 closed · ░░░░░░░░░░ 0%_
+_⚪ 1 open · 🔵 0 active · 🟡 0 paused · 🟢 2 closed · ███████░░░ 67%_
 
 ```mermaid
 kanban
   Open
-    TASK_019["Hedge-language lint over inventory/parts/*.md + pre-commit hook"]
     TASK_020["Auto-trigger /inventory-page on row creation via /inventory-add"]
-    TASK_021["Family-page proactive suggestion at add-time + page-gen-time"]
   Active
   Paused
   Closed
+    TASK_019["Hedge-language lint over inventory/parts/*.md + pre-commit hook"]
+    TASK_021["Family-page proactive suggestion at add-time + page-gen-time"]
 ```
 
 ## usb-camera-capture

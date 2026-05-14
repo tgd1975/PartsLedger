@@ -93,6 +93,30 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   rode on EPIC-002's branch as a Phase 0b prerequisite for
   TASK-016 / TASK-017 — the package layout had to land before
   the writer and lint modules could.
+- TASK-019 closed: `src/partsledger/inventory/hedge_lint.py` +
+  `scripts/lint_hedge_language.py` shim + pre-commit hook stanza in
+  `scripts/pre-commit`. Mechanical backstop for the sincere-language
+  convention — flags absolute-claim phrasing (`is the`, `must`,
+  `always`, `never`) in `inventory/parts/*.md` outside fenced code,
+  block quotes, and `<!-- lint: ok -->` overrides. 16 unit tests
+  covering pattern matrix, exempt contexts, and the existing-pages-
+  clean smoke test. 14 `<!-- lint: ok -->` markers added across the
+  six existing parts pages for legitimate datasheet-derived
+  absolutes (industry-standard pinouts, hardware constraints, ELI5
+  figurative language). Allowlist entry
+  `Bash(python scripts/lint_hedge_language.py:*)` added to
+  `.claude/settings.json`.
+- TASK-021 closed: `src/partsledger/inventory/family.py` lands the
+  MPN family-sibling heuristic (`family_sibling`, `find_siblings`,
+  `find_sibling_pages`) per IDEA-005 § Stage 2 — length gate ≥ 4
+  alphanumeric chars + suffix-only divergence (`^[A-Z]\d?[A-Z]?$`).
+  18 unit tests covering IDEA-004 family-boundary worked examples
+  (LM358P/N siblings, LM358/LM2904 not, LM358N/LM386N not, LM358/
+  LM3580 not). `/inventory-add` SKILL.md gains a Step 9 that calls
+  the heuristic after the row is written and offers the family-page
+  pattern when matches surface; `/inventory-page` SKILL.md's Family
+  pages section gains the proactive sibling check before drafting a
+  fresh page.
 
 ### Policy
 
@@ -219,6 +243,14 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   mechanism, autonomous-epic-run skill, GitHub Actions CI matrix,
   server-side branch protection on `main`. See the closed epic at
   [docs/developers/tasks/closed/epic-001-align-with-circuitsmith.md](docs/developers/tasks/closed/epic-001-align-with-circuitsmith.md).
+
+### Architecture decisions
+
+- ADR-0002 — Hedge-lint pattern set is the four literals from
+  IDEA-005. Records the calibration call (four-literals-from-task-
+  body vs MPN-token-shape narrow) made while landing TASK-019;
+  legitimate datasheet-derived absolutes use `<!-- lint: ok -->`
+  rather than being filtered out of the pattern set.
 
 ### Ideas
 

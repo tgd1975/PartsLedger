@@ -10,6 +10,7 @@ This folder contains utility scripts for development, CI/CD, and maintenance tas
 | [`commit-pathspec.sh`](commit-pathspec.sh) | scripts/commit-pathspec.sh — wrapper for git's pathspec-form commit | `./commit-pathspec.sh` |
 | [`housekeep.py`](housekeep.py) | Central housekeeping for the task system. | `python3 housekeep.py` |
 | [`install_git_hooks.sh`](install_git_hooks.sh) | Install repo-side git hooks into .git/hooks/. | `./install_git_hooks.sh` |
+| [`lint_hedge_language.py`](lint_hedge_language.py) | Pre-commit shim for ``partsledger.inventory.hedge_lint``. | `python3 lint_hedge_language.py` |
 | [`lint_inventory.py`](lint_inventory.py) | Pre-commit shim for ``partsledger.inventory.lint``. | `python3 lint_inventory.py` |
 | [`pre-commit`](pre-commit) | Pre-commit hook for PartsLedger. | `python3 pre-commit` |
 | [`release_burnup.py`](release_burnup.py) | Generate the burn-up section for OVERVIEW.md. | `python3 release_burnup.py` |
@@ -45,6 +46,12 @@ This folder contains utility scripts for development, CI/CD, and maintenance tas
 **Purpose**: Install repo-side git hooks into .git/hooks/.
 
 **Usage**: `./install_git_hooks.sh`
+
+### lint_hedge_language.py
+
+**Purpose**: Pre-commit shim for ``partsledger.inventory.hedge_lint``.
+
+**Usage**: `python3 lint_hedge_language.py`
 
 ### lint_inventory.py
 

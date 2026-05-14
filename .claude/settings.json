@@ -3,6 +3,7 @@
     "allow": [
       "Bash(python scripts/codeowner_hook.py:*)",
       "Bash(python scripts/housekeep.py:*)",
+      "Bash(python scripts/lint_hedge_language.py:*)",
       "Bash(python scripts/lint_inventory.py:*)",
       "Bash(python scripts/release_burnup.py:*)",
       "Bash(python scripts/release_snapshot.py:*)",

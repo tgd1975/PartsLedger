@@ -1,9 +1,11 @@
 ---
 id: TASK-019
 title: Hedge-language lint over inventory/parts/*.md + pre-commit hook
-status: open
+status: closed
 opened: 2026-05-14
+closed: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Medium (2-8h)
 complexity: Medium
 human-in-loop: No
 epic: skill-path-today
@@ -46,18 +48,18 @@ Two pieces of work:
 
 ## Acceptance Criteria
 
-- [ ] The six existing parts pages pass clean (any failures are real
+- [x] The six existing parts pages pass clean (any failures are real
       finds, not lint false positives).
-- [ ] A synthetic *"this is the LM358"* outside a code block fails.
-- [ ] *"walls must align"* inside an ASCII-pinout block passes
+- [x] A synthetic *"this is the LM358"* outside a code block fails.
+- [x] *"walls must align"* inside an ASCII-pinout block passes
       (exempt-context works).
-- [ ] A synthetic *"is the LM358"* inside an `INVENTORY.md` Notes cell
+- [x] A synthetic *"is the LM358"* inside an `INVENTORY.md` Notes cell
       passes (scope is parts pages only, by design).
-- [ ] `<!-- lint: ok -->` on a line suppresses the diagnostic for that
+- [x] `<!-- lint: ok -->` on a line suppresses the diagnostic for that
       line.
-- [ ] `scripts/pre-commit` is wired to fire the lint on every commit
+- [x] `scripts/pre-commit` is wired to fire the lint on every commit
       touching `inventory/parts/*.md`.
-- [ ] `CHANGELOG.md` carries the tooling bullet under `[Unreleased] /
+- [x] `CHANGELOG.md` carries the tooling bullet under `[Unreleased] /
       ### Tooling`.
 
 ## Test Plan

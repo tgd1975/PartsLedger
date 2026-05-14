@@ -168,4 +168,26 @@ if [ -n "$STAGED_INVENTORY" ]; then
     echo -e "${GREEN}Inventory schema OK.${NC}"
 fi
 
+# ---------------------------------------------------------------------------
+# Hedge-language lint over inventory/parts/*.md (mandatory when any parts
+# page is staged — flags absolute-claim phrasing that should be hedged).
+# IDEA-005 § Stage 1 — backstop for the sincere-language convention.
+# The script is a thin shim over `partsledger.inventory.hedge_lint`.
+# ---------------------------------------------------------------------------
+STAGED_PARTS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^inventory/parts/[^/]+\.md$' || true)
+if [ -n "$STAGED_PARTS" ]; then
+    PYTHON=$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)
+    if [ -z "$PYTHON" ]; then
+        echo -e "${RED}ERROR: python is required but not on PATH.${NC}" >&2
+        exit 1
+    fi
+    echo -e "${YELLOW}Checking hedge language (lint_hedge_language.py)...${NC}"
+    # shellcheck disable=SC2086
+    if ! echo "$STAGED_PARTS" | xargs "$PYTHON" "${REPO_ROOT}/scripts/lint_hedge_language.py"; then
+        echo -e "${RED}Hedge-language lint failed. Commit aborted.${NC}" >&2
+        exit 1
+    fi
+    echo -e "${GREEN}Hedge language OK.${NC}"
+fi
+
 exit 0
