@@ -4,7 +4,7 @@ skill_paths = [".claude/skills/"]
 # a new SKILL.md without the corresponding enabled_skills entry won't actually
 # activate. Pinned 2026-05-14 so the registration step doesn't slip between
 # the dossier decision and the PR.
-enabled_skills = ["check-branch", "check-tool", "co-inventory-master-index", "co-inventory-schema", "commit", "epic-run", "fix-markdown", "housekeep", "os-context", "status", "tasks", "ts-epic-list", "ts-epic-new", "ts-idea-archive", "ts-idea-list", "ts-idea-new", "ts-task-active", "ts-task-done", "ts-task-list", "ts-task-new", "ts-task-pause", "ts-task-reopen", "update-scripts-readme"]
+enabled_skills = ["bash-no-prompts", "check-branch", "check-tool", "co-inventory-master-index", "co-inventory-schema", "commit", "epic-run", "fix-markdown", "housekeep", "os-context", "status", "tasks", "ts-epic-list", "ts-epic-new", "ts-idea-archive", "ts-idea-list", "ts-idea-new", "ts-task-active", "ts-task-done", "ts-task-list", "ts-task-new", "ts-task-pause", "ts-task-reopen", "update-scripts-readme"]
 disabled_skills = []
 agent_paths = [".claude/agents/"]
 enabled_agents = []

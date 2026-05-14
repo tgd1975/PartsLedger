@@ -31,6 +31,118 @@ Before invoking `/epic-run`:
       isn't in the epic file or the dossier (rare, but
       sometimes necessary for the first task).
 
+## Default execution mode — uninterrupted
+
+`/epic-run` operates in **uninterrupted mode by default**: the user
+expects to brief the agent at the start, review at the end, and not
+hear from it in between. Mid-run prompts are an exception path, not
+a routine path. The rest of this skill body is built around making
+that property hold.
+
+The three load-bearing mechanisms:
+
+1. **Pre-run scoping phase** (below) — the agent reads every task
+   in the epic, identifies every cross-task / cross-epic /
+   schema-shape decision that *might* need human input, and bundles
+   them into **one** `AskUserQuestion` call before the work phase
+   starts. Anything the agent could plausibly have to ask later
+   gets asked here instead.
+2. **ADR-on-ambiguity mid-run** — once the work phase starts, the
+   agent does not pause for clarification. Unforeseen ambiguities
+   resolve via the
+   [ADR-on-ambiguity rule](../../../docs/developers/AUTONOMY.md#adr-on-ambiguity);
+   the ADRs are reviewed in batch at the end.
+3. **Bash-prompt hygiene via [`/bash-no-prompts`](../bash-no-prompts/SKILL.md)** —
+   every Bash call is preflighted against the
+   `bash-no-prompts` rules so the user is not interrupted by
+   permission prompts that the allowlist would have accepted
+   without the diagnostic suffix or the compound chaining. The
+   user's attention is the resource being protected, not Bash
+   convenience.
+
+If at any point the agent is tempted to break the uninterrupted
+property — to ask a clarification question, to chain a diagnostic
+`echo` for "safety", to retry a denied `head` with a different
+forbidden primary — re-read this section. Those temptations are
+the failure modes the protocol exists to prevent.
+
+## Pre-run scoping
+
+This phase runs **once**, at the very top of the epic-run, before
+the work-phase loop starts. Its job: turn every plausible mid-run
+question into either a pre-run answer or a defensible default the
+agent will apply autonomously.
+
+### Step 1 — Inventory the work
+
+1. **Read the epic file.** Note the `branch:` field, the prose body
+   (especially any "Phase" placement comments), and the list of
+   tasks.
+2. **Read every open / paused task file in the epic.** Capture:
+   - Each task's `prerequisites:` field — flag any prerequisite
+     that lives in **another epic** (cross-epic ride-along).
+   - Each task's `human-in-loop:` field — `Clarification` /
+     `Support` / `Main` mean the task body names a decision the
+     user must own; pull that decision into the pre-run question
+     batch instead of waiting for the work-phase loop to hit it.
+   - Each task's body for explicit "to be confirmed" /
+     "user choice" / "to decide" prose — these are pre-run-batch
+     candidates regardless of HIL field.
+3. **Audit shared resources** the epic will touch — settings.json,
+   pyproject.toml, the codeowner registry, CHANGELOG.md sections
+   that don't exist yet — and identify any decision-points the
+   audit surfaces (e.g. "this epic adds two new pre-commit
+   scripts; should they share one allowlist entry or two?").
+
+### Step 2 — Build the scoping question batch
+
+Bundle every flagged item from Step 1 into **one**
+`AskUserQuestion` call with 1-4 questions. Each question is
+multi-choice, has a (Recommended) option marked first, and
+explains the trade-off concisely.
+
+Question shapes to expect:
+
+- **Cross-epic ride-along.** "Task X in this epic depends on Task
+  Y from another epic. Should I (a) pull Y in as a riding
+  prerequisite on this branch, or (b) stop after the tasks that
+  don't need it?"
+- **End-state preference.** "When the work + commit + CHANGELOG
+  phases finish on `<branch>`, should I (a) stop on the local
+  branch for review, (b) push without a PR, or (c) push + open
+  a draft PR?"
+- **Schema-shape divergences.** "INVENTORY.md has a custom
+  Transistors table with a different column shape — should the
+  new Source column apply there too?"
+- **Task-body-named clarifications.** Any `Clarification`-HIL
+  task's named question goes here.
+
+If the pre-run audit finds **zero** decision-points, skip the
+question batch entirely and proceed to the work phase. Asking a
+question for which you already have a defensible default — when
+the user said "don't disturb me" — is a noise event.
+
+### Step 3 — Cross-epic ride-along mechanic
+
+When a task from another epic (call it `TASK-Y` under `EPIC-B`) is
+pulled in as a riding prerequisite for `EPIC-A`'s tasks:
+
+- **Do not invoke `/ts-task-active TASK-Y`.** It would prompt for
+  the epic/branch mismatch, breaking uninterrupted mode. Edit the
+  task file's `status:` to `active` by hand and run `/housekeep`.
+  This is the documented manual equivalent the skill body
+  describes — use it here.
+- **Do not rewrite `EPIC-B`'s `branch:` frontmatter.** The other
+  tasks under `EPIC-B` still belong to that branch. The
+  cross-epic ride-along is for *one* task on *this* branch, not
+  a wholesale rebranding.
+- **Document the ride-along in the commit message** for `TASK-Y`'s
+  close. One sentence: *"`TASK-Y` rides on `<this-branch>` as a
+  Phase-Nb prerequisite for `TASK-X` per EPIC-A's epic file."*
+- **Mention the ride-along in the final review packet** under
+  "Per-EPIC ride-along" so the user sees the cross-epic accounting
+  at end-of-run.
+
 ## Work phase
 
 For each iteration in the work phase:
@@ -46,9 +158,22 @@ For each iteration in the work phase:
    `human-in-loop:` field:
 
    - `No` → proceed silently.
-   - `Clarification` → proceed; pause for one batched
-     `AskUserQuestion` call **only** if the task body explicitly
-     names a decision the user must own. Otherwise, treat as `No`.
+   - `Clarification` → proceed silently in the routine case. The
+     named decision was already pulled into the **Pre-run
+     scoping** question batch and either answered by the user or
+     resolved by a defensible default; the work-phase loop does
+     not re-prompt. If a genuinely new decision appears mid-task
+     (one the pre-run audit could not have foreseen):
+     - **Defensible default exists** → pick it, file an ADR per
+       the [ADR-on-ambiguity rule](../../../docs/developers/AUTONOMY.md#adr-on-ambiguity),
+       and continue. This is the routine path.
+     - **No defensible default** → the trade-offs are roughly
+       balanced and the choice is load-bearing. Surface **one**
+       batched `AskUserQuestion` call, then continue once
+       answered. This is the rare exception — severe cases only.
+       If you find yourself reaching for it more than once per
+       run, you are pre-empting work the pre-run audit should
+       have caught; tighten that next time.
    - `Support` → proceed up to the task body's stop-line, then
      enter the **Hand-off phase** (below) with what's accumulated
      so far.
@@ -64,8 +189,30 @@ For each iteration in the work phase:
    ADRs filed under the
    [ADR-on-ambiguity rule](../../../docs/developers/AUTONOMY.md#adr-on-ambiguity).
    Mid-task `AskUserQuestion` calls are **not** part of the loop;
-   if the agent reaches one, that's a Clarification-HIL pause and
-   the protocol applies.
+   the pre-run scoping batch is where all foreseeable questions
+   landed. If you reach an ambiguity now, file an ADR and continue
+   — see the Anti-patterns section's "Resolving ambiguity by
+   stopping" entry.
+
+   **Bash hygiene.** Every Bash call goes through
+   [`/bash-no-prompts`](../bash-no-prompts/SKILL.md)'s preflight
+   list — no diagnostic `; echo "EXIT=$?"` suffixes, no `cmd1 &&
+   cmd2` chaining of independent commands, no `head`/`tail`/`sed`/
+   `awk` as a substitute for the dedicated `Read`/`Edit`/`Grep`
+   tools. The allowlist matches the whole command string; every
+   mismatch is a permission prompt the user has to dismiss, and in
+   uninterrupted mode that's the same as stopping. Treat the
+   prompt rate as a quality metric, not a fixed cost.
+
+   **New-script allowlist riding rule.** If the task adds a new
+   shim under `scripts/` (e.g. `scripts/lint_inventory.py` in
+   EPIC-002), the same task's commit pathspec **must** include the
+   corresponding `.claude/settings.json` `permissions.allow` entry
+   (`Bash(python scripts/<name>.py:*)`). Otherwise the very next
+   invocation of the shim prompts the user, defeating
+   uninterrupted mode for the rest of the run. Add the allowlist
+   entry the moment the shim file is created — do not defer it to
+   the close-out step.
 
 5. **Definition-of-done gate.** Run the checklist from
    [AUTONOMY.md § Definition of done](../../../docs/developers/AUTONOMY.md#definition-of-done).
@@ -221,20 +368,42 @@ not reach for any of them.
 - **Skipping `/ts-task-active`.** The epic/branch nag and the
   status transition are load-bearing; bypassing them silently
   breaks `/check-branch`, `/housekeep`, and the index files.
+  The one documented exception is the cross-epic ride-along
+  (see Pre-run scoping § Step 3), and the substitute there is
+  *not* "skip the activation" — it is "do the activation by
+  hand (status flip + housekeep) so the nag prompt never fires
+  in the first place".
 - **Batching commits across tasks.** Each task closure is its own
   commit on the epic's branch. The squash-merge to `main` collapses
   them — that is the user's call at merge time, not the loop's.
-- **Mid-loop user prompts that aren't HIL-defined.** If you find
-  yourself wanting to ask "should I continue with the next task?",
-  re-read AUTONOMY.md — the answer is no, the loop drives itself
-  until a defined stop-line. End-of-turn "continue?" checkpoints
-  are forbidden by [`CLAUDE.md`](../../../CLAUDE.md).
+- **Mid-loop user prompts that aren't pre-run-scoped.** If you
+  find yourself wanting to ask "should I continue with the next
+  task?" or "what should I do about X?" mid-loop, re-read the
+  Default execution mode section. The answer is *almost always*
+  no — the loop drives itself until a Main/Support HIL stop-line
+  or end-of-epic. The pre-run scoping batch is the *one*
+  opportunity to ask. End-of-turn "continue?" checkpoints are
+  forbidden by [`CLAUDE.md`](../../../CLAUDE.md).
 - **Resolving ambiguity by stopping.** If a decision has a
   defensible default, file an ADR and continue. Stopping is the
   exception, not the default.
 - **Touching files outside the task's scope.** "While I'm in
   here" edits clobber the squash-merge story and pollute the
   commit. New tasks for new work.
+- **Bash calls that bounce permission prompts.** A `cmd1 && cmd2`
+  chain, a `; echo "EXIT=$?"` suffix, a `| head -20` truncator —
+  each one of these mismatches the allowlist for *no content
+  reason* and burns one unit of the user's attention. In
+  uninterrupted mode, the user is not there to dismiss the
+  prompt. Preflight via
+  [`/bash-no-prompts`](../bash-no-prompts/SKILL.md) before every
+  Bash call.
+- **Forgetting the allowlist entry for a new shim.** A
+  `scripts/X.py` file that lands without a matching
+  `Bash(python scripts/X.py:*)` entry in `.claude/settings.json`
+  produces a permission prompt the moment the next call to it
+  runs (usually in the very same task's verification step). Add
+  the entry the moment the shim is created.
 
 ## When NOT to use
 

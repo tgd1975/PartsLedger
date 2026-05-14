@@ -175,6 +175,28 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
     `/commit`, `/housekeep`, `/ts-task-done`, `/check-branch`).
   - HIL frontmatter sweep was a no-op — every existing task already
     carried the field.
+- `.claude/skills/bash-no-prompts/SKILL.md` added — preflight rules
+  for every Bash call to avoid permission prompts the allowlist
+  would otherwise accept (no diagnostic `; echo "EXIT=$?"` suffixes,
+  no chained `cmd1 && cmd2`, no `head`/`tail`/`sed`/`awk` as a
+  substitute for the dedicated `Read`/`Edit`/`Grep` tools). The
+  allowlist matches whole command strings, so each mismatch is a
+  user-attention event for no content reason. Registered in
+  `.vibe/config.toml` `enabled_skills`.
+- `/epic-run` skill restructured around uninterrupted-by-default
+  operation. New **Pre-run scoping** phase reads every task in the
+  epic, identifies every plausible cross-task / cross-epic /
+  schema-shape decision, and bundles them into **one**
+  `AskUserQuestion` call before the work phase starts. Adds the
+  cross-epic ride-along mechanic (activate the foreign task by
+  hand; never `[c]ontinue`-rewrite the other epic's `branch:`
+  frontmatter) and the new-script allowlist riding rule (every
+  task that adds a `scripts/X.py` shim must include
+  `Bash(python scripts/X.py:*)` in the same commit's
+  `.claude/settings.json` edit). `Clarification` HIL semantics
+  refined: silent + ADR routine; mid-run `AskUserQuestion` is the
+  rare exception, only for load-bearing ambiguities with no
+  defensible default.
 
 ### CI
 
