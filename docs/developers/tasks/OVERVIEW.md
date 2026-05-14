@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 0** | 🔵 **Active: 0** | 🟡 **Paused: 0** | 🟢 **Closed: 13** | **Total: 13** | ██████████ 100%
+⚪ **Open: 42** | 🔵 **Active: 0** | 🟡 **Paused: 3** | 🟢 **Closed: 13** | **Total: 58** | ██░░░░░░░░ 22%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -24,11 +24,58 @@ _No active tasks._
 
 ## Paused Tasks
 
-_No paused tasks._
+| ID | Title | Effort | Complexity | Status |
+|----|-------|--------|------------|--------|
+| [TASK-018](paused/task-018-inventory-split-support.md) | Multi-file INVENTORY.md split support + suggestion trigger | Large (8-24h) | Medium | 🟡 **paused** |
+| [TASK-057](paused/task-057-pipeline-test-fixture-corpus.md) | Build pipeline test-fixture corpus under tests/fixtures/ | Medium (2-8h) | Senior | 🟡 **paused** |
+| [TASK-058](paused/task-058-resistor-output-parser-test.md) | One-line parser test walking IDEA-011 V1 output through /inventory-add's parser | Small (&lt;2h) | Medium | 🟡 **paused** |
 
 ## Open Tasks
 
-_No open tasks._
+| ID | Title | Effort | Complexity | Status |
+|----|-------|--------|------------|--------|
+| [TASK-014](open/task-014-source-column-and-section-flex.md) | Add Source column and maker-choice section taxonomy to INVENTORY.md | Medium (2-8h) | Medium | ⚪ open |
+| [TASK-015](open/task-015-parts-page-template-adaptivity.md) | Teach /inventory-page to produce part-class-appropriate sections | Small (&lt;2h) | Medium | ⚪ open |
+| [TASK-016](open/task-016-inventory-writer-module.md) | Implement src/partsledger/inventory/writer.py with upsert_row() contract | Large (8-24h) | Senior | ⚪ open |
+| [TASK-017](open/task-017-inventory-lint-module.md) | Implement src/partsledger/inventory/lint.py + scripts/lint_inventory.py shim | Medium (2-8h) | Medium | ⚪ open |
+| [TASK-019](open/task-019-hedge-language-lint.md) | Hedge-language lint over inventory/parts/*.md + pre-commit hook | Medium (2-8h) | Medium | ⚪ open |
+| [TASK-020](open/task-020-page-gen-auto-trigger.md) | Auto-trigger /inventory-page on row creation via /inventory-add | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-021](open/task-021-family-page-proactive-suggestion.md) | Family-page proactive suggestion at add-time + page-gen-time | Medium (2-8h) | Medium | ⚪ open |
+| [TASK-022](open/task-022-adopt-src-layout.md) | Adopt src/partsledger/ layout in pyproject | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-023](open/task-023-releasing-docs-and-release-skill.md) | Port RELEASING.md and /release skill; rewrite semver for three public surfaces | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-024](open/task-024-github-workflows.md) | Add .github/workflows/ci.yml and release.yml | Medium (2-8h) | Medium | ⚪ open |
+| [TASK-025](open/task-025-uv-lock.md) | Adopt uv.lock for reproducible installs | Small (&lt;2h) | Junior | ⚪ open |
+| [TASK-026](open/task-026-portability-lint.md) | Add src/partsledger/_dev/portability_lint.py with scripts/ shim | Medium (2-8h) | Medium | ⚪ open |
+| [TASK-027](open/task-027-shim-convention-doc.md) | Document shim convention (scripts/ and skill .py files as thin shims) | Small (&lt;2h) | Medium | ⚪ open |
+| [TASK-028](open/task-028-scripts-drift-audit.md) | Drift audit on already-copied scripts/ files vs CircuitSmith | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-029](open/task-029-optional-dependencies-extras.md) | Configure [project.optional-dependencies] for partsledger[resistor-reader] extra | Small (&lt;2h) | Medium | ⚪ open |
+| [TASK-030](open/task-030-adr-0001-library-as-installable-package.md) | Write ADR-0001 — library as installable package | Small (&lt;2h) | Senior | ⚪ open |
+| [TASK-031](open/task-031-bootstrap-readme-quickstart.md) | Write README.md / QUICKSTART.md bootstrap section | Medium (2-8h) | Medium | ⚪ open |
+| [TASK-032](open/task-032-camera-selection-wizard.md) | Camera-selection wizard (V4L2 / DirectShow enumeration, friendly names) | Large (8-24h) | Senior | ⚪ open |
+| [TASK-033](open/task-033-live-viewfinder-overlays.md) | Live viewfinder + capture overlays (framing rect, focus, lighting, trigger hint) | Large (8-24h) | Senior | ⚪ open |
+| [TASK-034](open/task-034-capture-trigger-and-still.md) | Capture trigger + single-still emit per Output contract | Medium (2-8h) | Medium | ⚪ open |
+| [TASK-035](open/task-035-camera-cli-wrapper.md) | CLI wrapper python -m partsledger.capture | Small (&lt;2h) | Medium | ⚪ open |
+| [TASK-036](open/task-036-recognition-overlay-state-machine.md) | Recognition-status overlay state machine + hint-family tokeniser | Large (8-24h) | Senior | ⚪ open |
+| [TASK-037](open/task-037-secondary-key-dispatch.md) | Secondary key dispatch — R / X / U handlers | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-038](open/task-038-capture-slash-skill.md) | /capture thin slash-skill subprocess wrapper | Small (&lt;2h) | Medium | ⚪ open |
+| [TASK-039](open/task-039-recognition-embed-module.md) | Implement src/partsledger/recognition/embed.py — DINOv2-ViT-S/14 via torch.hub | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-040](open/task-040-recognition-cache-module.md) | Implement src/partsledger/recognition/cache.py — sqlite-vec backed | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-041](open/task-041-cache-only-banded-recognition.md) | Cache-only recognition with tight / tight_ambiguous / medium / miss bands | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-042](open/task-042-vlm-adapter.md) | Implement src/partsledger/recognition/vlm.py — OpenAI-compatible REST adapter | Large (8-24h) | Senior | ⚪ open |
+| [TASK-043](open/task-043-recognition-pipeline-glue.md) | Pipeline glue — pipeline.run(image) -&gt; Outcome with re-frame loop and writer hand-off | Large (8-24h) | Senior | ⚪ open |
+| [TASK-044](open/task-044-undo-journal.md) | Undo journal at inventory/.embeddings/undo.toml, depth 1 | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-045](open/task-045-nexar-graphql-adapter.md) | Implement src/partsledger/enrichment/nexar.py — OAuth + GraphQL supSearchMpn | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-046](open/task-046-nexar-response-cache.md) | Implement src/partsledger/enrichment/cache.py — SQLite per-MPN response cache | Small (&lt;2h) | Medium | ⚪ open |
+| [TASK-047](open/task-047-family-datasheet-fallback.md) | Implement src/partsledger/enrichment/family_datasheets.py — MPN-prefix → URL table | Small (&lt;2h) | Junior | ⚪ open |
+| [TASK-048](open/task-048-enrichment-orchestrator.md) | Orchestrator enrich(part_id) + writer-integration (no clobber on non-empty cells) | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-049](open/task-049-camera-async-dispatch.md) | Camera-path async dispatch — dispatch_async() + single-worker thread + enrichment.log | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-050](open/task-050-skill-sync-chain.md) | Skill-path sync enrichment + page-gen chain (sync for /inventory-add, async for camera) | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-051](open/task-051-resistor-localisation-v1.md) | V1 — resistor localisation (HSV thresholding + contour finding) on still images | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-052](open/task-052-resistor-band-reading-eia.md) | V1 — band reading + EIA classifier + orientation disambiguation via E-series check | Medium (2-8h) | Senior | ⚪ open |
+| [TASK-053](open/task-053-resistor-uniformity-check.md) | V1 — uniformity check (strict, every deviation flagged) | Small (&lt;2h) | Medium | ⚪ open |
+| [TASK-054](open/task-054-resistor-extra-packaging.md) | V1 — package as partsledger[resistor-reader] extra with CLI entry-point | Small (&lt;2h) | Medium | ⚪ open |
+| [TASK-055](open/task-055-resistor-trained-detector-v2.md) | V2 — small trained detector (YOLO-nano / MobileNet-SSD) for live-view localisation | Large (8-24h) | Senior | ⚪ open |
+| [TASK-056](open/task-056-resistor-live-overlay-v2.md) | V2 — live overlay + per-frame stable decoding at ≥10 fps | Large (8-24h) | Senior | ⚪ open |
 
 ## Closed Tasks
 

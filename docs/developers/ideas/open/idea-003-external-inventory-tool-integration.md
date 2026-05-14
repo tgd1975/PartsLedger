@@ -178,6 +178,6 @@ multi-editor pain emerges.
 
 - [IDEA-004](idea-004-markdown-inventory-schema.md) — defines the MD
   schema that any external integration must round-trip against.
-- [IDEA-009](idea-009-circuitsmith-prefer-inventory-adapter.md) — the
-  CircuitSmith bridge; the same parameter vocabulary (IDEA-027) should
-  drive the InvenTree parameter-template mapping.
+- [CircuitSmith IDEA-010](https://github.com/tgd1975/CircuitSmith/blob/main/docs/developers/ideas/open/idea-010-prefer-inventory-adapter.md)
+  — the CircuitSmith bridge; the same parameter vocabulary
+  (IDEA-027) should drive the InvenTree parameter-template mapping.

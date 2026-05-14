@@ -45,6 +45,24 @@ The script flags:
   `.env`.
 - Network egress added to scripts (`curl`, `wget`, `requests`,
   `urllib`, `fetch`).
+- **Hardcoded API keys / tokens / private keys** — scanned on
+  **every changed file regardless of suffix** (so a key pasted into
+  a `.md`, `.toml`, `.yaml`, or `.json` is caught too). Patterns:
+  - **Provider-specific prefixes**: Anthropic (`sk-ant-…`), OpenAI
+    (`sk-…`), GitHub PATs (`ghp_…`, `gho_…`, `ghs_…`, `ghr_…`,
+    `github_pat_…`), Slack (`xoxb-…`, `xoxa-…`, `xoxp-…`, `xoxr-…`,
+    `xoxs-…`), AWS access keys (`AKIA…`), Google API (`AIza…`),
+    Stripe (`sk_live_…`, `pk_test_…`, etc.), JWTs (`eyJ…`), PEM
+    private-key blocks (`-----BEGIN … PRIVATE KEY-----`).
+  - **Generic `name = '…'` assignment** where `name` is one of
+    `api_key`, `secret`, `token`, `password`, `credential`
+    (case-insensitive, hyphen / underscore / plural tolerated) and
+    the quoted value is ≥ 20 characters of typical key alphabet.
+    The length minimum is tuned to keep short placeholders
+    (*"your-api-key-here"*, *"REPLACE_ME"*) below the threshold.
+  - Findings have the **secret masked** in the report snippet
+    (first 4 chars + asterisks) so the report itself does not
+    re-leak the key into CI logs or developer terminals.
 
 ### Semantic pass
 
@@ -84,8 +102,13 @@ the novel cases. Both are needed.
 
 When reviewing a diff (your own or someone else's), grep / scan for:
 
-- [ ] **Secrets in commits.** `.env`, `*.key`, `*.pem`, credentials
-  JSON, API tokens in plain text.
+- [ ] **Secrets in commits.** Files: `.env`, `.envrc`, `*.key`,
+  `*.pem`, credentials JSON. In-line: API tokens / bearer values
+  in any file regardless of suffix (the automated layer catches
+  the common provider prefixes — see `## Static rules` — but a
+  reviewer should still scan diffs of `.md`, `.toml`, `.yaml`,
+  `.json`, and CI configs for hand-pasted secrets that don't match
+  a known prefix).
 - [ ] **Shell-execution risks.** `eval`, `exec`, `subprocess(...,
   shell=True)`, `os.system`, dynamic `import` of attacker-controlled
   names.

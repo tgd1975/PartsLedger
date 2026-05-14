@@ -1,9 +1,30 @@
 ---
 id: IDEA-009
-title: CircuitSmith --prefer-inventory adapter
-description: The bridge that lets CircuitSmith bias its component selection toward parts the maker already owns. Lives in the CircuitSmith repo, depends on the PartsLedger MD schema ([IDEA-004]). BOM gets three columns — needed / in stock / to order.
+title: CircuitSmith --prefer-inventory adapter (moved to CircuitSmith)
+description: Moved 2026-05-14 — the canonical version lives at CircuitSmith IDEA-010. Every open question on this dossier is a CircuitSmith-side concern; PartsLedger only ships the schema the adapter reads ([IDEA-004]). Kept here for history.
 category: integration
 ---
+
+## Archive Reason
+
+2026-05-14 — Moved to [CircuitSmith IDEA-010](https://github.com/tgd1975/CircuitSmith/blob/main/docs/developers/ideas/open/idea-010-prefer-inventory-adapter.md)
+(on disk at `~/Dokumente/Projekte/CircuitSmith/docs/developers/ideas/open/idea-010-prefer-inventory-adapter.md`).
+
+The contract was originally drafted from PartsLedger's POV during the
+2026-05-13 split of the retired IDEA-001. On re-reading 2026-05-14,
+every open question on the dossier (pinout-parser robustness, BOM
+family-page semantics, quantity reservation, adapter discovery, schema
+versioning, round-trip enrichment) is a **CircuitSmith-side concern**
+— none of them change anything PartsLedger ships. The dossier was
+rewritten from CircuitSmith's POV and moved to that repo as IDEA-010,
+where it can be honed against CircuitSmith's own implementation
+realities.
+
+PartsLedger's job for the integration stays unchanged: keep
+[IDEA-004](../open/idea-004-markdown-inventory-schema.md) stable
+enough that CircuitSmith's adapter can rely on it.
+
+## Original dossier (frozen at move-time)
 
 > *Replaces the "Integration with CircuitSmith" section of the retired
 > IDEA-001 dossier.* The smallest piece of the toolchain in code terms
@@ -132,9 +153,20 @@ implementation lands.
 
 - **Pinout-table parser robustness.** The ASCII-DIP + table pattern is
   consistent across the six existing pages, but it's a convention, not
-  a spec. Worth tightening into a regex CircuitSmith can rely on, or
-  adding a `<!-- pin-aliases: yaml -->` machine-readable block per
-  [IDEA-004 open questions](idea-004-markdown-inventory-schema.md#open-questions-to-hone)?
+  a spec — and IDEA-004 now codifies that the Pinout section's shape
+  *adapts to the part class*: TO-92 sketch for 3-pin small-signal
+  parts, one-line polarity note for 2-pin parts, header diagram for
+  modules. Only the DIP-N ASCII shape is structurally regular enough
+  for an automated lifter. Likely partition: tighten a regex for the
+  DIP-N shape and declare TO-92 / polarity-note / header-diagram
+  pinouts **out of scope for automated pin-alias lifting** — the
+  adapter skips them rather than guessing. IDEA-004 has closed out
+  the "add a structured `<!-- pin-aliases: yaml -->` block to
+  `parts/*.md`" alternative (parts pages stay prose-only), so any
+  fallback richer than regex-over-DIP-prose lives on the CircuitSmith
+  side — e.g. an MPN-keyed pin-alias overlay file in the CircuitSmith
+  repo, which would also be the home for any aliases the maker wants
+  to attach to a TO-92 transistor or a module header.
 - **Quantity reservation.** During BOM composition, if two designs are
   open and both want the single LM358N, who reserves it? Probably
   out-of-scope (the maker resolves by hand), but worth naming.

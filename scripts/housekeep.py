@@ -49,14 +49,14 @@ Sibling-script audit (TASK-328)
   path is documented in its docstring). Serialised by its caller, so
   it inherits housekeep's lock. **Safe — no lock needed.**
 - `update_idea_overview.py`: regenerate ideas `OVERVIEW.md` from
-  frontmatter. Called both by `housekeep.py` and directly by
-  `scripts/pre-commit`, so it does **not** inherit housekeep's lock
-  on the pre-commit path. The output is a pure function of the
+  frontmatter. Called by `housekeep.py` via
+  `regenerate_idea_overview()` during `apply_plan` when
+  `ideas.enabled` is set. The output is a pure function of the
   on-disk idea files: two parallel runs reading the same tree write
   byte-identical bytes to the same path, so a last-writer-wins race
-  is benign. **Safe — no lock needed.** Re-evaluate if the script
-  ever takes input from a non-deterministic source (clock, env,
-  random ordering).
+  is benign. **Safe — no extra lock needed beyond housekeep's own.**
+  Re-evaluate if the script ever takes input from a non-deterministic
+  source (clock, env, random ordering).
 - `organize_closed_tasks.py`: explicit release-time archival
   (`v0.X.Y` argument), invoked by hand at release. No trigger
   fan-out. **Safe — no lock needed.**
@@ -83,6 +83,7 @@ _ACTIVE_ENABLED = bool(tsc.get(_CFG, "tasks", "active", "enabled", default=True)
 _PAUSED_ENABLED = tsc.paused_enabled(_CFG)
 _EPICS_ENABLED = bool(tsc.get(_CFG, "tasks", "epics", "enabled", default=True))
 _BURNUP_ENABLED = bool(tsc.get(_CFG, "visualizations", "burnup", "enabled", default=True))
+_IDEAS_ENABLED = bool(tsc.get(_CFG, "ideas", "enabled", default=True))
 
 
 def _status_folders(active_enabled: bool, paused_enabled: bool) -> tuple[str, ...]:
@@ -421,6 +422,16 @@ def regenerate_overview() -> None:
     script = Path(__file__).resolve().parent / "update_task_overview.py"
     subprocess.run([sys.executable, str(script)], check=True)
     _refresh_burnup_section()
+
+
+def regenerate_idea_overview() -> None:
+    """Regenerate ideas/OVERVIEW.md by delegating to update_idea_overview.py.
+
+    Same delegate-to-existing-script pattern as `regenerate_overview()`
+    for the tasks side — keeps the rendering format in one place.
+    """
+    script = Path(__file__).resolve().parent / "update_idea_overview.py"
+    subprocess.run([sys.executable, str(script)], check=True)
 
 
 def _refresh_burnup_section() -> None:
@@ -919,11 +930,13 @@ def print_plan(plan: Plan, stream=sys.stdout) -> None:
         for p in plan.stubs:
             print(f"  CREATE {p}", file=stream)
     if plan.regen:
-        regen_files = ["OVERVIEW.md"]
+        regen_files = ["tasks/OVERVIEW.md"]
         if _EPICS_ENABLED:
-            regen_files.append("EPICS.md")
+            regen_files.append("tasks/EPICS.md")
         if _KANBAN_ENABLED:
-            regen_files.append("KANBAN.md")
+            regen_files.append("tasks/KANBAN.md")
+        if _IDEAS_ENABLED:
+            regen_files.append("ideas/OVERVIEW.md")
         print(f"housekeep: {', '.join(regen_files)} will be regenerated.", file=stream)
 
 
@@ -1085,6 +1098,8 @@ def apply_plan(plan: Plan) -> None:
             generate_epics_md()
         if _KANBAN_ENABLED:
             generate_kanban_md()
+        if _IDEAS_ENABLED:
+            regenerate_idea_overview()
 
 
 def run_init(cfg: dict) -> int:

@@ -10,19 +10,57 @@
 #      whenever your shell is inside the repo.
 #
 # All variables are namespaced PL_* so they don't collide.
+#
+# SECRETS POLICY: never commit a filled-in `.envrc`. It is in `.gitignore`
+# precisely so API keys live here and not in the repo. Reference the names
+# in code / skills / docs; never paste literal values inline.
 
-# Anthropic API key — for Claude Opus 4.7 Vision fallback identification.
-export ANTHROPIC_API_KEY=""
+# ---------------------------------------------------------------------------
+# VLM (Visual Language Model) — used by IDEA-007 § VLM interfacing for the
+# cache-miss / marking-text-disambiguation path.
+#
+# PartsLedger speaks ONE transport — OpenAI-compatible REST — to every VLM,
+# hosted or local. Switching provider is purely env-var-driven; no code path
+# differs. See `docs/developers/ideas/open/idea-007-visual-recognition-dinov2-vlm.md`.
+#
+# Default (uncomment one block):
 
-# Nexar / Octopart GraphQL credentials — for metadata enrichment (datasheets,
-# manufacturer, pinout, prices). Get yours at https://nexar.com/.
+# --- Hosted: Claude Opus 4.7 Vision via Anthropic ---
+export PL_VLM_BASE_URL="https://api.anthropic.com/v1"
+export PL_VLM_MODEL="claude-opus-4-7"
+export PL_VLM_API_KEY=""                    # paste your Anthropic key here
+export ANTHROPIC_API_KEY="${PL_VLM_API_KEY}" # back-compat alias for code that reads it directly
+
+# --- Local: Pixtral 12B via Ollama (see IDEA-010) ---
+# export PL_VLM_BASE_URL="http://localhost:11434/v1"
+# export PL_VLM_MODEL="pixtral"
+# export PL_VLM_API_KEY=""    # not needed for local Ollama
+
+# --- Hosted: Pixtral via Mistral La Plateforme ---
+# export PL_VLM_BASE_URL="https://api.mistral.ai/v1"
+# export PL_VLM_MODEL="pixtral-12b-2409"
+# export PL_VLM_API_KEY=""    # paste your Mistral key here
+
+# ---------------------------------------------------------------------------
+# Metadata enrichment (IDEA-008) — Nexar / Octopart GraphQL credentials for
+# datasheets, manufacturer, pinout, prices. Leave empty to disable enrichment
+# entirely (the maker pastes datasheet URLs by hand). Get yours at https://nexar.com/.
 export PL_NEXAR_CLIENT_ID=""
 export PL_NEXAR_CLIENT_SECRET=""
 
-# USB camera index passed to `cv2.VideoCapture(...)`. On Linux,
-# `v4l2-ctl --list-devices` shows which /dev/videoN corresponds to which
-# camera; OpenCV indexes them as integers. Usually 0 for the first webcam.
-export PL_CAMERA_INDEX="0"
+# ---------------------------------------------------------------------------
+# Camera selection (IDEA-006). PartsLedger normally picks the camera via the
+# first-run wizard and persists the choice in the `[camera]` section of
+# `~/.config/partsledger/config.toml` (see docs/developers/config.toml.example
+# for the full file shape) — the maker does not need to touch anything here.
+# The env var below is an OPTIONAL override for headless / scripted use only;
+# it bypasses the wizard.
+# Stable identifier preferred (Linux: /dev/v4l/by-id/usb-…; Windows: DirectShow
+# friendly name), but a raw integer index is also accepted as a fallback.
+# export PL_CAMERA=""
+
+# ---------------------------------------------------------------------------
+# Paths and runtime defaults.
 
 # Path to the inventory directory (the maker's parts bin). Defaults to
 # `./inventory/` inside the repo, but you can point at any directory tree.

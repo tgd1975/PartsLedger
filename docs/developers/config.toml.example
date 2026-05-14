@@ -1,0 +1,84 @@
+# PartsLedger — example `~/.config/partsledger/config.toml`
+#
+# This is the single per-maker configuration file for PartsLedger.
+# It is owned cooperatively by three dossiers: the `[camera]` section
+# is owned by IDEA-006 (USB camera capture), `[recognition]` by
+# IDEA-007 (DINOv2 + VLM pipeline), and `[paths]` by CLAUDE.md
+# (project env-var conventions). This example file lives in
+# `docs/developers/` as the canonical reference; the real file goes
+# under `~/.config/partsledger/` (Linux/macOS) or
+# `%APPDATA%/partsledger/` (Windows) and is hand-editable.
+#
+# Setup:
+#   1. Copy this file to `~/.config/partsledger/config.toml`.
+#   2. Edit the values that don't match the defaults.
+#   3. Leave any section commented out to take the defaults.
+#
+# Deletion:
+#   Deleting the file (or just the `[camera]` section) re-triggers
+#   the first-run wizards on next startup. Nothing in PartsLedger
+#   needs this file to exist before the wizards run — the wizards
+#   create it.
+#
+# Env-var overrides:
+#   `$PL_CAMERA` and `$PL_INVENTORY_PATH` (from `.envrc`) trump the
+#   matching values here when set. Headless / scripted runs don't
+#   need a `config.toml` at all.
+#
+# Secrets policy:
+#   No secrets live here. API keys belong in `.envrc` (per
+#   CLAUDE.md § Project env vars).
+
+# ---------------------------------------------------------------------------
+# [camera] — IDEA-006, persisted first-run-wizard pick.
+#
+# The wizard writes this section on first invocation. The maker does
+# not normally hand-edit it. `stable_id` is a replug-survivable
+# device identifier (Linux: a `/dev/v4l/by-id/usb-…` symlink path;
+# Windows: the DirectShow friendly-name string); `name` is the
+# maker-readable label the wizard offered. See IDEA-006 §
+# *Camera selection — pick once, re-prompt on failure*.
+
+[camera]
+# stable_id = "/dev/v4l/by-id/usb-Some_Vendor_2K_Webcam-video-index0"
+# name = "2K USB Webcam"
+
+# ---------------------------------------------------------------------------
+# [recognition] — IDEA-007, recognition-pipeline tunables.
+#
+# Defaults below match the placeholder values from IDEA-007's
+# *Confidence bands* table. The maker hand-edits these once they
+# have observed-undo-rate data; PartsLedger does not gate the camera
+# path behind a "you must calibrate first" step. A future
+# `/calibrate-thresholds` skill (deferred polish, see IDEA-007's
+# open questions) will eventually suggest values based on real
+# session data.
+
+[recognition]
+# Cosine-distance thresholds for the three confidence bands.
+# Smaller = closer match. See IDEA-007 § Confidence bands.
+tight_distance = 0.10   # below this: silent qty++ on top-1
+medium_distance = 0.25  # below this (and above tight): R/X prompt
+                        # at or above medium_distance: VLM identifies
+
+# How many writes back the `U` key can undo. Depth 1 = only the
+# most recent write is reversible. Increasing this costs nothing
+# but maker mental overhead; the journal is small.
+undo_depth = 1
+
+# Second-opinion mode — when true, even a tight cache hit triggers
+# a VLM verification before committing. Deferred polish per
+# IDEA-007's open questions; left disabled by default.
+# second_opinion = false
+
+# ---------------------------------------------------------------------------
+# [paths] — CLAUDE.md, optional runtime overrides.
+#
+# These mirror env vars from `.envrc`. The env var wins when both
+# are set; this section exists so a maker who doesn't use direnv
+# can still override the defaults.
+
+[paths]
+# Inventory directory. Defaults to `./inventory/` relative to the
+# repo root. Equivalent to setting `$PL_INVENTORY_PATH`.
+# inventory = "/home/maker/parts-bin"

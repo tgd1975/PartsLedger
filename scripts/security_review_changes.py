@@ -13,6 +13,11 @@ Claude Code without further prompts:
   - shell patterns: curl|sh, base64|sh, eval, sudo, chmod +x, --no-verify
   - exfil patterns: ~/.ssh, ~/.aws, ~/.netrc, /etc/passwd, .env
   - network egress added to scripts (curl, wget, requests, urllib, fetch)
+  - hardcoded API keys / tokens / private-key blocks (Anthropic, OpenAI,
+    GitHub PAT, Slack, AWS, Google, Stripe, JWT, PEM private keys, plus
+    a generic "secret = '...'" assignment pattern). Scanned on EVERY
+    changed file regardless of suffix — secrets pasted into .md, .toml,
+    .yaml, .json, etc. are caught too.
 
 Then, if the `claude` CLI is on PATH, runs a semantic review on the diff for
 anything the static rules missed.
@@ -221,6 +226,34 @@ SHELL_PATTERNS: list[tuple[str, str, str]] = [
 ]
 
 
+# Secret patterns — scanned on EVERY added line of EVERY changed file
+# (not just INTERESTING ones), because secrets pasted into .md / .toml /
+# .yaml / .json should be caught too. Patterns are conservative —
+# provider-specific prefixes with vendor-published character ranges, plus
+# a generic assignment shape that requires ≥ 20 chars of quoted content
+# to keep false positives off short placeholder strings like
+# "your-api-key-here".
+SECRET_PATTERNS: list[tuple[str, str, str]] = [
+    # (severity, rule, regex)
+    ("HIGH", "anthropic-key", r"\bsk-ant-[A-Za-z0-9_-]{32,}"),
+    ("HIGH", "openai-key", r"\bsk-[A-Za-z0-9]{48,}\b"),
+    ("HIGH", "github-pat", r"\b(ghp|gho|ghs|ghr|github_pat)_[A-Za-z0-9_]{20,}"),
+    ("HIGH", "slack-token", r"\bxox[abprs]-[A-Za-z0-9-]{10,}"),
+    ("HIGH", "aws-access-key", r"\bAKIA[0-9A-Z]{16}\b"),
+    ("HIGH", "google-api-key", r"\bAIza[0-9A-Za-z_-]{35}\b"),
+    ("HIGH", "stripe-key", r"\b(sk|pk|rk)_(live|test)_[A-Za-z0-9]{24,}\b"),
+    ("HIGH", "jwt-token", r"\beyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}"),
+    ("HIGH", "private-key-block", r"-----BEGIN ([A-Z]+ )?PRIVATE KEY( BLOCK)?-----"),
+    # Generic "name = 'value'" — name is one of api_key / secret / token /
+    # password / credential (case-insensitive, optional underscore /
+    # hyphen / pluralisation), value is a quoted string of ≥ 20 chars of
+    # the alphabet API keys typically use. Requires the assignment shape
+    # so prose like "the api key" doesn't trigger.
+    ("HIGH", "generic-secret-assign",
+        r'(?i)\b(api[_-]?key|secret|token|password|passwd|credential)s?\s*[:=]\s*[\'"][A-Za-z0-9+/=_.\-]{20,}[\'"]'),
+]
+
+
 def scan_added_lines(path: str, diff: str) -> list[Finding]:
     findings: list[Finding] = []
     adds = added_lines(diff)
@@ -239,6 +272,47 @@ def scan_added_lines(path: str, diff: str) -> list[Finding]:
                 )
                 break  # one finding per rule per file
     return findings
+
+
+def scan_for_secrets(path: str, diff: str) -> list[Finding]:
+    """Run SECRET_PATTERNS against every added line, regardless of file suffix.
+
+    Comment-only lines are NOT skipped here — a key pasted into a code
+    comment is still a leaked key. The snippet attached to a finding is
+    truncated and partially masked so the report itself doesn't echo the
+    full secret back into git history (.claude/security-review-latest.md
+    is gitignored, but the report can also surface in CI logs).
+    """
+    findings: list[Finding] = []
+    adds = added_lines(diff)
+    if not adds:
+        return findings
+    for sev, rule, pattern in SECRET_PATTERNS:
+        rx = re.compile(pattern)
+        for line in adds:
+            m = rx.search(line)
+            if not m:
+                continue
+            # Mask the secret in the snippet so the report doesn't re-leak it.
+            masked_line = line.replace(m.group(0), _mask(m.group(0)))
+            findings.append(
+                Finding(
+                    severity=sev,
+                    file=path,
+                    rule=rule,
+                    detail=f"matched /{pattern}/ — value redacted in snippet",
+                    snippet=masked_line.strip()[:200],
+                )
+            )
+            break  # one finding per rule per file — enough signal to act
+    return findings
+
+
+def _mask(secret: str) -> str:
+    """Replace the body of a secret with asterisks, keep first 4 chars for context."""
+    if len(secret) <= 8:
+        return "*" * len(secret)
+    return secret[:4] + "*" * (len(secret) - 4)
 
 
 def scan_settings_json(path: str, old_ref: str, new_ref: str) -> list[Finding]:
@@ -535,11 +609,22 @@ def main() -> int:
 
     report = Report(old_ref=args.old_ref, new_ref=args.new_ref, label=args.label)
 
+    # Secret scan runs on EVERY changed file regardless of suffix — secrets
+    # in .md / .toml / .yaml / .json are just as dangerous as in code.
+    for status, path in files:
+        if status == "D":
+            continue
+        d = diff_for(args.old_ref, args.new_ref, path)
+        report.findings.extend(scan_for_secrets(path, d))
+
     if not interesting:
+        # Secret scan may still have produced findings — write the report
+        # and exit accordingly, but skip the semantic / shell-pattern pass.
         report.claude_skipped_reason = "no script/settings/skill files in diff"
         write_report(report)
-        print_summary(report, blocked=False)
-        return 0
+        blocked = report.max_severity in BLOCKING
+        print_summary(report, blocked=blocked)
+        return 1 if blocked and not args.non_blocking else 0
 
     full_diff_parts: list[str] = []
     for status, path in interesting:

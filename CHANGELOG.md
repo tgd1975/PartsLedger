@@ -36,6 +36,15 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   deny mirroring CircuitSmith's shape. Deny includes `Bash(git add:*)`
   (harness-enforced no-`git add`), `Bash(sed/awk/head/tail:*)`,
   `Bash(git push origin main|--force|-f:*)`.
+- `.envrc.example` extended with the VLM env-vars
+  (`PL_VLM_ENDPOINT`, `PL_VLM_MODEL`) and the IDEA-006 camera-wizard
+  placeholders.
+- `docs/developers/config.toml.example` added as the canonical
+  `~/.config/partsledger/config.toml` shape for the camera + recognition
+  layers (consumed by TASK-032 wizard and TASK-039..042 recognition stack).
+- `scripts/security_review_changes.py` sensitised to hardcoded API keys
+  and private-key blocks; `docs/developers/SECURITY_REVIEW.md` updated
+  to match.
 
 ### Policy
 
@@ -155,3 +164,41 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   header. Cross-references updated in README, CLAUDE.md, CONTRIBUTING,
   ARCHITECTURE, AUTONOMY, CODE_OWNERS, TASK_SYSTEM, adr/README, the
   two `co-inventory-*` SKILL.md files, and IDEA-003.
+- IDEAs 004, 005, 006, 007, 008, 011, 012, 014 honed across the 2026-05
+  work and archived after promotion to their corresponding epics.
+  IDEA-012 captured the cross-cuts (workflows A + B, unified pipeline,
+  six-phase rollout, Section 4 gap analysis pruned from 9 to 2,
+  Section 5 implementation plan synthesised) before being promoted.
+- IDEA-010 (local VLM hosting) added as a spin-off from IDEA-007; scope
+  widened to cover both DINOv2 backbone hosting and VLM hosting.
+  Remains open.
+- IDEA-011 (resistor color-band detector) added as a standalone-tool
+  sibling; archived after promotion to EPIC-008.
+- IDEA-013 (capture setup + colour calibration) added; remains open as
+  the colour-profile input to TASK-054 (resistor reader V1).
+- IDEA-014 (project setup review vs CircuitSmith) added and archived
+  after promotion to EPIC-004 (cross-cutting Phase 0b prerequisite).
+- IDEA-009 (CircuitSmith prefer-inventory adapter) archived — owned
+  downstream by CircuitSmith IDEA-010.
+
+### Roadmap
+
+- **8 epics opened** (EPIC-002..EPIC-009) and **45 tasks scaffolded**
+  (TASK-014..TASK-058) realizing the IDEA-012 implementation plan.
+  Mapping (epic ← seed idea):
+  - EPIC-002 markdown-inventory-schema  ← IDEA-004 (TASK-014..018)
+  - EPIC-003 skill-path-today           ← IDEA-005 (TASK-019..021)
+  - EPIC-004 project-setup              ← IDEA-014 (TASK-022..031, Phase 0b)
+  - EPIC-005 usb-camera-capture         ← IDEA-006 (TASK-032..038)
+  - EPIC-006 visual-recognition         ← IDEA-007 (TASK-039..044)
+  - EPIC-007 metadata-enrichment        ← IDEA-008 (TASK-045..050)
+  - EPIC-008 resistor-reader            ← IDEA-011 + IDEA-013 (TASK-051..056)
+  - EPIC-009 integration-followups      ← IDEA-012 § 4 (TASK-057..058)
+- Three tasks land paused awaiting upstream prerequisites: TASK-018
+  (multi-file split, real-bin trigger), TASK-057 (pipeline fixture
+  corpus, awaits TASK-043 active), TASK-058 (resistor-reader parser
+  test, awaits TASK-054 close).
+- EPIC-004 Phase 0b is the hard prerequisite for every Phase 1+ task —
+  no module is importable as `partsledger.*` until `src/partsledger/`
+  layout, release pipeline, lockfile, shim convention, and the inventory
+  writer + lint modules (TASK-016/017) land.
