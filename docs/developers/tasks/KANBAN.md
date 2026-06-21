@@ -107,18 +107,18 @@ kanban
 
 ## visual-recognition
 
-_⚪ 6 open · 🔵 0 active · 🟡 0 paused · 🟢 0 closed · ░░░░░░░░░░ 0%_
+_⚪ 5 open · 🔵 1 active · 🟡 0 paused · 🟢 0 closed · ░░░░░░░░░░ 0%_
 
 ```mermaid
 kanban
   Open
-    TASK_039["Implement src/partsledger/recognition/embed.py — DINOv2-ViT-S/14 via torch.hub"]
     TASK_040["Implement src/partsledger/recognition/cache.py — sqlite-vec backed"]
     TASK_041["Cache-only recognition with tight / tight_ambiguous / medium / miss bands"]
     TASK_042["Implement src/partsledger/recognition/vlm.py — OpenAI-compatible REST adapter"]
     TASK_043["Pipeline glue — pipeline.run(image) - Outcome with re-frame loop and writer hand-off"]
     TASK_044["Undo journal at inventory/.embeddings/undo.toml, depth 1"]
   Active
+    TASK_039["Implement src/partsledger/recognition/embed.py — DINOv2-ViT-S/14 via torch.hub"]
   Paused
   Closed
 ```

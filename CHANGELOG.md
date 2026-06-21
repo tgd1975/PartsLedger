@@ -9,6 +9,21 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
 
 ## [Unreleased]
 
+### Recognition
+
+- TASK-039 closed: `src/partsledger/recognition/embed.py` lands the
+  DINOv2-ViT-S/14 embedding primitive (IDEA-007 Stage 1). `embed(image)`
+  takes a BGR `np.ndarray` and returns a 768-D L2-normalised `float32`
+  vector; the frozen backbone loads once via `torch.hub` (`eval()` only,
+  `requires_grad=False`) and is cached process-wide. Heavy imports
+  (`torch`/`cv2`) are deferred to call time and the forward pass is an
+  injected seam, so the module imports cheaply and the pure
+  post-processing (shape/dtype/L2-norm/determinism) is unit-tested with a
+  fake model on a torch-free host. `MODEL_HASH` (`dinov2_vits14#sha256:…`,
+  a content hash over the sorted `state_dict`) is exposed as a lazily
+  computed module constant for the cache's rebuild-on-mismatch gate. 12
+  tests in `tests/recognition/test_embed.py` (1 network-guarded).
+
 ### Schema
 
 - TASK-014 closed: add `Source` column and maker-choice section

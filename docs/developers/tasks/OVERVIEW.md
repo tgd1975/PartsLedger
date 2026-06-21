@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 21** | 🔵 **Active: 0** | 🟡 **Paused: 3** | 🟢 **Closed: 34** | **Total: 58** | ██████░░░░ 59%
+⚪ **Open: 20** | 🔵 **Active: 1** | 🟡 **Paused: 3** | 🟢 **Closed: 34** | **Total: 58** | ██████░░░░ 59%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -20,7 +20,9 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 
 ## Active Tasks
 
-_No active tasks._
+| ID | Title | Effort | Complexity | Status |
+|----|-------|--------|------------|--------|
+| [TASK-039](active/task-039-recognition-embed-module.md) | Implement src/partsledger/recognition/embed.py — DINOv2-ViT-S/14 via torch.hub | Medium (2-8h) | Senior | 🔵 **active** |
 
 ## Paused Tasks
 
@@ -37,7 +39,6 @@ _No active tasks._
 | [TASK-020](open/task-020-page-gen-auto-trigger.md) | Auto-trigger /inventory-page on row creation via /inventory-add | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-036](open/task-036-recognition-overlay-state-machine.md) | Recognition-status overlay state machine + hint-family tokeniser | Large (8-24h) | Senior | ⚪ open |
 | [TASK-037](open/task-037-secondary-key-dispatch.md) | Secondary key dispatch — R / X / U handlers | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-039](open/task-039-recognition-embed-module.md) | Implement src/partsledger/recognition/embed.py — DINOv2-ViT-S/14 via torch.hub | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-040](open/task-040-recognition-cache-module.md) | Implement src/partsledger/recognition/cache.py — sqlite-vec backed | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-041](open/task-041-cache-only-banded-recognition.md) | Cache-only recognition with tight / tight_ambiguous / medium / miss bands | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-042](open/task-042-vlm-adapter.md) | Implement src/partsledger/recognition/vlm.py — OpenAI-compatible REST adapter | Large (8-24h) | Senior | ⚪ open |
