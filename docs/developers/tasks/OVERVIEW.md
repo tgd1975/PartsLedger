@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 8** | 🔵 **Active: 1** | 🟡 **Paused: 3** | 🟢 **Closed: 46** | **Total: 58** | ████████░░ 79%
+⚪ **Open: 6** | 🔵 **Active: 3** | 🟡 **Paused: 3** | 🟢 **Closed: 46** | **Total: 58** | ████████░░ 79%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -22,6 +22,8 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
+| [TASK-036](active/task-036-recognition-overlay-state-machine.md) | Recognition-status overlay state machine + hint-family tokeniser | Large (8-24h) | Senior | 🔵 **active** |
+| [TASK-037](active/task-037-secondary-key-dispatch.md) | Secondary key dispatch — R / X / U handlers | Medium (2-8h) | Senior | 🔵 **active** |
 | [TASK-043](active/task-043-recognition-pipeline-glue.md) | Pipeline glue — pipeline.run(image) -&gt; Outcome with re-frame loop and writer hand-off | Large (8-24h) | Senior | 🔵 **active** |
 
 ## Paused Tasks
@@ -36,8 +38,6 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
-| [TASK-036](open/task-036-recognition-overlay-state-machine.md) | Recognition-status overlay state machine + hint-family tokeniser | Large (8-24h) | Senior | ⚪ open |
-| [TASK-037](open/task-037-secondary-key-dispatch.md) | Secondary key dispatch — R / X / U handlers | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-051](open/task-051-resistor-localisation-v1.md) | V1 — resistor localisation (HSV thresholding + contour finding) on still images | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-052](open/task-052-resistor-band-reading-eia.md) | V1 — band reading + EIA classifier + orientation disambiguation via E-series check | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-053](open/task-053-resistor-uniformity-check.md) | V1 — uniformity check (strict, every deviation flagged) | Small (&lt;2h) | Medium | ⚪ open |

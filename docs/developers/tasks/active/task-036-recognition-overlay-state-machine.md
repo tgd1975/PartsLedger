@@ -1,7 +1,7 @@
 ---
 id: TASK-036
 title: Recognition-status overlay state machine + hint-family tokeniser
-status: open
+status: active
 opened: 2026-05-14
 effort: Large (8-24h)
 complexity: Senior
@@ -10,6 +10,22 @@ epic: usb-camera-capture
 order: 5
 prerequisites: [TASK-035, TASK-043]
 ---
+
+> **Implementation note (2026-06-21).** The four-state machine
+> (`RecognitionOverlay` in `src/partsledger/capture/recognition_state.py`),
+> all four per-state renderers (frozen-frame + live thumbnail for
+> *Analyzing*, hint + R/X prompt for *Retry-or-abort*, flash text + *via
+> VLM* + *U to undo* for *Confirmation flash*, last-result breadcrumb for
+> *Idle*), the seven-family hint tokeniser (reusing
+> `recognition.hints.classify_hint`), the `set_state` idempotency, and the
+> flash/undo-window timing are implemented and unit-tested with injected
+> cv2 + clock (`tests/capture/test_state_machine.py`, 18 tests). The
+> transition API (`begin_analyzing` / `show_retry_or_abort` /
+> `flash_confirmation` / `return_to_idle`) matches the TASK-043 contract.
+> The task stays **active** because its `human-in-loop: Support`
+> definition-of-done requires the maintainer to wire the overlay into the
+> live `Viewfinder` run loop and eyeball rendering quality + flash/undo
+> timing on real hardware — that visual check cannot be automated.
 
 ## Description
 

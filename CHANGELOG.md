@@ -271,6 +271,19 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
 
 ### Camera path
 
+- TASK-036 + TASK-037 (camera-UX recognition overlay) implemented, kept
+  **active** pending hardware verification: new
+  `src/partsledger/capture/recognition_state.py` lands `RecognitionOverlay`
+  — the four-state machine (Idle / Analyzing / Retry-or-abort / Confirmation
+  flash) with per-state renderers (frozen-frame + live thumbnail,
+  hint + R/X prompt, flash + *via VLM* + *U to undo*), the seven-family hint
+  tokeniser (reusing `recognition.hints`), idempotent `set_state`, and the
+  flash/undo-window timing (TASK-036); plus the state-gated `R` / `X` / `U`
+  key dispatch mapping the TASK-044 `UndoOutcome` to viewfinder text, with
+  wrong-state/digit/unknown keys ignored silently (TASK-037). 30 unit tests
+  (`tests/capture/test_state_machine.py`, `test_secondary_keys.py`) with
+  injected cv2 + clock. Both stay `human-in-loop: Support` for the live
+  viewfinder wiring + visual rendering/timing check on real hardware.
 - TASK-032 closed: `src/partsledger/capture/camera_select.py` lands
   the first-run camera-selection wizard. Platform-aware enumeration
   (Linux: `/dev/v4l/by-id/usb-…` symlinks; Windows: DirectShow via

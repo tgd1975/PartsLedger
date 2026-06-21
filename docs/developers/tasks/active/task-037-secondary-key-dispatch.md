@@ -1,7 +1,7 @@
 ---
 id: TASK-037
 title: Secondary key dispatch — R / X / U handlers
-status: open
+status: active
 opened: 2026-05-14
 effort: Medium (2-8h)
 complexity: Senior
@@ -10,6 +10,20 @@ epic: usb-camera-capture
 order: 6
 prerequisites: [TASK-036, TASK-044]
 ---
+
+> **Implementation note (2026-06-21).** The state-gated `R` / `X` / `U`
+> dispatch is implemented as `RecognitionOverlay.handle_key` in
+> `src/partsledger/capture/recognition_state.py`: `R`/`X` legal only in
+> *Retry-or-abort* (return to *Idle* after firing), `U` legal during the
+> *Confirmation flash* and for ~5 s after via the undo-window that outlives
+> the flash, mapping the TASK-044 `UndoOutcome` to *reverted* / *undo
+> failed* / *nothing to undo*. Wrong-state keys, numeric digits, and
+> unknown keys are ignored silently. 12 unit tests in
+> `tests/capture/test_secondary_keys.py` cover the full key × state matrix
+> and the time-bound U-window (T+0 / T+4 s fire, T+6 s dropped). Stays
+> **active** for the same `human-in-loop: Support` reason as TASK-036 —
+> wiring `handle_key` into the live viewfinder key loop and confirming the
+> undo-window feel needs the maintainer on real hardware.
 
 ## Description
 

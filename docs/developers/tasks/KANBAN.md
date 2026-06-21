@@ -55,14 +55,14 @@ kanban
 
 ## usb-camera-capture
 
-_⚪ 2 open · 🔵 0 active · 🟡 0 paused · 🟢 5 closed · ███████░░░ 71%_
+_⚪ 0 open · 🔵 2 active · 🟡 0 paused · 🟢 5 closed · ███████░░░ 71%_
 
 ```mermaid
 kanban
   Open
+  Active
     TASK_036["Recognition-status overlay state machine + hint-family tokeniser"]
     TASK_037["Secondary key dispatch — R / X / U handlers"]
-  Active
   Paused
   Closed
     TASK_032["Camera-selection wizard (V4L2 / DirectShow enumeration, friendly names)"]
