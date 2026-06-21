@@ -57,8 +57,40 @@ def _call(part_id: str, qty_delta: int, *, path: Path, **kwargs) -> WriteResult:
         source=kwargs.pop("source", "manual"),
         section=kwargs.pop("section", None),
         cells=kwargs.pop("cells", None),
+        cells_if_empty=kwargs.pop("cells_if_empty", None),
         path=path,
     )
+
+
+class TestCellsIfEmpty:
+    """No-clobber overlay used by the enrichment orchestrator (TASK-048)."""
+
+    def test_fills_empty_cell(self, inv_path: Path):
+        result = _call(
+            "LM358N", 0, path=inv_path, cells_if_empty={"Notes": "Obsolete"}
+        )
+        assert result.disposition == "metadata_updated"
+        assert "Obsolete" in inv_path.read_text()
+
+    def test_does_not_clobber_non_empty_cell(self, inv_path: Path):
+        # Description is already "Op-amp" in the template — must survive.
+        result = _call(
+            "LM358N", 0, path=inv_path, cells_if_empty={"Description": "SHOULD NOT APPEAR"}
+        )
+        assert result.disposition == "no_op"
+        text = inv_path.read_text()
+        assert "SHOULD NOT APPEAR" not in text
+        assert "Op-amp" in text
+
+    def test_insert_treats_cells_if_empty_like_cells(self, inv_path: Path):
+        _call(
+            "NE555N",
+            3,
+            path=inv_path,
+            section="ICs",
+            cells_if_empty={"Description": "Timer IC"},
+        )
+        assert "Timer IC" in inv_path.read_text()
 
 
 class TestInsert:

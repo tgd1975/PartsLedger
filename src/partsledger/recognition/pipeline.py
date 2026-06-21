@@ -338,13 +338,18 @@ class Pipeline:
         self._reframe_count = 0
         self._last_vector = None
 
+    #: INVENTORY.md ``Source`` value for every camera-path write. The
+    #: recognition source (``cache`` / ``vlm``) rides on the ``Wrote``
+    #: outcome for the viewfinder flash, not on the inventory column.
+    INVENTORY_SOURCE = "camera"
+
     def _commit(self, label: str | None, source: str, vector: Any, *, marking: str | None) -> Any:
         assert label is not None
         part_id = _part_id_of(label)
 
         # MD write first. A writer failure aborts BEFORE cache-learn so the
         # cache and inventory can never diverge (TASK-016/017 contract).
-        result = self._writer_upsert(part_id, 1, source=source)
+        result = self._writer_upsert(part_id, 1, source=self.INVENTORY_SOURCE)
         qty_after = int(getattr(result, "qty", 1))
 
         # Cache-learn — only after the write landed.

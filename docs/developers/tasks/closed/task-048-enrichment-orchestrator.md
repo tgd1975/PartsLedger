@@ -1,9 +1,11 @@
 ---
 id: TASK-048
 title: Orchestrator enrich(part_id) + writer-integration (no clobber on non-empty cells)
-status: open
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Medium (2-8h)
 complexity: Senior
 human-in-loop: No
 epic: metadata-enrichment

@@ -86,7 +86,7 @@ def test_tight_writes_from_cache():
     assert isinstance(out, pl.Wrote)
     assert out.label == "lm358n"
     assert out.source == "cache"
-    assert writer.calls == [("lm358n", 1, "cache")]
+    assert writer.calls == [("lm358n", 1, "camera")]  # inventory Source col
     assert len(cache.inserted) == 1  # cache-learn happened
 
 
@@ -105,7 +105,7 @@ def test_tight_ambiguous_routes_to_vlm():
     out = p.run(object())
     assert isinstance(out, pl.Wrote)
     assert out.source == "vlm"
-    assert writer.calls[0][2] == "vlm"
+    assert writer.calls[0][2] == "camera"  # inventory Source col, not recog source
     assert len(cache.inserted) == 1
 
 

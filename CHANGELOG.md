@@ -68,6 +68,43 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   `human-in-loop: Support` fixture walk (a maintainer stepping the
   TASK-057 corpus through each band) is the only remaining step.
 
+### Enrichment
+
+- **EPIC-007 (metadata-enrichment) — all 6 tasks implemented.** New
+  `src/partsledger/enrichment/` package (IDEA-008). Every network-touching
+  module is built on injected transport/encoder seams, so the full suite
+  (48 tests under `tests/enrichment/`) runs with no Nexar account; the one
+  thing still needing the maker is the live-credential smoke test noted in
+  each task.
+- TASK-047 closed: `family_datasheets.py` — pure MPN-prefix → manufacturer-
+  direct datasheet URL table (`lookup_family`), longest-prefix-wins,
+  case-insensitive, no file I/O. Seeds for the families already in
+  `inventory/parts/` (LM358/LM386/TL08x/NE555/L78xx/PIC16F/PIC12F).
+- TASK-045 closed: `nexar.py` — OAuth client-credentials + `supSearchMpn`
+  GraphQL → `NexarPart`. In-session bearer cache (identity endpoint hit
+  once), `EnrichmentDisabledError` when `$PL_NEXAR_*` is unset, junk-MPN →
+  `None`, bearer/secret redaction on every error (401 → "auth failed
+  against <https://identity.nexar.com>"). `bestImage` deliberately not
+  queried.
+- TASK-046 closed: `cache.py` — SQLite per-MPN response cache at
+  `inventory/.embeddings/nexar_cache.sqlite`. `get`/`put`/`expire_stale`
+  with lifecycle-aware TTL (30 days for Active; never for Obsolete/NRND).
+- TASK-048 closed: `enrichment/__init__.py` — `enrich(part_id) -> Enriched
+  / NoEnrichment(reason)` (offline / network_unreachable / unknown_mpn /
+  fallback_missed). Pipeline order cache → Nexar → family fallback. The
+  TASK-016 writer gains a **no-clobber** `cells_if_empty` overlay that fills
+  only empty Description/Datasheet/Notes cells, so re-running enrichment
+  never overwrites a maker's hand-edit.
+- TASK-049 closed: `dispatch.py` — `Dispatcher.dispatch_async(part_id)`
+  on a single-worker `ThreadPoolExecutor` (no concurrent Nexar requests).
+  Returns in < 50 ms; every outcome logged to
+  `inventory/.embeddings/enrichment.log`; background exceptions caught and
+  dropped, never reaching the viewfinder; chains page-gen on `Enriched`.
+- TASK-050 closed: `chain.py` — `enrich_and_page(part_id)` sync skill-path
+  chain (enrich → page-gen, idempotent: skipped when the part page already
+  exists). Camera-path async page-gen chaining lives in the dispatcher.
+  The `/inventory-add` SKILL.md invocation wiring rides with TASK-020.
+
 ### Schema
 
 - TASK-014 closed: add `Source` column and maker-choice section

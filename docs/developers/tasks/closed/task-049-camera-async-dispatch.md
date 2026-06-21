@@ -1,9 +1,11 @@
 ---
 id: TASK-049
 title: Camera-path async dispatch — dispatch_async() + single-worker thread + enrichment.log
-status: open
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Small (<2h)
 complexity: Senior
 human-in-loop: No
 epic: metadata-enrichment

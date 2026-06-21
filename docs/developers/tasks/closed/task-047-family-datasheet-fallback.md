@@ -1,9 +1,11 @@
 ---
 id: TASK-047
 title: Implement src/partsledger/enrichment/family_datasheets.py — MPN-prefix → URL table
-status: open
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Small (<2h)
+effort_actual: XS (<30m)
 complexity: Junior
 human-in-loop: No
 epic: metadata-enrichment

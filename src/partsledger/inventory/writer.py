@@ -252,15 +252,30 @@ def upsert_row(
     source: str,
     section: str | None = None,
     cells: dict[str, str] | None = None,
+    cells_if_empty: dict[str, str] | None = None,
 ) -> WriteResult:
     """Insert or update a row in ``inventory/INVENTORY.md``.
 
     See module docstring for the contract. The path is resolved via
     the ``PL_INVENTORY_PATH`` env var (when set) or by walking up to
     the repo root.
+
+    ``cells_if_empty`` is the **no-clobber** overlay used by the
+    enrichment orchestrator (TASK-048): each named cell is filled only
+    when the existing cell is empty / whitespace, so a maker's
+    hand-edit is never overwritten by a re-run of ``enrich()``. On an
+    insert (new row) it behaves like ``cells``.
     """
 
-    return _upsert_row_at(part_id, qty_delta, source=source, section=section, cells=cells, path=_resolve_inventory_path())
+    return _upsert_row_at(
+        part_id,
+        qty_delta,
+        source=source,
+        section=section,
+        cells=cells,
+        cells_if_empty=cells_if_empty,
+        path=_resolve_inventory_path(),
+    )
 
 
 def _upsert_row_at(
@@ -271,6 +286,7 @@ def _upsert_row_at(
     section: str | None,
     cells: dict[str, str] | None,
     path: Path,
+    cells_if_empty: dict[str, str] | None = None,
 ) -> WriteResult:
     """Path-aware backend — pulled out for testability."""
 
@@ -278,6 +294,7 @@ def _upsert_row_at(
 
     cells = dict(cells or {})
     cells.setdefault("Part", part_id)
+    fill_if_empty = dict(cells_if_empty or {})
 
     if not path.is_file():
         raise MalformedPreStateError(f"inventory file does not exist: {path}")
@@ -360,6 +377,15 @@ def _upsert_row_at(
                 changed_metadata = True
                 new_cells[ci] = value
 
+        # No-clobber overlay: fill only cells that are currently empty.
+        for col_name, value in fill_if_empty.items():
+            ci = found_table.col_index(col_name)
+            if ci is None or not value:
+                continue
+            if not new_cells[ci].strip():
+                new_cells[ci] = value
+                changed_metadata = True
+
         if qty_idx is not None:
             new_cells[qty_idx] = str(new_qty)
 
@@ -418,7 +444,7 @@ def _upsert_row_at(
             elif col == "Part":
                 new_row_cells.append(cells.get("Part", part_id))
             else:
-                new_row_cells.append(cells.get(col, ""))
+                new_row_cells.append(cells.get(col, fill_if_empty.get(col, "")))
 
         # Drop any all-empty placeholder rows before inserting.
         cleaned_rows = [r for r in table.rows if any(c.strip() for c in r.cells)]

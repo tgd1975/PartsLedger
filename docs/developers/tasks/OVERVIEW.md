@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 15** | 🔵 **Active: 1** | 🟡 **Paused: 3** | 🟢 **Closed: 39** | **Total: 58** | ███████░░░ 67%
+⚪ **Open: 9** | 🔵 **Active: 1** | 🟡 **Paused: 3** | 🟢 **Closed: 45** | **Total: 58** | ████████░░ 78%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -39,12 +39,6 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 | [TASK-020](open/task-020-page-gen-auto-trigger.md) | Auto-trigger /inventory-page on row creation via /inventory-add | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-036](open/task-036-recognition-overlay-state-machine.md) | Recognition-status overlay state machine + hint-family tokeniser | Large (8-24h) | Senior | ⚪ open |
 | [TASK-037](open/task-037-secondary-key-dispatch.md) | Secondary key dispatch — R / X / U handlers | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-045](open/task-045-nexar-graphql-adapter.md) | Implement src/partsledger/enrichment/nexar.py — OAuth + GraphQL supSearchMpn | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-046](open/task-046-nexar-response-cache.md) | Implement src/partsledger/enrichment/cache.py — SQLite per-MPN response cache | Small (&lt;2h) | Medium | ⚪ open |
-| [TASK-047](open/task-047-family-datasheet-fallback.md) | Implement src/partsledger/enrichment/family_datasheets.py — MPN-prefix → URL table | Small (&lt;2h) | Junior | ⚪ open |
-| [TASK-048](open/task-048-enrichment-orchestrator.md) | Orchestrator enrich(part_id) + writer-integration (no clobber on non-empty cells) | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-049](open/task-049-camera-async-dispatch.md) | Camera-path async dispatch — dispatch_async() + single-worker thread + enrichment.log | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-050](open/task-050-skill-sync-chain.md) | Skill-path sync enrichment + page-gen chain (sync for /inventory-add, async for camera) | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-051](open/task-051-resistor-localisation-v1.md) | V1 — resistor localisation (HSV thresholding + contour finding) on still images | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-052](open/task-052-resistor-band-reading-eia.md) | V1 — band reading + EIA classifier + orientation disambiguation via E-series check | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-053](open/task-053-resistor-uniformity-check.md) | V1 — uniformity check (strict, every deviation flagged) | Small (&lt;2h) | Medium | ⚪ open |
@@ -95,4 +89,10 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 | [TASK-041](closed/task-041-cache-only-banded-recognition.md) | Cache-only recognition with tight / tight_ambiguous / medium / miss bands | Medium (2-8h) |
 | [TASK-042](closed/task-042-vlm-adapter.md) | Implement src/partsledger/recognition/vlm.py — OpenAI-compatible REST adapter | Large (8-24h) |
 | [TASK-044](closed/task-044-undo-journal.md) | Undo journal at inventory/.embeddings/undo.toml, depth 1 | Medium (2-8h) |
+| [TASK-045](closed/task-045-nexar-graphql-adapter.md) | Implement src/partsledger/enrichment/nexar.py — OAuth + GraphQL supSearchMpn | Medium (2-8h) |
+| [TASK-046](closed/task-046-nexar-response-cache.md) | Implement src/partsledger/enrichment/cache.py — SQLite per-MPN response cache | Small (&lt;2h) |
+| [TASK-047](closed/task-047-family-datasheet-fallback.md) | Implement src/partsledger/enrichment/family_datasheets.py — MPN-prefix → URL table | Small (&lt;2h) |
+| [TASK-048](closed/task-048-enrichment-orchestrator.md) | Orchestrator enrich(part_id) + writer-integration (no clobber on non-empty cells) | Medium (2-8h) |
+| [TASK-049](closed/task-049-camera-async-dispatch.md) | Camera-path async dispatch — dispatch_async() + single-worker thread + enrichment.log | Medium (2-8h) |
+| [TASK-050](closed/task-050-skill-sync-chain.md) | Skill-path sync enrichment + page-gen chain (sync for /inventory-add, async for camera) | Medium (2-8h) |
 <!-- END GENERATED -->

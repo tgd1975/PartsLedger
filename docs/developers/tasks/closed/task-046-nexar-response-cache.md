@@ -1,9 +1,11 @@
 ---
 id: TASK-046
 title: Implement src/partsledger/enrichment/cache.py — SQLite per-MPN response cache
-status: open
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Small (<2h)
+effort_actual: Small (<2h)
 complexity: Medium
 human-in-loop: No
 epic: metadata-enrichment

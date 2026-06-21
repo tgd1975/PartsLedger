@@ -1,9 +1,11 @@
 ---
 id: TASK-045
 title: Implement src/partsledger/enrichment/nexar.py — OAuth + GraphQL supSearchMpn
-status: open
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Medium (2-8h)
 complexity: Senior
 human-in-loop: Clarification
 epic: metadata-enrichment

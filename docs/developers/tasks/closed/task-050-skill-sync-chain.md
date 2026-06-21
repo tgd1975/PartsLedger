@@ -1,9 +1,11 @@
 ---
 id: TASK-050
 title: Skill-path sync enrichment + page-gen chain (sync for /inventory-add, async for camera)
-status: open
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Small (<2h)
 complexity: Senior
 human-in-loop: No
 epic: metadata-enrichment
