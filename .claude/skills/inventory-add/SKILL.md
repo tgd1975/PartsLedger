@@ -151,7 +151,35 @@ For each `<part-id> <qty>` pair:
 
    Skip this step entirely when `siblings` is empty.
 
-10. **Report** per part: category, part number used, qty after the operation
+10. **Auto-trigger enrichment + page generation on a new row (IDEA-005
+    Stage 3 / TASK-020).** **New rows only** — a qty-bump on an existing
+    row does *not* re-run this chain (the page already exists or the maker
+    declined it once; re-prompting on every restock would nag). The
+    new-vs-bump signal is the same `disposition` the writer returns
+    (`"inserted"` vs `"bumped"`) in step 6.
+
+    On a newly inserted row, chain synchronously — the maker is already in
+    an interactive turn, so one extra Nexar round-trip is in the same
+    budget as the `WebSearch` dance:
+
+    1. `enrich(part_id)` (IDEA-008 Stage 6) — populates the row's empty
+       Description / Datasheet / Notes cells from the response cache, never
+       clobbering a hand-edit.
+    2. Chain into `/inventory-page <part-id>`, reusing the enriched cells
+       verbatim. On a page-gen failure the row stays committed — the row
+       write is the load-bearing artefact; page-gen is convenience.
+
+    The gate is mechanised by
+    `partsledger.enrichment.chain.chain_on_new_row(disposition, part_id,
+    …)`: it returns `None` on a bump and runs `enrich_and_page` on an
+    insert. A `--no-page` intent (`no_page=True`) still enriches but skips
+    page generation — for a maker seeding a kit row without wanting an
+    immediate reference page. In a **batched** `/inventory-add`, run the
+    chain once per new-row pair in sequence; a page-gen failure on row N
+    does not block N+1. The camera path's async dispatch is untouched
+    (owned by IDEA-008 Stage 5).
+
+11. **Report** per part: category, part number used, qty after the operation
     (new row vs. updated from N to M), and whether a datasheet URL and an
     Octopart link were found.
 

@@ -133,6 +133,15 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
 
 ### Tooling
 
+- TASK-020 closed: `/inventory-add` auto-triggers enrichment + page
+  generation on a **new** row (IDEA-005 Stage 3). A qty-bump does not
+  re-run the chain. Mechanised by
+  `partsledger.enrichment.chain.chain_on_new_row(disposition, part_id, …)`
+  — gates on the writer's `"inserted"` disposition, supports a `--no-page`
+  intent (enrich without page-gen), and runs once per new-row pair in a
+  batched add. `/inventory-add` SKILL.md gains Step 11 documenting the
+  chain; the camera path's async dispatch is untouched. Closes EPIC-003.
+  3 tests in `tests/enrichment/test_chain.py`.
 - TASK-001 closed: deleted `awesome-task-system/` and
   `scripts/sync_task_system.py`. PartsLedger now follows CircuitSmith's
   installed-copy model — the live `scripts/`, `.claude/skills/`, and

@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 9** | 🔵 **Active: 1** | 🟡 **Paused: 3** | 🟢 **Closed: 45** | **Total: 58** | ████████░░ 78%
+⚪ **Open: 8** | 🔵 **Active: 1** | 🟡 **Paused: 3** | 🟢 **Closed: 46** | **Total: 58** | ████████░░ 79%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -36,7 +36,6 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
-| [TASK-020](open/task-020-page-gen-auto-trigger.md) | Auto-trigger /inventory-page on row creation via /inventory-add | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-036](open/task-036-recognition-overlay-state-machine.md) | Recognition-status overlay state machine + hint-family tokeniser | Large (8-24h) | Senior | ⚪ open |
 | [TASK-037](open/task-037-secondary-key-dispatch.md) | Secondary key dispatch — R / X / U handlers | Medium (2-8h) | Senior | ⚪ open |
 | [TASK-051](open/task-051-resistor-localisation-v1.md) | V1 — resistor localisation (HSV thresholding + contour finding) on still images | Medium (2-8h) | Senior | ⚪ open |
@@ -68,6 +67,7 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 | [TASK-016](closed/task-016-inventory-writer-module.md) | Implement src/partsledger/inventory/writer.py with upsert_row() contract | Large (8-24h) |
 | [TASK-017](closed/task-017-inventory-lint-module.md) | Implement src/partsledger/inventory/lint.py + scripts/lint_inventory.py shim | Medium (2-8h) |
 | [TASK-019](closed/task-019-hedge-language-lint.md) | Hedge-language lint over inventory/parts/*.md + pre-commit hook | Medium (2-8h) |
+| [TASK-020](closed/task-020-page-gen-auto-trigger.md) | Auto-trigger /inventory-page on row creation via /inventory-add | Medium (2-8h) |
 | [TASK-021](closed/task-021-family-page-proactive-suggestion.md) | Family-page proactive suggestion at add-time + page-gen-time | Medium (2-8h) |
 | [TASK-022](closed/task-022-adopt-src-layout.md) | Adopt src/partsledger/ layout in pyproject | Medium (2-8h) |
 | [TASK-023](closed/task-023-releasing-docs-and-release-skill.md) | Port RELEASING.md and /release skill; rewrite semver for three public surfaces | Medium (2-8h) |
