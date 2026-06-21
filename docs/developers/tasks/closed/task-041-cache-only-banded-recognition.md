@@ -1,9 +1,11 @@
 ---
 id: TASK-041
 title: Cache-only recognition with tight / tight_ambiguous / medium / miss bands
-status: open
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Small (<2h)
 complexity: Senior
 human-in-loop: No
 epic: visual-recognition

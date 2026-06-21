@@ -23,6 +23,24 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   a content hash over the sorted `state_dict`) is exposed as a lazily
   computed module constant for the cache's rebuild-on-mismatch gate. 12
   tests in `tests/recognition/test_embed.py` (1 network-guarded).
+- TASK-040 closed: `src/partsledger/recognition/cache.py` lands the
+  `EmbeddingCache` — a persistent embedding store at
+  `inventory/.embeddings/vectors.sqlite`. `insert()` (idempotent on
+  `image_hash`), `nearest(vector, k)` (ascending cosine distance),
+  `delete_last_inserted()` (undo support), and `clear_if_hash_mismatch()`
+  (rebuild-on-mismatch gate keyed on `embed.MODEL_HASH`). Backed by plain
+  `sqlite3` + numpy brute-force cosine rather than the `sqlite-vec`
+  loadable extension (ADR-0004 — extension loading is compiled out of many
+  stdlib builds; brute force is correct + sub-ms at <10k parts). 11 tests
+  in `tests/recognition/test_cache.py`.
+- TASK-041 closed: `src/partsledger/recognition/pipeline.py` lands the
+  read-only banded classifier (IDEA-007 Stage 2). `classify(image)` →
+  `Verdict(band, top1_candidate, neighbour_labels)` over the four
+  confidence bands — `tight` / `tight_ambiguous` (the LM358N-vs-LM358P
+  collision) / `medium` / `miss`. Thresholds load from the `[recognition]`
+  section of `~/.config/partsledger/config.toml` (defaults 0.10 / 0.25).
+  14 tests in `tests/recognition/test_pipeline_classify.py` covering every
+  band boundary, the ambiguity split, the empty cache, and config override.
 
 ### Schema
 
