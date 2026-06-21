@@ -1,9 +1,11 @@
 ---
 id: TASK-039
 title: Implement src/partsledger/recognition/embed.py — DINOv2-ViT-S/14 via torch.hub
-status: active
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Medium (2-8h)
+effort_actual: Small (<2h)
 complexity: Senior
 human-in-loop: No
 epic: visual-recognition

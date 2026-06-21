@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 20** | 🔵 **Active: 1** | 🟡 **Paused: 3** | 🟢 **Closed: 34** | **Total: 58** | ██████░░░░ 59%
+⚪ **Open: 20** | 🔵 **Active: 0** | 🟡 **Paused: 3** | 🟢 **Closed: 35** | **Total: 58** | ██████░░░░ 60%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -20,9 +20,7 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 
 ## Active Tasks
 
-| ID | Title | Effort | Complexity | Status |
-|----|-------|--------|------------|--------|
-| [TASK-039](active/task-039-recognition-embed-module.md) | Implement src/partsledger/recognition/embed.py — DINOv2-ViT-S/14 via torch.hub | Medium (2-8h) | Senior | 🔵 **active** |
+_No active tasks._
 
 ## Paused Tasks
 
@@ -95,4 +93,5 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 | [TASK-034](closed/task-034-capture-trigger-and-still.md) | Capture trigger + single-still emit per Output contract | Medium (2-8h) |
 | [TASK-035](closed/task-035-camera-cli-wrapper.md) | CLI wrapper python -m partsledger.capture | Small (&lt;2h) |
 | [TASK-038](closed/task-038-capture-slash-skill.md) | /capture thin slash-skill subprocess wrapper | Small (&lt;2h) |
+| [TASK-039](closed/task-039-recognition-embed-module.md) | Implement src/partsledger/recognition/embed.py — DINOv2-ViT-S/14 via torch.hub | Medium (2-8h) |
 <!-- END GENERATED -->
