@@ -1,9 +1,11 @@
 ---
 id: TASK-042
 title: Implement src/partsledger/recognition/vlm.py — OpenAI-compatible REST adapter
-status: open
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Large (8-24h)
+effort_actual: Medium (2-8h)
 complexity: Senior
 human-in-loop: No
 epic: visual-recognition

@@ -41,6 +41,32 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
   section of `~/.config/partsledger/config.toml` (defaults 0.10 / 0.25).
   14 tests in `tests/recognition/test_pipeline_classify.py` covering every
   band boundary, the ambiguity split, the empty cache, and config override.
+- TASK-042 closed: `src/partsledger/recognition/vlm.py` lands the
+  OpenAI-compatible VLM adapter (IDEA-007 Stage 3). `identify(image)` →
+  `HedgedID` / `NeedsReframe` / `NoIdea`. One REST transport for every
+  provider (`$PL_VLM_BASE_URL` / `_MODEL` / `_API_KEY`) — no vendor SDK.
+  JSON-schema structured output with a lenient JSON-substring fallback
+  parser; hedge-grammar enforcement (must lead with `likely`/`probably`/…,
+  rejects `must`/`always`/`never`) with a retry cap that collapses to
+  `NoIdea`; bearer-token redaction on every error path (401 → "auth failed
+  against <base_url>", never the key). Plus `recognition/hints.py` — the
+  shared seven-family hint tokeniser (also used by TASK-036). 26 tests
+  across `test_vlm.py` + `test_hints.py`.
+- TASK-044 closed: `src/partsledger/recognition/undo.py` lands the
+  depth-1 undo journal at `inventory/.embeddings/undo.toml`. `record()`
+  after each write; `undo_last()` decrements the qty (via the TASK-016
+  writer) and deletes the cache row, atomically from the maker's view —
+  MD decrement first, so a writer failure leaves the cache row + journal
+  entry intact for retry. Persists across process restart. 8 tests in
+  `test_undo.py`.
+- TASK-043 (pipeline glue) implemented, kept **active** pending manual
+  verification: `Pipeline.run(image) -> Wrote / Reframing /
+  EscalatedToManual` wires classify → VLM → writer → cache-learn →
+  enrichment, owns the re-frame loop (cap 2, distinct-part reset), aborts
+  before cache-learn on writer failure, and treats enrichment as
+  best-effort. 9 mocked host tests cover every AC; the task's
+  `human-in-loop: Support` fixture walk (a maintainer stepping the
+  TASK-057 corpus through each band) is the only remaining step.
 
 ### Schema
 

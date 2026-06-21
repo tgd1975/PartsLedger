@@ -1,7 +1,7 @@
 ---
 id: TASK-043
 title: Pipeline glue — pipeline.run(image) -> Outcome with re-frame loop and writer hand-off
-status: open
+status: active
 opened: 2026-05-14
 effort: Large (8-24h)
 complexity: Senior
@@ -10,6 +10,20 @@ epic: visual-recognition
 order: 5
 prerequisites: [TASK-016, TASK-017, TASK-041, TASK-042, TASK-048]
 ---
+
+> **Implementation note (2026-06-21).** The `Pipeline.run(image) -> Outcome`
+> glue, the re-frame loop (cap 2, distinct-part reset), the VLM verdict
+> routing, the writer hand-off, the cache-learn-after-write ordering, the
+> soft-enrichment edge, and the hard writer-failure abort are all
+> implemented in `src/partsledger/recognition/pipeline.py` and fully
+> covered by mocked host tests (`tests/recognition/test_pipeline_run.py`,
+> 9 tests — every AC). The enrichment hand-off is an **optional injected
+> seam**, so this code does not hard-block on TASK-048; the orchestrator
+> plugs in when it lands. The task stays **active** rather than closed
+> because its `human-in-loop: Support` definition-of-done requires a
+> maintainer to walk the real fixture corpus (TASK-057) image-by-image
+> through each band — that manual integration step needs a human and is
+> the only remaining work.
 
 ## Description
 
