@@ -9,6 +9,35 @@ first tag is cut; until then the `[Unreleased]` section is the only entry.
 
 ## [Unreleased]
 
+### Resistor reader
+
+- **EPIC-008 V1 (resistor colour-band reader) implemented.** New CV
+  pipeline under `src/partsledger/resistor_reader/`, validated on a
+  synthetic fixture set (`tests/fixtures/resistor-reader/generate.py`) —
+  31 tests in `tests/resistor_reader/`. V2 (TASK-055/056, trained detector +
+  live overlay) is untouched (needs a live camera + training data).
+- TASK-053 closed: `uniformity.py` — `check_uniformity(decoded) ->
+  UniformityReport`. Strict clustering on the raw decoded value (no
+  confidence weighting, no averaging); the modal value is the batch value
+  and every off-modal resistor is listed with its frame position and
+  per-band confidence, even low-confidence outliers.
+- TASK-054 closed: `__main__.py` CLI (`partsledger-resistor-reader <image>`
+  / `python -m partsledger.resistor_reader`) + the `[project.scripts]`
+  entry. Prints decoded value(s) in RKM format, a uniformity report for
+  multi-resistor frames, and `--json` for piping into `/inventory-add`.
+  Loads the IDEA-013 colour-calibration profile from
+  `$PL_INVENTORY_PATH/.calibration/` then the user-config dir (override via
+  `--calibrate`); without one it decodes white-balance-naive and prints a
+  *"no calibration profile"* note. No OpenCV internals or file paths leak
+  into `--help` or output. 6 subprocess tests.
+- TASK-051 (localise) + TASK-052 (decode) implemented, kept **active**
+  pending the `human-in-loop: Support` real-photo validation: `localise.py`
+  (HSV body gating → morphology → contour/`minAreaRect`, ranked candidates)
+  and `decode.py` (band finding, EIA classification, 4/5-band decode,
+  spacing- then E-series-based orientation resolution, RKM formatting,
+  optional colour-correction matrix). 15 tests against the synthetic
+  fixtures; real-photo robustness is the remaining maker step.
+
 ### Recognition
 
 - TASK-039 closed: `src/partsledger/recognition/embed.py` lands the

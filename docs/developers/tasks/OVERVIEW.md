@@ -4,7 +4,7 @@
 
 <!-- markdownlint-disable-file MD033 -->
 
-⚪ **Open: 6** | 🔵 **Active: 3** | 🟡 **Paused: 3** | 🟢 **Closed: 46** | **Total: 58** | ████████░░ 79%
+⚪ **Open: 2** | 🔵 **Active: 5** | 🟡 **Paused: 3** | 🟢 **Closed: 48** | **Total: 58** | ████████░░ 83%
 
 **Jump to:** [Burn-up](#burn-up) · [Active Tasks](#active-tasks) · [Paused Tasks](#paused-tasks) · [Open Tasks](#open-tasks) · [Closed Tasks](#closed-tasks)
 
@@ -25,6 +25,8 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 | [TASK-036](active/task-036-recognition-overlay-state-machine.md) | Recognition-status overlay state machine + hint-family tokeniser | Large (8-24h) | Senior | 🔵 **active** |
 | [TASK-037](active/task-037-secondary-key-dispatch.md) | Secondary key dispatch — R / X / U handlers | Medium (2-8h) | Senior | 🔵 **active** |
 | [TASK-043](active/task-043-recognition-pipeline-glue.md) | Pipeline glue — pipeline.run(image) -&gt; Outcome with re-frame loop and writer hand-off | Large (8-24h) | Senior | 🔵 **active** |
+| [TASK-051](active/task-051-resistor-localisation-v1.md) | V1 — resistor localisation (HSV thresholding + contour finding) on still images | Medium (2-8h) | Senior | 🔵 **active** |
+| [TASK-052](active/task-052-resistor-band-reading-eia.md) | V1 — band reading + EIA classifier + orientation disambiguation via E-series check | Medium (2-8h) | Senior | 🔵 **active** |
 
 ## Paused Tasks
 
@@ -38,10 +40,6 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 
 | ID | Title | Effort | Complexity | Status |
 |----|-------|--------|------------|--------|
-| [TASK-051](open/task-051-resistor-localisation-v1.md) | V1 — resistor localisation (HSV thresholding + contour finding) on still images | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-052](open/task-052-resistor-band-reading-eia.md) | V1 — band reading + EIA classifier + orientation disambiguation via E-series check | Medium (2-8h) | Senior | ⚪ open |
-| [TASK-053](open/task-053-resistor-uniformity-check.md) | V1 — uniformity check (strict, every deviation flagged) | Small (&lt;2h) | Medium | ⚪ open |
-| [TASK-054](open/task-054-resistor-extra-packaging.md) | V1 — package as partsledger[resistor-reader] extra with CLI entry-point | Small (&lt;2h) | Medium | ⚪ open |
 | [TASK-055](open/task-055-resistor-trained-detector-v2.md) | V2 — small trained detector (YOLO-nano / MobileNet-SSD) for live-view localisation | Large (8-24h) | Senior | ⚪ open |
 | [TASK-056](open/task-056-resistor-live-overlay-v2.md) | V2 — live overlay + per-frame stable decoding at ≥10 fps | Large (8-24h) | Senior | ⚪ open |
 
@@ -95,4 +93,6 @@ _No git tag found yet — burn-up chart needs a release tag to anchor on._
 | [TASK-048](closed/task-048-enrichment-orchestrator.md) | Orchestrator enrich(part_id) + writer-integration (no clobber on non-empty cells) | Medium (2-8h) |
 | [TASK-049](closed/task-049-camera-async-dispatch.md) | Camera-path async dispatch — dispatch_async() + single-worker thread + enrichment.log | Medium (2-8h) |
 | [TASK-050](closed/task-050-skill-sync-chain.md) | Skill-path sync enrichment + page-gen chain (sync for /inventory-add, async for camera) | Medium (2-8h) |
+| [TASK-053](closed/task-053-resistor-uniformity-check.md) | V1 — uniformity check (strict, every deviation flagged) | Small (&lt;2h) |
+| [TASK-054](closed/task-054-resistor-extra-packaging.md) | V1 — package as partsledger[resistor-reader] extra with CLI entry-point | Small (&lt;2h) |
 <!-- END GENERATED -->

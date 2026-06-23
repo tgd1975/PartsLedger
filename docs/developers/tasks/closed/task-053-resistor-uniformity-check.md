@@ -1,9 +1,11 @@
 ---
 id: TASK-053
 title: V1 — uniformity check (strict, every deviation flagged)
-status: open
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Small (<2h)
+effort_actual: XS (<30m)
 complexity: Medium
 human-in-loop: No
 epic: resistor-reader

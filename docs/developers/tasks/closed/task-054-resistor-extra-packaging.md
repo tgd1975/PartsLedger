@@ -1,9 +1,11 @@
 ---
 id: TASK-054
 title: V1 — package as partsledger[resistor-reader] extra with CLI entry-point
-status: open
+status: closed
+closed: 2026-06-21
 opened: 2026-05-14
 effort: Small (<2h)
+effort_actual: Small (<2h)
 complexity: Medium
 human-in-loop: No
 epic: resistor-reader

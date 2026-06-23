@@ -37,20 +37,20 @@ kanban
 
 ## resistor-reader
 
-_⚪ 6 open · 🔵 0 active · 🟡 0 paused · 🟢 0 closed · ░░░░░░░░░░ 0%_
+_⚪ 2 open · 🔵 2 active · 🟡 0 paused · 🟢 2 closed · ███░░░░░░░ 33%_
 
 ```mermaid
 kanban
   Open
-    TASK_051["V1 — resistor localisation (HSV thresholding + contour finding) on still images"]
-    TASK_052["V1 — band reading + EIA classifier + orientation disambiguation via E-series check"]
-    TASK_053["V1 — uniformity check (strict, every deviation flagged)"]
-    TASK_054["V1 — package as partsledger[resistor-reader] extra with CLI entry-point"]
     TASK_055["V2 — small trained detector (YOLO-nano / MobileNet-SSD) for live-view localisation"]
     TASK_056["V2 — live overlay + per-frame stable decoding at ≥10 fps"]
   Active
+    TASK_051["V1 — resistor localisation (HSV thresholding + contour finding) on still images"]
+    TASK_052["V1 — band reading + EIA classifier + orientation disambiguation via E-series check"]
   Paused
   Closed
+    TASK_053["V1 — uniformity check (strict, every deviation flagged)"]
+    TASK_054["V1 — package as partsledger[resistor-reader] extra with CLI entry-point"]
 ```
 
 ## usb-camera-capture

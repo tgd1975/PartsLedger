@@ -61,6 +61,11 @@ resistor-reader = [
     "scipy>=1.11",
 ]
 
+[project.scripts]
+# V1 resistor colour-band reader CLI (EPIC-008 / TASK-054). Requires the
+# [resistor-reader] extra for the CV stack.
+partsledger-resistor-reader = "partsledger.resistor_reader.__main__:main"
+
 [project.urls]
 Homepage = "https://github.com/tgd1975/PartsLedger"
 Issues = "https://github.com/tgd1975/PartsLedger/issues"

@@ -1,7 +1,7 @@
 ---
 id: TASK-052
 title: V1 — band reading + EIA classifier + orientation disambiguation via E-series check
-status: open
+status: active
 opened: 2026-05-14
 effort: Medium (2-8h)
 complexity: Senior
@@ -10,6 +10,18 @@ epic: resistor-reader
 order: 2
 prerequisites: [TASK-051]
 ---
+
+> **Implementation note (2026-06-21).** `src/partsledger/resistor_reader/decode.py`
+> implements `decode_resistor(image, candidate) -> DecodedResistor` — band
+> finding along the body axis, EIA nearest-colour classification, 4- and
+> 5-band decode, orientation resolution (band-spacing cue first, then an
+> E-series tie-break), RKM value formatting (`4k7`/`100R`/`1M`), and an
+> optional IDEA-013 colour-correction matrix. Validated on the synthetic
+> fixtures (1k 5%, 4k7 5%, 220 1% 5-band, an orientation-ambiguous case),
+> 10 tests in `tests/resistor_reader/test_decode.py`. Stays **active** for
+> the same `human-in-loop: Support` reason as TASK-051 — band-colour
+> classification accuracy under real lighting (where the IDEA-013
+> calibration profile earns its keep) needs validation on real photos.
 
 ## Description
 
